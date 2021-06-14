@@ -29,10 +29,32 @@ session = Session()
 
 data = session.query(MyTable).all()
 # Printet alle sqlalchemy.orm.state.InstanceState objects (alle row einträge in der database die im ORM gestored sind)
+""" The SQLAlchemy ORM will return an instance of a class by default (erste print) """
 for class_instance in data:
+    """ The SQLAlchemy ORM will return an instance of a class by default (erste print) """
+    print(class_instance)
+    # kann sich die objekte als vars ausgeben lassen
     print(vars(class_instance))
+    # einzelne features der objekte printen
     print(class_instance.zeilennr)
     print(class_instance.content)
+    # objekte als dicts printen == If you're looking to get dictionaries instead, use the built-in __dict__ method:
+    print(class_instance.__dict__)
+
+    # oder als eigenes Objekt (etwas gedoppelt dadurch)
+    dataObject = {
+        'postingID': class_instance.postingId,
+        'zeilennr': class_instance.zeilennr,
+        'classID': class_instance.classID,
+        'content': class_instance.content
+    }
+    print(dataObject)
 
 
 session.close()
+
+# Ausprobieren: 
+# Daten verändern und wieder in neue table schreiben
+# blobs erzeugen 
+# Daten bei mehreren Tables verwalten? (iterieren über Datenbank)
+# Schemata genauer ansehen 
