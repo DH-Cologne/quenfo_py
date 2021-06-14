@@ -4,6 +4,7 @@ from sqlalchemy import String, Integer, Float, Boolean, Column
 from sqlalchemy.orm import sessionmaker
 import os
 
+
 input_path = os.path.join('..', 'traindata_sql.db')
 
 Base = declarative_base()
@@ -27,8 +28,11 @@ engine = create_engine('sqlite:///' + input_path, echo=True)
 Session = sessionmaker(bind=engine)
 session = Session()
 
+# data enthält alle Objekte der Klasse myClass die row-wise gefüllt wurden --> data ist eine liste
 data = session.query(MyTable).all()
+
 # Printet alle sqlalchemy.orm.state.InstanceState objects (alle row einträge in der database die im ORM gestored sind)
+
 """ The SQLAlchemy ORM will return an instance of a class by default (erste print) """
 for class_instance in data:
     """ The SQLAlchemy ORM will return an instance of a class by default (erste print) """
@@ -41,7 +45,7 @@ for class_instance in data:
     # objekte als dicts printen == If you're looking to get dictionaries instead, use the built-in __dict__ method:
     print(class_instance.__dict__)
 
-    # oder als eigenes Objekt (etwas gedoppelt dadurch)
+    # oder als eigenes Objekt (etwas gedoppelt dadurch) und deserialisiert!
     dataObject = {
         'postingID': class_instance.postingId,
         'zeilennr': class_instance.zeilennr,
@@ -49,6 +53,7 @@ for class_instance in data:
         'content': class_instance.content
     }
     print(dataObject)
+
 
 
 session.close()
