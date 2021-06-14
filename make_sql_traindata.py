@@ -59,6 +59,8 @@ def writer(df_train):
     # Name of database table
     key = 'traindata'
 
+    df_train['index'] = df_train.index
+
     # make connection
     try:
         conn_temp = sqlite3.connect(output_path)
