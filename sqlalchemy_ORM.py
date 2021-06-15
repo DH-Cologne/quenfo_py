@@ -89,7 +89,6 @@ output = OutputData(
     content = "test"
 )
 
-
 session.add(output)
 session.commit()
 
