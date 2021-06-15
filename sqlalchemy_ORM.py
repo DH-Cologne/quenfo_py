@@ -1,3 +1,6 @@
+from typing import Text
+from numpy import string_
+import sqlalchemy
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import create_engine, Sequence
 from sqlalchemy import String, Integer, Float, Boolean, Column
@@ -7,6 +10,8 @@ import os, psutil
 import sqlite3
 from sqlite3 import Error
 import pandas as pd
+from sqlalchemy.schema import CreateTable
+from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String
 
 """ Gerade sind hier zwei Herangehensweisen drinnen, um die Daten (Trainingsdaten) einzulesen. Einmal mittels Sqlalchemy ORM Objects und einmal über sqlite3 Anfragen und Verwaltung in DF/Dicts
 Beide haben bezügl. des memory usages ähnliche Kapazitäten. Die Klassenstruktur mittels ORM bietet aber einheitlichere Verwaltungsstrukturen. """
@@ -68,33 +73,52 @@ for class_instance in data:
 
 session.close()
 
+#meta = MetaData()
 
 # Class OutputData
 class OutputData(Base):
     __tablename__ = 'outputdata'
     index = Column(Integer, Sequence('index'), primary_key=True)
-    content = Column('content', nullable = True)
+    postingId = Column(String(225))
+    zeilennr = Column(Integer)
+    classID = Column (Integer)
+    content = Column(String(225))
 
-    def __init__(self, content):
+    def __init__(self, postingId, zeilennr, classID, content):
+        self.postingId = postingId
+        self.zeilennr = zeilennr
+        self.classID = classID
         self.content = content
 
-
 engine = create_engine('sqlite:///' + input_path, echo=True)
-Session = sessionmaker(bind=engine)
-session = Session()
-Base.metadata.create_all(engine)
+#Base.metadata.tables['outputdata'].create(engine)
+try:
+    OutputData.__table__.create(engine)
+except sqlalchemy.exc.OperationalError:
+    print("table does already exist")
+    pass
 
+#Base.metadata.create_all(engine)
+#engine = create_engine('sqlite:///' + input_path, echo=True)
 #outdata = session.query(OutputData).all()
-output = OutputData(
-    content = "test"
-)
+#meta.create_all(engine)
+    Session = sessionmaker(bind=engine)
+    session = Session()
 
-session.add(output)
+for class_instance in data:
+    output = OutputData(
+
+        postingId=class_instance.postingId,
+        zeilennr=class_instance.zeilennr,
+        classID=class_instance.classID,
+        content=class_instance.content
+    )
+
+    
+
+    #Base.metadata.tables["outputdata"].create(bind = engine)
+    session.add(output)
 session.commit()
-
-
-
-
 
 
 # wie viel memory wird belegt?
@@ -106,7 +130,6 @@ print(process.memory_info().rss)  # in bytes
 # blobs erzeugen 
 # Daten bei mehreren Tables verwalten? (iterieren über Datenbank)
 # Schemata genauer ansehen 
-
 
 
 
