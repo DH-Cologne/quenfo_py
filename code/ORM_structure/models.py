@@ -1,6 +1,7 @@
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import create_engine, String, Integer, Float, Boolean, Column, Sequence
 
+# ## TODO InputData Klasse erstellen (da fehlt die classID und Zeilennr)
 
 Base = declarative_base()
 
@@ -41,7 +42,6 @@ class OutputData(Base):
 
     def __repr__(self):
         return "(%s, %s, %s, %s, %s)" % (self.postingId, self.zeilennr, self.classID, self.content, self.prepro)
-
 
 
 
