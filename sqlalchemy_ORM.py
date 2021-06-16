@@ -39,6 +39,10 @@ class TrainingData(Base):
         self.classID = classID
         self.content = content
 
+    def __repr__(self):
+        print('###############################')
+        return "<User %r>" % self.postingId
+
 
 engine = create_engine('sqlite:///' + input_path, echo=True)
 Session = sessionmaker(bind=engine)
@@ -54,9 +58,9 @@ for class_instance in data:
     """ The SQLAlchemy ORM will return an instance of a class by default (erste print) """
     #print(class_instance)
     # kann sich die objekte als vars ausgeben lassen
-    print(vars(class_instance))
+    #print(vars(class_instance))
     # einzelne features der objekte printen
-    print(class_instance.zeilennr)
+    #print(class_instance.zeilennr)
     #print(class_instance.content)
     # objekte als dicts printen == If you're looking to get dictionaries instead, use the built-in __dict__ method:
     #print(class_instance.__dict__)
@@ -114,9 +118,8 @@ for class_instance in data:
         content=class_instance.content
     )
 
-    
-
     #Base.metadata.tables["outputdata"].create(bind = engine)
+    #print('######################')
     session.add(output)
 session.commit()
 
@@ -183,8 +186,8 @@ def get_df_id(conn):
     #print(df)
 
 
-conn=conn_testing()
-get_df_id(conn)
+""" conn=conn_testing()
+get_df_id(conn) """
 
 process = psutil.Process(os.getpid())
 print(process.memory_info().rss)  # in bytes 
