@@ -30,14 +30,18 @@ class OutputData(Base):
     zeilennr = Column(Integer)
     classID = Column (Integer)
     content = Column(String(225))
+    prepro = Column('prepro',String(225))
 
-    def __init__(self, postingId, zeilennr, classID, content):
+    def __init__(self, postingId, zeilennr, classID, content, prepro):
         self.postingId = postingId
         self.zeilennr = zeilennr
         self.classID = classID
         self.content = content
+        self.prepro = prepro
 
     def __repr__(self):
-        return "(%s, %s, %s, %s)" % (self.postingId, self.zeilennr, self.classID, self.content)
+        return "(%s, %s, %s, %s, %s)" % (self.postingId, self.zeilennr, self.classID, self.content, self.prepro)
+
+
 
 
