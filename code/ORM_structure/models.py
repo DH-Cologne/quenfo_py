@@ -1,13 +1,6 @@
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import create_engine, Sequence
-from sqlalchemy import String, Integer, Float, Boolean, Column
-from sqlalchemy.orm import sessionmaker
-import os, psutil
-import pandas as pd
-from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String
-import sqlalchemy
+from sqlalchemy import create_engine, String, Integer, Float, Boolean, Column, Sequence
 
-input_path = os.path.join('..', 'traindata_sql.db')
 
 Base = declarative_base()
 
@@ -26,7 +19,7 @@ class TrainingData(Base):
         self.content = content
 
     def __repr__(self):
-        return "<User %r>" % self.postingId
+        return "(%s, %s, %s, %s)" % (self.postingId, self.zeilennr, self.classID, self.content)
 
 
 # Class OutputData
@@ -43,4 +36,8 @@ class OutputData(Base):
         self.zeilennr = zeilennr
         self.classID = classID
         self.content = content
+
+    def __repr__(self):
+        return "(%s, %s, %s, %s)" % (self.postingId, self.zeilennr, self.classID, self.content)
+
 

@@ -1,27 +1,43 @@
+"""Script to build data and to create data"""
 from typing import Tuple
-
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.orm import Session
 import os
 from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String
+from sqlalchemy.sql.expression import false, true
 from .models import OutputData, TrainingData
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 import sqlalchemy
 from database import engine
 
-def create_output(session, output):
+is_created = None
 
-    try:
-        OutputData.__table__.create(engine)
-    except sqlalchemy.exc.OperationalError:
-        print("table does already exist")
-        pass
-    print("#####")
-    print(output.postingId)
+def get_traindata(session):
+    data = session.query(TrainingData).all()
+    return data
+
+
+def create_output(session, output):
+    __check_once()
     session.add(output)
-    session.commit()
-    session.close()
+    
+    
+def __check_once(): 
+    global is_created
+    if is_created is None:
+        try:
+            OutputData.__table__.create(engine)
+        except sqlalchemy.exc.OperationalError:
+            print("table does already exist")
+            pass
+        is_created = 'checked'
+    else:
+        pass
+        
+
+
+
 
 
 

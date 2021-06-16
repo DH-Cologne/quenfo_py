@@ -1,3 +1,3 @@
-from ORM_structure import generate_output
+from ORM_structure import convert_data
 
-generate_output()
+convert_data()
