@@ -6,6 +6,9 @@ from ORM_structure import preprocessing
 
 data = list
 
+def use_jobads() -> list:
+    jobads = orm.get_jobads(session)
+    return jobads
 # ## Input
 def use_traindata():
     data = orm.get_traindata(session)

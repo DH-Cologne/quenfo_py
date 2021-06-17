@@ -5,6 +5,27 @@ from sqlalchemy import create_engine, String, Integer, Float, Boolean, Column, S
 
 Base = declarative_base()
 
+
+
+class JobAds(Base):
+    __tablename__ = 'jobads'
+    id = Column(Integer, Sequence('id'), primary_key=True)
+    postingID = Column('postingID')
+    jahrgang = Column('jahrgang')
+    language = Column('language')
+    content = Column('content')
+
+    def __init__(self, id, posting_ID, jahrgang, language, content):
+        self.id = id
+        self.postingID = posting_ID
+        self.jahrgang = jahrgang
+        self.language = language
+        self.content = content
+    
+    def __repr__(self):
+        return "(%s, %s, %s, %s, %s)" % (self.id, self.postingID, self.jahrgang, self.language, self.content)
+
+# fungiert letztlich als classifyunit (TODO umbenennen)
 class TrainingData(Base):
     __tablename__ = 'traindata'
     index = Column(Integer, Sequence('index'), primary_key=True)

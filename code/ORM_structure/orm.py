@@ -5,13 +5,18 @@ from sqlalchemy.orm import Session
 import os
 from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String
 from sqlalchemy.sql.expression import false, true
-from .models import OutputData, TrainingData
+from .models import OutputData, TrainingData, JobAds
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 import sqlalchemy
 from database import engine
 
 is_created = None
+
+
+def get_jobads(session: Session) -> list:
+    job_ads = session.query(JobAds).all()
+    return job_ads
 
 def get_traindata(session):
     data = session.query(TrainingData).all()
