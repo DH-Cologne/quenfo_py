@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 import os
 from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String
 from sqlalchemy.sql.expression import false, true
-from .models import OutputData, TrainingData, JobAds
+from .models import ClassifyUnits, OutputData, TrainingData, JobAds
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 import sqlalchemy
@@ -17,6 +17,7 @@ is_created = None
 def get_jobads(session: Session) -> list:
     job_ads = session.query(JobAds).all()
     return job_ads
+    
 
 def get_traindata(session):
     data = session.query(TrainingData).all()
@@ -32,9 +33,11 @@ def __check_once():
     global is_created
     if is_created is None:
         try:
-            OutputData.__table__.create(engine)
+            ClassifyUnits.__table__.create(engine)
         except sqlalchemy.exc.OperationalError:
             print("table does already exist")
+            ClassifyUnits.__table__.drop(engine)
+            ClassifyUnits.__table__.create(engine)  
             pass
         is_created = 'checked'
     else:

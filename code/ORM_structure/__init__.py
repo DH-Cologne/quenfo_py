@@ -5,14 +5,21 @@ from database import session
 from ORM_structure import preprocessing
 
 data = list
+print('in orm init')
 
 def use_jobads() -> list:
     jobads = orm.get_jobads(session)
     return jobads
+    
 # ## Input
 def use_traindata():
     data = orm.get_traindata(session)
     return data
+
+
+
+
+
 
 
 """Hier passiert was mit data und die daten werden vorverarbeitet/manipuliert und die veränderten Daten/Analysedaten werden dann an generate_output weitergegeben

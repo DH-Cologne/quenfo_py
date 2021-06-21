@@ -1,3 +1,4 @@
+
 """ TODO: 
 splitten wenn eine leere Zeile folgt (splitatemtpyline) 
 → dann wird aus dem Paragrafen ein sauberer String erstellt:
@@ -7,14 +8,13 @@ merge die List-items zsm
 merge die Zeilen, bei denen die erste Zeile nicht mit einem Punkt endet und die zweite nicht mit uppercase char beginnt oder die ein Jobtitel ist
 """
 
-# HIER DIE RELATIONSSHIPS EINBAUEN !!! ein object ist related to list of paragraphs die jeweils einer classify unit hinzugefügt werden!!!
-
-# sowas wie wie main, kann vllt in init
-def jobads_to_paragraphs(jobads: list):
-    for obj in jobads:
-        split_at_empty_line(obj)
-
 # Returns list of paragraphs per object
-def split_at_empty_line(obj: object) -> list:
-    list_paragraphs = obj.content.split("\n\n")
-    return list_paragraphs
+def split_at_empty_line(jobad: object) -> list:
+    return jobad.content.split("\n\n")
+
+# Remove spaces at the beginning and at the end of the string
+def remove_whitespaces(para: str) -> str:
+    return para.strip()
+
+def replace(para) -> str:
+    return ''.join(c for c in para if c.isalnum())

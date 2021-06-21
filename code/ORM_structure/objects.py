@@ -1,4 +1,4 @@
-from .models import OutputData, TrainingData
+from .models import OutputData, TrainingData, ClassifyUnits
 
 
 def create_output_object(obj, onestring):

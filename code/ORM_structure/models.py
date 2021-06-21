@@ -1,10 +1,10 @@
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import create_engine, String, Integer, Float, Boolean, Column, Sequence
-
+from sqlalchemy import create_engine, String, Integer, Float, Boolean, Column, Sequence, ForeignKey
+from sqlalchemy.orm import backref, relationship
+from database import session
 # ## TODO InputData Klasse erstellen (da fehlt die classID und Zeilennr)
 
 Base = declarative_base()
-
 
 
 class JobAds(Base):
@@ -14,6 +14,9 @@ class JobAds(Base):
     jahrgang = Column('jahrgang')
     language = Column('language')
     content = Column('content')
+    #child_id = Column(Integer, ForeignKey('classify_units.id'))
+    #classify_units = relationship("ClassifyUnits")
+    children = relationship("ClassifyUnits", back_populates="parent")
 
     def __init__(self, id, posting_ID, jahrgang, language, content):
         self.id = id
@@ -21,9 +24,38 @@ class JobAds(Base):
         self.jahrgang = jahrgang
         self.language = language
         self.content = content
+
     
     def __repr__(self):
         return "(%s, %s, %s, %s, %s)" % (self.id, self.postingID, self.jahrgang, self.language, self.content)
+
+# Class classifyunit
+class ClassifyUnits(Base):
+    __tablename__ = 'classify_units'
+    id = Column(Integer, primary_key=True)
+    # neue felder
+    classID = Column('classID', Integer)
+    paragraph = Column('paragraph', String(225))
+    # Declare relationship as child to parent (jobads)
+
+    # Foreign key bezieht sich auf den table name!!! nicht auf ein attribute!!!
+    #parent_id = Column(Integer, ForeignKey('JobAds.id'))
+    #job_ads = relationship("JobAds", backref=backref("classify_units", lazy='noload'))
+
+    parent_id = Column(Integer, ForeignKey('jobads.id'))
+    parent = relationship("JobAds", back_populates="children")
+
+    def __init__(self, classID, paragraph):
+        self.classID = classID
+        self.paragraph = paragraph
+
+    def __repr__(self):
+        return "(%s, %s)" % (self.classID, self.paragraph)
+
+
+
+
+
 
 # fungiert letztlich als classifyunit (TODO umbenennen)
 class TrainingData(Base):
