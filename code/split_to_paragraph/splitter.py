@@ -1,4 +1,5 @@
 
+import re
 """ TODO: 
 splitten wenn eine leere Zeile folgt (splitatemtpyline) 
 → dann wird aus dem Paragrafen ein sauberer String erstellt:
@@ -16,5 +17,8 @@ def split_at_empty_line(jobad: object) -> list:
 def remove_whitespaces(para: str) -> str:
     return para.strip()
 
+
+# elegantere Lösung finden? vllt gensim simple preprocessing für alles in einem (inkl remove whitespaces)
 def replace(para) -> str:
-    return ''.join(c for c in para if c.isalnum())
+    para = re.sub('\W+',' ', para)
+    return para
