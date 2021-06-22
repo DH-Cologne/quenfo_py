@@ -1,7 +1,11 @@
+"""Script to merge output objects together.
+STILL WORKING ON IT --> vllt überflüssiges script?"""
+
+# ## Imports
 from .models import OutputData, TrainingData, ClassifyUnits
 
-
-def create_output_object(obj, onestring):
+# Function to create output objects
+""" def create_output_object(obj, onestring):
     output = OutputData(
         postingId=obj.postingId,
         zeilennr=obj.zeilennr,
@@ -9,5 +13,5 @@ def create_output_object(obj, onestring):
         content=obj.content,
         prepro=onestring
     )
-    return output
+    return output """
 
