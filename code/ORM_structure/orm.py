@@ -1,34 +1,56 @@
 """Script to build data and to create data"""
-from typing import Tuple
-from sqlalchemy.exc import IntegrityError, SQLAlchemyError
+
+# ## Imports
 from sqlalchemy.orm import Session
-import os
-from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String
-from sqlalchemy.sql.expression import false, true
 from .models import ClassifyUnits, OutputData, TrainingData, JobAds
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
 import sqlalchemy
 from database import engine
 
+# ## Variables
 is_created = None
 
-
+# Function to query the data from the db table
 def get_jobads(session: Session) -> list:
+    """ Function manages the data query and instantiates the Schema for the class JobAds in models.py
+
+    Parameters
+    ----------
+    session: Session
+        Session object, generated in module database. Contains the database path
+
+    Returns
+    -------
+    jobads: list
+        Data contains the orm-objects from class JobAds """
+    
     job_ads = session.query(JobAds).all()
     return job_ads
     
+def pass_output(session: Session):
+    """ The session.commit() statement commits all adds to the current session.
 
-def get_traindata(session):
-    data = session.query(TrainingData).all()
-    return data
+    Parameters
+    ----------
+    session: Session
+        Session object, generated in module database. Contains the database path. """
 
+    session.commit()
 
-def create_output(session, output):
+# Function to manage session adding
+def create_output(session: Session, output: object):
+    """ Function checks if table to store output in already exists. Else the table is dropped and created again.
+    The session.add(object) statement adds the passed object to the current session.
+
+    Parameters
+    ----------
+    session: Session
+        Session object, generated in module database. Contains the database path. """
+
     __check_once()
     session.add(output)
     
-    
+
+# Private function to check if needed table already exists, else drop it and create a new empty table
 def __check_once(): 
     global is_created
     if is_created is None:
@@ -49,6 +71,9 @@ def __check_once():
 
 
 
+    """ def get_traindata(session):
+    data = session.query(TrainingData).all()
+    return data """
 
     """ try:
         existing_user = session.query(OutputData).all()

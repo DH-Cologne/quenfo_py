@@ -1,31 +1,41 @@
-from sqlalchemy.sql.expression import false
-from ORM_structure import objects
+# ## Imports
 from ORM_structure import orm
 from database import session
-from ORM_structure import preprocessing
 
-data = list
-print('in orm init')
+# TODO: Kommentare hier irgendwie unnötig. Vllt kann diese init auch leer bleiben.
 
-def use_jobads() -> list:
-    jobads = orm.get_jobads(session)
-    return jobads
+# Initiate session 
+# and pass it function get_jobads in module orm to read db-table and store rows as objects
+
+""" def use_jobads() -> list: """
+""" Function manages the initiation of a session, loading of input-data and handling data as orm-objects
+
+Returns
+-------
+jobads: list
+    Data contains the orm-objects from class JobAds """
+
+""" jobads = orm.get_jobads(session)
+return jobads """
+
+
+
+
+
+
+
+# ---------------------------------------------------
     
-# ## Input
+""" # ## Input
 def use_traindata():
     data = orm.get_traindata(session)
-    return data
-
-
-
-
-
+    return data """
 
 
 """Hier passiert was mit data und die daten werden vorverarbeitet/manipuliert und die veränderten Daten/Analysedaten werden dann an generate_output weitergegeben
 Der nimmt sich dann was er braucht, um es in die Output db zu packen"""
 
-def manipulate_data(obj):
+""" def manipulate_data(obj):
     
     onestring = preprocessing.prepro(obj)
         
@@ -36,7 +46,7 @@ def manipulate_data(obj):
 def generate_output(obj, onestring):
  
     output_obj = objects.create_output_object(obj, onestring)
-    orm.create_output(session, output_obj)
+    orm.create_output(session, output_obj) """
     
 
 

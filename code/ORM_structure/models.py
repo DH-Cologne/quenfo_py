@@ -1,23 +1,38 @@
+"""Script to define Classes and Schemes for ORM-objects"""
+
+# ## Imports
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import create_engine, String, Integer, Float, Boolean, Column, Sequence, ForeignKey
 from sqlalchemy.orm import backref, relationship
+from sqlalchemy.sql.functions import array_agg
 from database import session
-# ## TODO InputData Klasse erstellen (da fehlt die classID und Zeilennr)
+import itertools
 
+
+# get Base connection
 Base = declarative_base()
 
+# ## Define Classes
 
+# Class JobAds
 class JobAds(Base):
+    """ Checks and sets all JobAds values. Defines tablename, columnnames and makes values reachable. """
+
+    # Tablename for matching with db table
+    # TODO: declare in config
     __tablename__ = 'jobads'
+    # Columns to query
     id = Column(Integer, Sequence('id'), primary_key=True)
     postingID = Column('postingID')
     jahrgang = Column('jahrgang')
     language = Column('language')
     content = Column('content')
-    #child_id = Column(Integer, ForeignKey('classify_units.id'))
-    #classify_units = relationship("ClassifyUnits")
+
+    # JobAds have a parent-child relationship as a parent with ClassifyUnits.
+    # ORM-relationship-type: One-to-many
     children = relationship("ClassifyUnits", back_populates="parent")
 
+    # init-function to set values, works as constructor
     def __init__(self, id, posting_ID, jahrgang, language, content):
         self.id = id
         self.postingID = posting_ID
@@ -25,37 +40,52 @@ class JobAds(Base):
         self.language = language
         self.content = content
 
-    
+    # Name the objects
     def __repr__(self):
-        return "(%s, %s, %s, %s, %s)" % (self.id, self.postingID, self.jahrgang, self.language, self.content)
+        return "(%s, %s)" % (self.id, self.postingID)
 
-# Class classifyunit
+# Class ClassifyUnits
 class ClassifyUnits(Base):
+    """ Checks and sets all ClassifyUnits values. Defines tablename, columnnames and makes values reachable. """
+
+    # Tablename for matching with db table
+    # TODO: declare in config
     __tablename__ = 'classify_units'
+    # Columns to query
     id = Column(Integer, primary_key=True)
-    # neue felder
     classID = Column('classID', Integer)
     paragraph = Column('paragraph', String(225))
-    # Declare relationship as child to parent (jobads)
 
-    # Foreign key bezieht sich auf den table name!!! nicht auf ein attribute!!!
-    #parent_id = Column(Integer, ForeignKey('JobAds.id'))
-    #job_ads = relationship("JobAds", backref=backref("classify_units", lazy='noload'))
-
+    # ClassifyUnits have a parent-child relationship as a child with JobAds.
+    # ForeignKey to connect both Classes
     parent_id = Column(Integer, ForeignKey('jobads.id'))
     parent = relationship("JobAds", back_populates="children")
 
-    def __init__(self, classID, paragraph):
+    # Set uid for each classif unit
+    id_iter = itertools.count()
+
+    # Set featureunit TODO: hier soll ne liste mit strings hin nicht nur str
+    featureunit = str
+
+    # Set featurevector
+    featurevector = ''
+
+    # init-function to set values, works as constructor
+    def __init__(self, classID, paragraph, featureunit, featurevector):
         self.classID = classID
         self.paragraph = paragraph
+        self.id = next(ClassifyUnits.id_iter)
+        self.featureunit = featureunit
+        self.featurevector = featurevector
 
+    # Name the objects
     def __repr__(self):
-        return "(%s, %s)" % (self.classID, self.paragraph)
+        return "(%s, %s)" % (self.id, self.parent.id)
 
 
 
 
-
+# -------------------------------------------------------------------------------
 
 # fungiert letztlich als classifyunit (TODO umbenennen)
 class TrainingData(Base):
