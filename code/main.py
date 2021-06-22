@@ -5,7 +5,7 @@ from ORM_structure import manipulate_data
 from database import session
 from split_to_paragraph import jobads_to_paragraphs
 
-print('testo')
+print('test')
 jobads = use_jobads()
 #print(jobads)
 print('beginner')
