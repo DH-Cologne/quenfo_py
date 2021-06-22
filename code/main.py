@@ -8,7 +8,7 @@ from split_to_paragraph import jobads_to_paragraphs
 print('test')
 jobads = use_jobads()
 #print(jobads)
-print('beginner')
+print('newcommit')
 jobads_to_paragraphs(jobads)
 session.commit()
 
