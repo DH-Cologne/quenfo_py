@@ -1,6 +1,8 @@
 import luigi
 import time
 
+# run in cmdline python luigi_test.py NameSubstituter --local-scheduler
+
 # Task A - write hello world in text file
 class HelloWorld(luigi.Task):
     def requires(self):
