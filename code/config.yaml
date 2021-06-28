@@ -1,0 +1,18 @@
+# +++++ Configuration ++++++
+
+# --- FeatureUnitConfiguration---
+# TODO:
+## classification
+#startPos=0
+#queryLimit=500
+#fetchSize=500
+
+# in subfolder resources/classification/trainingSets
+#trainingDataFile=trainingdata_anonymized.tsv
+
+fu_config:
+  normalize: true
+  stem: true
+  filterSW: true
+  nGrams: {3,4}
+  continousNGrams: true

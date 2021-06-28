@@ -11,7 +11,13 @@ from database import session
 from ORM_structure import orm
 from ORM_structure.models import ClassifyUnits
 from database import engine
+import logging
 
+""" # ## Initiate Logging-Module
+logging.basicConfig(
+    format='%(asctime)s : %(threadName)s : %(levelname)s : %(message)s',
+    level=logging.DEBUG, filename='logger.log', filemode='w+',
+) """
 
 
 # Load the Input data: JobAds in JobAds Class.

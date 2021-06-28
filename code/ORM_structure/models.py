@@ -82,6 +82,12 @@ class ClassifyUnits(Base):
     def __repr__(self):
         return "(%s, %s)" % (self.id, self.parent.id)
 
+    def set_featureunit(self, value):
+        self.featureunit = value
+    
+    def set_featurevector(self, value):
+        self.featurevector = value
+
 
 
 

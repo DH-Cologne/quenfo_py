@@ -10,13 +10,12 @@ from typing import Union
 def split_at_empty_line(jobad: object) -> list:
     return jobad.content.split("\n\n")
 
-# Remove spaces at the beginning and at the end of the string
+# Remove whitespaces at the beginning and at the end of the string and in each line
 def remove_whitespaces(list_paragraphs: list) -> list:
-    # TODO: Allgemeineren Ausdruck finden, um alle Einrückungen in den Zeilen zu löschen.
     cleaned_paralist = list()
     for para in list_paragraphs:
-        newpara = []
-        newstring = ''
+        newpara = list()
+        newstring = str()
         parasplit = para.split('\n')
         for line in parasplit:
             line = line.strip()
@@ -37,10 +36,10 @@ def merge_listitems(previous: str, para: str, previous_to_remember: str) -> Unio
 
 # Check if two paragraphs contain the required list characters and join them if true.
 def __isListItem(previous, para, previous_to_remember):
-    # Regex for list items at the end of a paragraph
-    regex_previous = re.compile(r"(\n(\s)*((-\*|-|\*|\d(\.|\\)|\.\\)(\s)*)(\w)+$)")
+    # Regex for list items at the end of a paragraph and if previous ends with ":" + current is a list item
+    regex_previous = re.compile(r"((\n(\s)*((-\*|-|\*|\d(\.|\\)|\.\\)(\s)*)(\w)+$)|(\s+[^.!?]*[:]))")
     # Regex for list items at the beginning of a paragraph
-    regex_para = re.compile(r"(^(\s)*((-\*|-|\*|\d(\.|\\)|\.\\)(\s)*)\w*)")
+    regex_para = re.compile(r"(^(\s)*((-\*|\+|-|\*|\d(\.|\\)|\.\\)(\s)*)\w*)")
     if regex_previous.search(previous) and regex_para.search(para):
         previous = "\n".join([previous, para])
         previous_to_remember = previous
@@ -70,7 +69,7 @@ def merge_whatbelongstogether(previous, para, previous_to_remember):
 
 def __BelongsItem(previous, para, previous_to_remember):
     if previous != '' and previous_to_remember != '':
-        if previous.endswith('.') and (para[0].isupper() or __looksLikeJobTitle(para)):
+        if (previous.endswith('.') or previous.endswith(':')) and (para[0].isupper() or __looksLikeJobTitle(para)):
             print(previous)
             print(para)
             previous = "\n".join([previous, para])
@@ -86,10 +85,3 @@ def __BelongsItem(previous, para, previous_to_remember):
 def __looksLikeJobTitle(para):
     regex_jobtitle = re.compile(r"^.*\w+/-?\w+.*$")
     return regex_jobtitle.match(para)
-
-
-# elegantere Lösung finden? vllt gensim simple preprocessing für alles in einem (inkl remove whitespaces)
-def replace(para) -> str:
-    para = re.sub('\W+',' ', para)
-    return para
-
