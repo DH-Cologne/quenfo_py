@@ -47,6 +47,8 @@ for jobad in jobads:
 
 # Commit generated classify units with paragraphs and class assignments to table
 orm.pass_output(session)
+session.flush()
+session.close()
 
 
 """ # Load traindata and store it in list of objects
