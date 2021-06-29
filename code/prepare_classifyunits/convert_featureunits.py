@@ -13,7 +13,8 @@ def replace(para) -> str:
 
 # HIER VLLT NOCH EIN CHECKER, dass die CONFIGS AUCH WIRKLICH DIE ENTSPRECHENDEN WERTE HABEN; SONST DEFAULT SETZEN
 
-def normalize(fu: str, normalize: bool) -> str:
+def normalize(fus: list, normalize: bool) -> str:
+
     if normalize:
         """ if(normalizeNumbers && Character.isDigit(fu.charAt(0)) && Character.isDigit(fu.charAt(fu.length()-1))){
 				fu="NUM";
@@ -24,34 +25,40 @@ def normalize(fu: str, normalize: bool) -> str:
 			if(fu.length() > 1){
 				featureUnits.set(i,fu);
 			 """
-        # Filter Numbers
-        if fu.isdigit():
-            fu = 'NUM'
-        else:
-            # Lower Case
-            fu = fu.lower()
-        print(fu)
+        
+        # Filter Numbers, wenn am Anfang un am Ende (index 0 und -1 des strings) digits stehen
 
-    return fu
+        if fus[0].isdigit() and fus[-1].isdigit():
+            fus[0] = 'NUM'
+            fus[-1] = 'NUM'
 
-def stem(fu: str, stem: bool) -> str:
+    
+        """ if fus.isdigit():
+            fus = 'NUM' """
+        
+        """ # Lower Case
+        fus = fus.lower() """
+
+    return fus
+
+def stem(fus: list, stem: bool) -> list:
     if stem:
-        fu = fu
-    return fu 
+        fus = fus
+    return fus 
 
-def filterSW(fu: str, filterSW: bool) -> str:
+def filterSW(fus: list, filterSW: bool) -> list:
     if filterSW:
-        fu = fu
-    return fu
+        fus = fus
+    return fus
 
-def ngrams(fu: str, ngrams: int) -> str:
+def ngrams(fus: list, ngrams: int) -> list:
     if ngrams == int:
-        fu = fu
-    return fu
+        fus = fus
+    return fus
 
-def cngrams(fu: str, cngrams: bool) -> str:
+def cngrams(fus: list, cngrams: bool) -> list:
     if cngrams:
-        fu = fu
-    return fu
+        fus = fus
+    return fus
 
     

@@ -16,7 +16,7 @@ import yaml
 # ## Open Configuration-file and set paths to models (trained and retrained)
 with open(Path('config.yaml'), 'r') as yamlfile:
     cfg = yaml.load(yamlfile, Loader=yaml.FullLoader)
-    fu_config = cfg['fu_config']
+    fus_config = cfg['fus_config']
    
 
 
@@ -42,20 +42,27 @@ def generate_classifyunits(jobad: object):
     list_paragraphs = __clean_paragraphs(list_paragraphs)
 
     for para in list_paragraphs:
-        # 3. Add cleaned paragraph, default classID, featureunit and featurevector to classify unit
-        cu = ClassifyUnits(paragraph=para, classID=0, featureunit='', featurevector='')
-        
-        # 4. Connect the cu (classifyunit) as a child to its parent (jobad)
-        jobad.children.append(cu)
+
+        # Remove all non alpha-numerical characters
+        # # cu_para is still just one string --> Convert cu_para to list of strings aka list of token (fuslist with fu)
+
+        fus = convert_featureunits.replace(para).split()
+        if fus != []:
+            # 3. Add cleaned paragraph, default classID, featureunit and featurevector to classify unit
+            cu = ClassifyUnits(classID=0, paragraph=para, featureunits=list(), featurevectors=list())
+            cu.set_featureunits(fus)
+            
+            # 4. Connect the cu (classifyunit) as a child to its parent (jobad)
+            jobad.children.append(cu)
 
     for cu in jobad.children:
+        
         # 5. Make feature units
-        fu = __get_featureunits(cu)
-        cu.set_featureunit(fu)
-
+        __get_featureunits(cu)
+        
         # 6. Make featurevectors
-        fv = __get_featurevectors(cu)
-        cu.set_featurevector(fv)
+        fvs = __get_featurevectors(cu)
+        cu.set_featurevectors(fvs)
 
 
 
@@ -133,6 +140,7 @@ def __clean_paragraphs(list_paragraphs: list) -> list:
             # append merged or old paragraph to output list
             belongs.append(para)
             i += 1
+
         # remove empty strings
         belongs = list(filter(None, belongs))
         return belongs
@@ -144,26 +152,26 @@ def __clean_paragraphs(list_paragraphs: list) -> list:
 
 # TODO: Rückgabe später sollte kein str sein sonern eine list of strings
 def __get_featureunits(cu) -> str:
-    fu = cu.paragraph
-    # Remove all non alpha-numerical characters
-    fu = convert_featureunits.replace(fu)
 
     # TODO: FEATUREUNIT  
     # normalize, stem, filterSW, nGrams, continousNGrams
-    # Hier auslesen der config und übergabe der parameter an convert_featureunits.configuration?
-    fu = convert_featureunits.normalize(fu, fu_config['normalize'])
-    fu = convert_featureunits.stem(fu, fu_config['stem'])
-    fu = convert_featureunits.filterSW(fu, fu_config['filterSW'])
-    fu = convert_featureunits.ngrams(fu, fu_config['nGrams'])
-    fu = convert_featureunits.cngrams(fu, fu_config['continousNGrams'])
+    #if cu.featureunits != []: # Nicht die Lösung!!!
+    fus = convert_featureunits.normalize(cu.featureunits, fus_config['normalize'])
+    cu.set_featureunits(fus)
+    fus = convert_featureunits.stem(cu.featureunits, fus_config['stem'])
+    cu.set_featureunits(fus)
+    fus = convert_featureunits.filterSW(cu.featureunits, fus_config['filterSW'])
+    cu.set_featureunits(fus)
+    fus = convert_featureunits.ngrams(cu.featureunits, fus_config['nGrams'])
+    cu.set_featureunits(fus)
+    fus = convert_featureunits.cngrams(cu.featureunits, fus_config['continousNGrams'])
+    cu.set_featureunits(fus)
 
-    # die fus sollten eine liste bestehend aus strings (den ngrammen sein pro cu eine liste) --> anpassen in models.py
-    return fu
 
 
 # TODO: rückgabe später sollte kein string sein sondern ein vector
 def __get_featurevectors(cu):
-    fv = cu.featureunit
+    fv = cu.featureunits
 
     # TODO: FEATUREVECTOR
     # generate featurevector (vorerst vllt mit tfidf)

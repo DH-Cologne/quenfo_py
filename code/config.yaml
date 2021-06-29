@@ -10,7 +10,7 @@
 # in subfolder resources/classification/trainingSets
 #trainingDataFile=trainingdata_anonymized.tsv
 
-fu_config:
+fus_config:
   normalize: true
   stem: true
   filterSW: true

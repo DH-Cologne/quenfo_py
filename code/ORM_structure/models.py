@@ -65,28 +65,32 @@ class ClassifyUnits(Base):
     id_iter = itertools.count()
 
     # Set featureunit TODO: hier soll ne liste mit strings hin nicht nur str
-    featureunit = str
+    featureunits = list()
 
     # Set featurevector
-    featurevector = ''
+    featurevectors = list()
 
     # init-function to set values, works as constructor
-    def __init__(self, classID, paragraph, featureunit, featurevector):
+    def __init__(self, classID, paragraph, featureunits, featurevectors):
         self.classID = classID
         self.paragraph = paragraph
         self.id = next(ClassifyUnits.id_iter)
-        self.featureunit = featureunit
-        self.featurevector = featurevector
+        self.featureunits = featureunits
+        self.featurevectors = featurevectors
 
     # Name the objects
     def __repr__(self):
-        return "(%s, %s)" % (self.id, self.parent.id)
+        return "(%s, %s,%s)" % (self.id, self.parent.id, self.featureunits)
 
-    def set_featureunit(self, value):
-        self.featureunit = value
+    def set_featureunits(self, value):
+        """ print('hello')
+        print(value)
+        print('###') """
+        self.featureunits = value
+        """ print(self.featureunits) """
     
-    def set_featurevector(self, value):
-        self.featurevector = value
+    def set_featurevectors(self, value):
+        self.featurevectors = value
 
 
 
