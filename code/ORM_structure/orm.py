@@ -22,9 +22,13 @@ def get_jobads(session: Session) -> list:
     -------
     jobads: list
         Data contains the orm-objects from class JobAds """
-    ClassifyUnits.__table__.drop(engine)
-    ClassifyUnits.__table__.create(engine) 
+        
+    """ ClassifyUnits.__table__.drop(engine)
+    ClassifyUnits.__table__.create(engine) """
     job_ads = session.query(JobAds).all()
+    session.query(ClassifyUnits).delete()
+    session.commit()
+    
     return job_ads
     
 def pass_output(session: Session):
