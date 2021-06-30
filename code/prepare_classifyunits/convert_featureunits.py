@@ -31,13 +31,9 @@ def normalize(fus: list, normalize: bool) -> str:
         if fus[0].isdigit() and fus[-1].isdigit():
             fus[0] = 'NUM'
             fus[-1] = 'NUM'
-
-    
-        """ if fus.isdigit():
-            fus = 'NUM' """
         
-        """ # Lower Case
-        fus = fus.lower() """
+        # Lower Case
+        [fu.lower() for fu in fus]
 
     return fus
 

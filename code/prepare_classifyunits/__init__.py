@@ -61,8 +61,8 @@ def generate_classifyunits(jobad: object):
         __get_featureunits(cu)
         
         # 6. Make featurevectors
-        fvs = __get_featurevectors(cu)
-        cu.set_featurevectors(fvs)
+        __get_featurevectors(cu)
+        
 
 
 
@@ -171,9 +171,9 @@ def __get_featureunits(cu) -> str:
 
 # TODO: rückgabe später sollte kein string sein sondern ein vector
 def __get_featurevectors(cu):
-    fv = cu.featureunits
+    fvs = cu.featureunits
 
     # TODO: FEATUREVECTOR
     # generate featurevector (vorerst vllt mit tfidf)
-    fv = 'filler'    # filler
-    return fv
+    fvs = 'filler'    # filler
+    cu.set_featurevectors(fvs)
