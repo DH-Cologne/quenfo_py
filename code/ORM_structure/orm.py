@@ -27,7 +27,7 @@ def get_jobads(session: Session) -> list:
     ClassifyUnits.__table__.create(engine) """
     
     job_ads = session.query(JobAds).limit(500).all()
-    # delete the handles from jobads to cus
+    # delete the handles from jobads to classifyunits
     session.query(ClassifyUnits).delete()
     session.commit()
     
