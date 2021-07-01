@@ -10,6 +10,8 @@
 # in subfolder resources/classification/trainingSets
 #trainingDataFile=trainingdata_anonymized.tsv
 
+input_path: '..\..\text_kernel_orm_2018_03.db'
+
 fus_config:
   normalize: true
   stem: true

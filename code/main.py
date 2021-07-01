@@ -47,7 +47,7 @@ for jobad in jobads:
 
 # Commit generated classify units with paragraphs and class assignments to table
 orm.pass_output(session)
-session.flush()
+
 session.close()
 
 

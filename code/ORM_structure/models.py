@@ -83,11 +83,7 @@ class ClassifyUnits(Base):
         return "(%s, %s,%s)" % (self.id, self.parent.id, self.featureunits)
 
     def set_featureunits(self, value):
-        """ print('hello')
-        print(value)
-        print('###') """
         self.featureunits = value
-        """ print(self.featureunits) """
     
     def set_featurevectors(self, value):
         self.featurevectors = value

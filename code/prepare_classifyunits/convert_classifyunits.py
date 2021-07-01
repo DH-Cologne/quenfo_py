@@ -171,7 +171,7 @@ def __merge_whatbelongstogether(previous, para, previous_to_remember):
         return previous, previous_to_remember
 
 def __BelongsItem(previous, para, previous_to_remember):
-    if previous != '' and previous_to_remember != '':
+    if previous != '' and para!= '':
         if (previous.endswith('.') or previous.endswith(':')) and (para[0].isupper() or __looksLikeJobTitle(para)):
             previous = "\n".join([previous, para])
             previous_to_remember = previous

@@ -2,7 +2,7 @@
 
 # ## Imports
 from re import I
-from . import convert_classifyuntis
+from . import convert_classifyunits
 from . import convert_featureunits
 from database import session
 from ORM_structure import orm
@@ -34,7 +34,7 @@ def generate_classifyunits(jobad: object):
     jobad: object
         jobad is an object of the class JobAds and contains all given variables """
 
-    # 1. Split the jobad texts (content) and receive a list of paragraphs for each jobad
+    # 1. Split the jobad texts (content) and receive a list of paragraphs for each jobad + remove whitespaces
     list_paragraphs = __get_paragraphs(jobad)
 
     # 2. Clean each paragraph and merge ListItems and WhatBelongsTogether
