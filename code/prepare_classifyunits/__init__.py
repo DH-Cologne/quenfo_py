@@ -2,7 +2,7 @@
 
 # ## Imports
 from re import I
-from . import converter
+from . import convert_classifyuntis
 from . import convert_featureunits
 from database import session
 from ORM_structure import orm
@@ -18,8 +18,7 @@ with open(Path('config.yaml'), 'r') as yamlfile:
     cfg = yaml.load(yamlfile, Loader=yaml.FullLoader)
     fus_config = cfg['fus_config']
    
-
-
+# ### Main-Function of the Script
 def generate_classifyunits(jobad: object):
     """ Function manages the preparation for the textclassification. Therefore classifyunits are needed and will be generated in this step.
         Following steps are used:
@@ -41,20 +40,24 @@ def generate_classifyunits(jobad: object):
     # 2. Clean each paragraph and merge ListItems and WhatBelongsTogether
     list_paragraphs = __clean_paragraphs(list_paragraphs)
 
+    # Iterate over each paragraph in list_paragraphs for one jobad
     for para in list_paragraphs:
 
-        # Remove all non alpha-numerical characters
-        # # cu_para is still just one string --> Convert cu_para to list of strings aka list of token (fuslist with fu)
-
+        """ Remove all non-alphanumerical characters from para and return fus. 
+        A lot of fus will be empty lists afterwards, so only ClassifyUnits for filled
+        fus are instantiated."""
         fus = convert_featureunits.replace(para).split()
+
+        # Check if fus is a empty list
         if fus != []:
-            # 3. Add cleaned paragraph, default classID, featureunit and featurevector to classify unit
+            # 3. Add cleaned paragraph, default classID, featureunits and featurevectors to classify unit
             cu = ClassifyUnits(classID=0, paragraph=para, featureunits=list(), featurevectors=list())
+            # set the list of token without non-alphanumerical characters as prototype-fus
             cu.set_featureunits(fus)
-            
             # 4. Connect the cu (classifyunit) as a child to its parent (jobad)
             jobad.children.append(cu)
 
+    # Iterate over each jobad and make featureunits and featurevectors vor each cu
     for cu in jobad.children:
         
         # 5. Make feature units
@@ -65,97 +68,69 @@ def generate_classifyunits(jobad: object):
         
 
 
-
 def __get_paragraphs(jobad: object) -> list:
-    # Iterate over all jobad-objects in jobads-list containing the jobad-objects
-    #for jobad in jobads:
-    # 1. Split the jobad texts (content) and receive a list of paragraphs for each jobad
-    list_paragraphs = converter.split_at_empty_line(jobad)
+    """ 
+    Step 1: Split at emtpy line
+        --> Splits the text in jobad.content into Paragraphs at empty lines
     
-    # Remove whitespaces
-    list_paragraphs = converter.remove_whitespaces(list_paragraphs)
+    Step 2: remove whitespaces
+        --> Removes whitespaces at the end and the beginning of a paragraph and each line
+   
+    
+    Parameters
+    ----------
+    jobad: object
+        object of the class JobAds which contains id, posting_id, jahrgang, language, content
+    
+    Returns
+    -------
+    list_paragraphs: list
+        list with paragraphs for one jobad item """
 
+    # 1. Split the jobad texts (content) and receive a list of paragraphs for each jobad
+    list_paragraphs = convert_classifyunits.split_at_empty_line(jobad)
+    
+    # 2. # Remove whitespaces at the beginning and at the end of each paragraph and in each line
+    list_paragraphs = convert_classifyunits.remove_whitespaces(list_paragraphs)
+
+    # Returns organized paragraphs for a jobad
     return list_paragraphs
 
 
 def __clean_paragraphs(list_paragraphs: list) -> list:
-    """
-    Step 1: identify_listitems: 
+    """ 
+    Step 3: identify_listitems: 
     Iterate over a list of paragraphs and compare one paragraph to the previous one. If both paragraphs contain certain list-characters
     (like * or _), the paragraphs are merged together to one paragraph.
     
-    Step 2: identify_whatbelongstogether:
+    Step 4: identify_whatbelongstogether:
     Iterate over a list of paragraphs and compare one paragraph to the previous one. 
     If the previous one ends with a period and the current one starts with uppercase/isjobtitle both paragraphs are merged together to one paragraph.
-    """
+    
+    Parameters
+    ----------
+    list_paragraphs: list
+        list with paragraphs for one jobad item
+    
+    Returns
+    -------
+    list_paragraphs: list
+        list with better cleaned paragraphs for one jobad item """
 
-    def __identify_listitems(list_paragraphs: list) -> list:
-        # Set variables
-        # List to store cleaned paragraphs
-        cleaned_merged = list()
-        # counter
-        i = 1
-        # add an empty string at the beginning and ending of the list for easier iteration
-        list_paragraphs.insert(0, '')
-        list_paragraphs.append('')
-        # set memory variable
-        previous_to_remember = str()
+    # ## Step 3: to merge ListItems Together
+    list_paragraphs = convert_classifyunits.identify_listitems(list_paragraphs)
 
-        while i < len(list_paragraphs):
-            # set variables to compare
-            para = list_paragraphs[i]
-            previous = list_paragraphs[i-1]
-
-            # Merge Listitems together
-            para, previous_to_remember = converter.merge_listitems(previous, para, previous_to_remember)
-
-            # append merged or old paragraph to output list
-            cleaned_merged.append(para)
-            i += 1
-        # remove empty strings
-        cleaned_merged = list(filter(None, cleaned_merged))
-        return cleaned_merged
-    list_paragraphs = __identify_listitems(list_paragraphs)
-
-    def __identify_whatbelongstogether(list_paragraphs: list) -> list:
-        # Set variables
-        # List to store cleaned paragraphs
-        belongs = list()
-        # counter
-        i = 1
-        # add an empty string at the beginning and ending of the list for easier iteration
-        list_paragraphs.insert(0, '')
-        list_paragraphs.append('')
-        # set memory variable
-        previous_to_remember = str()
-       
-        while i < len(list_paragraphs):
-            # set variables to compare
-            para = list_paragraphs[i]
-            previous = list_paragraphs[i-1]
-
-            # Merge Listitems together
-            para, previous_to_remember = converter.merge_whatbelongstogether(previous, para, previous_to_remember)
-
-            # append merged or old paragraph to output list
-            belongs.append(para)
-            i += 1
-
-        # remove empty strings
-        belongs = list(filter(None, belongs))
-        return belongs
-
-    list_paragraphs = __identify_whatbelongstogether(list_paragraphs)
+    # ## Step 4: to merge What Belongs Together
+    list_paragraphs = convert_classifyunits.identify_whatbelongstogether(list_paragraphs)
 
     # return cleaned list (listitems and belongs) to generate_classifyunits()
     return list_paragraphs
 
-# TODO: Rückgabe später sollte kein str sein sonern eine list of strings
-def __get_featureunits(cu) -> str:
+
+def __get_featureunits(cu: object) -> str:
 
     # TODO: FEATUREUNIT  
     # normalize, stem, filterSW, nGrams, continousNGrams
-    #if cu.featureunits != []: # Nicht die Lösung!!!
     fus = convert_featureunits.normalize(cu.featureunits, fus_config['normalize'])
     cu.set_featureunits(fus)
     fus = convert_featureunits.stem(cu.featureunits, fus_config['stem'])

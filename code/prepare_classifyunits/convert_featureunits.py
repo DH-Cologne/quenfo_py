@@ -5,38 +5,59 @@ import re
 # für die verarbeitung gesetzt wurden (normalize = true etc...), vllt dohc eine klasse einrichten, die das speichert und setted und hinterlegt in db?
 
 
-# elegantere Lösung finden? vllt gensim simple preprocessing für alles in einem (inkl remove whitespaces)
-def replace(para) -> str:
+def replace(para: str) -> str:
+    """ The replace function replaces all non-alphanumerical characters with a whitespace via regex
+
+    Parameters
+    ----------
+    para: str
+        para variable contains the paragraph of a jobad as string
+    
+    Returns
+    -------
+    para: str
+        returns para variable without non-alphanumerical characters"""
+
     para = re.sub('\W+',' ', para)
     return para
 
 
 # HIER VLLT NOCH EIN CHECKER, dass die CONFIGS AUCH WIRKLICH DIE ENTSPRECHENDEN WERTE HABEN; SONST DEFAULT SETZEN
 
-def normalize(fus: list, normalize: bool) -> str:
+def normalize(fus: list, normalize: bool) -> list:
+    """ The normalization function contains 3 steps:
+        a. lower case
+        b. replace token with beginning and ending digits as characters with NUM
+        c. append only token with more than one character to output list
 
+    Parameters
+    ----------
+    fus: list
+        the list contains the featureunits of a paragraph aka token
+    normalize: boolean
+        bool value from config to determine if normalization step is executed 
+        
+    Returns
+    --------
+    norm_fus: list
+        list with normalized token, is used as fus for a paragraph """
+
+    # normalized fus are stored in new list
+    norm_fus = list()
+    # Check if normalize is set to true and use the following normalization step
     if normalize:
-        """ if(normalizeNumbers && Character.isDigit(fu.charAt(0)) && Character.isDigit(fu.charAt(fu.length()-1))){
-				fu="NUM";
-			}
-			if(toLowerCase){
-				fu = fu.toLowerCase();
-			}
-			if(fu.length() > 1){
-				featureUnits.set(i,fu);
-			 """
-        
-        # Filter Numbers, wenn am Anfang un am Ende (index 0 und -1 des strings) digits stehen
-
-        if fus[0].isdigit() and fus[-1].isdigit():
-            fus[0] = 'NUM'
-            fus[-1] = 'NUM'
-        
-        # Lower Case
-        [fu.lower() for fu in fus]
-
-    return fus
-
+        # for token in token_list
+        for fu in fus:
+            # Lower Case
+            fu = fu.lower()
+            # if token starts and ends with a digit-character --> set token to NUM because it won't be processable
+            if fu[0].isdigit() and fu[-1].isdigit():
+                fu = 'NUM'
+            # filter 
+            if len(fu) > 1:
+                norm_fus.append(fu)
+        return norm_fus
+                
 def stem(fus: list, stem: bool) -> list:
     if stem:
         fus = fus
