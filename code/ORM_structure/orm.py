@@ -25,6 +25,7 @@ def get_jobads(session: Session) -> list:
         
     """ ClassifyUnits.__table__.drop(engine)
     ClassifyUnits.__table__.create(engine) """
+    
     job_ads = session.query(JobAds).limit(500).all()
     session.query(ClassifyUnits).delete()
     session.commit()
