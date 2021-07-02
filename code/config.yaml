@@ -18,3 +18,7 @@ fus_config:
   filterSW: true
   nGrams: {3,4}
   continousNGrams: true
+
+
+resources:
+  stopwords_path: '..\..\quenfo_data\resources\classification\stopwords.txt'

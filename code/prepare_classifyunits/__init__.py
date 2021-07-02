@@ -13,10 +13,13 @@ import sys
 from pathlib import Path
 import yaml
 
+
 # ## Open Configuration-file and set paths to models (trained and retrained)
 with open(Path('config.yaml'), 'r') as yamlfile:
     cfg = yaml.load(yamlfile, Loader=yaml.FullLoader)
     fus_config = cfg['fus_config']
+    resources = cfg['resources']
+
    
 # ### Main-Function of the Script
 def generate_classifyunits(jobad: object):
@@ -42,11 +45,15 @@ def generate_classifyunits(jobad: object):
 
     # Iterate over each paragraph in list_paragraphs for one jobad
     for para in list_paragraphs:
-
+    
         """ Remove all non-alphanumerical characters from para and return fus. 
         A lot of fus will be empty lists afterwards, so only ClassifyUnits for filled
         fus are instantiated."""
-        fus = convert_featureunits.replace(para).split()
+        fus = convert_featureunits.replace(para)
+
+        # TODO: 
+        #Encoding mit den Paragaphen --> Ignore non ascii chars
+        fus = convert_featureunits.encode(fus)
 
         # Check if fus is a empty list
         if fus != []:
@@ -65,6 +72,7 @@ def generate_classifyunits(jobad: object):
         
         # 6. Make featurevectors
         __get_featurevectors(cu)
+    """ sys.exit() """
         
 
 
@@ -129,18 +137,22 @@ def __clean_paragraphs(list_paragraphs: list) -> list:
 
 def __get_featureunits(cu: object) -> str:
 
+    # TODO: Tokenization überlegen -->  delimiter = "[^\\pL\\pM\\p{Nd}\\p{Nl}\\p{Pc}[\\p{InEnclosedAlphanumerics}&&\\p{So}]]"; Tokenizes specified text into sequences of alphanumeric characters
+    # sind nicht alle non-alphanumerics schon draußen?
+    fus = convert_featureunits.tokenize(cu.featureunits)
+    cu.set_featureunits(fus)
+
     # TODO: FEATUREUNIT  
     # normalize, stem, filterSW, nGrams, continousNGrams
     fus = convert_featureunits.normalize(cu.featureunits, fus_config['normalize'])
     cu.set_featureunits(fus)
+    fus = convert_featureunits.filterSW(cu.featureunits, fus_config['filterSW'], Path(resources['stopwords_path']))
+    cu.set_featureunits(fus)
     fus = convert_featureunits.stem(cu.featureunits, fus_config['stem'])
     cu.set_featureunits(fus)
-    fus = convert_featureunits.filterSW(cu.featureunits, fus_config['filterSW'])
+    fus = convert_featureunits.ngrams(cu.featureunits, fus_config['nGrams'], fus_config['continousNGrams'])
     cu.set_featureunits(fus)
-    fus = convert_featureunits.ngrams(cu.featureunits, fus_config['nGrams'])
-    cu.set_featureunits(fus)
-    fus = convert_featureunits.cngrams(cu.featureunits, fus_config['continousNGrams'])
-    cu.set_featureunits(fus)
+
 
 
 
