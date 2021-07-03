@@ -8,8 +8,8 @@ TODO:
 # ## Imports
 from prepare_classifyunits import generate_classifyunits
 from database import session
-from ORM_structure import orm
-from ORM_structure.models import ClassifyUnits
+from orm_handling import orm
+from orm_handling.models import ClassifyUnits
 from database import engine
 import logging
 
@@ -28,6 +28,7 @@ for jobad in jobads:
     # ## TODO: PREPARE CLASSIFY UNITS
     # Pass list of JobAds-objects to be converted to clean paragraphs, featureunits and feature vectors
     generate_classifyunits(jobad)
+
 
 
     # TODO: TEXTCLASSIFICATION

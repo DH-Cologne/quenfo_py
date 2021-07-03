@@ -61,10 +61,10 @@ class ClassifyUnits(Base):
     parent_id = Column(Integer, ForeignKey('jobads.id'))
     parent = relationship("JobAds", back_populates="children")
 
-    # Set uid for each classif unit
+    # Set uid for each classify unit
     id_iter = itertools.count()
 
-    # Set featureunit TODO: hier soll ne liste mit strings hin nicht nur str
+    # Set featureunit
     featureunits = list()
 
     # Set featurevector

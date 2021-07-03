@@ -5,8 +5,8 @@ from re import I
 from . import convert_classifyunits
 from . import convert_featureunits
 from database import session
-from ORM_structure import orm
-from ORM_structure.models import ClassifyUnits, JobAds
+from orm_handling import orm
+from orm_handling.models import ClassifyUnits, JobAds
 from itertools import zip_longest as izip
 from itertools import tee, islice, chain
 import sys
@@ -72,7 +72,8 @@ def generate_classifyunits(jobad: object):
         
         # 6. Make featurevectors
         __get_featurevectors(cu)
-    """ sys.exit() """
+    
+    #sys.exit()
         
 
 
@@ -150,7 +151,7 @@ def __get_featureunits(cu: object) -> str:
     cu.set_featureunits(fus)
     fus = convert_featureunits.stem(cu.featureunits, fus_config['stem'])
     cu.set_featureunits(fus)
-    fus = convert_featureunits.ngrams(cu.featureunits, fus_config['nGrams'], fus_config['continousNGrams'])
+    fus = convert_featureunits.gen_ngrams(cu.featureunits, fus_config['nGrams'], fus_config['continousNGrams'])
     cu.set_featureunits(fus)
 
 

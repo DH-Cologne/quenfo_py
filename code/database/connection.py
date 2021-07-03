@@ -15,7 +15,7 @@ with open(Path('config.yaml'), 'r') as yamlfile:
 input_path = cfg['input_path']
 
 #input_path = os.path.join('..','..', 'traindata_sql.db')
-input_path = os.path.join('..','..', 'text_kernel_orm_2018_03.db')
+#input_path = os.path.join('..','..', 'text_kernel_orm_2018_03.db')
 
 # Create engine with path
 engine = create_engine('sqlite:///' + input_path, echo=False)

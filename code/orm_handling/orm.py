@@ -29,7 +29,7 @@ def get_jobads(session: Session) -> list:
     job_ads = session.query(JobAds).limit(500).all()
     # delete the handles from jobads to classifunitb
     session.query(ClassifyUnits).delete()
-    session.commit()
+    pass_output(session)
     
     return job_ads
     

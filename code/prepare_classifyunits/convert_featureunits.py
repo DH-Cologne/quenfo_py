@@ -4,6 +4,7 @@ import re
 import py_stringmatching as sm
 from contextlib import suppress
 from nltk.stem.snowball import GermanStemmer
+from nltk import ngrams
 
 # ## Set Variables
 sw_list = list()
@@ -113,8 +114,34 @@ def stem(fus: list, stem: bool) -> list:
 			} """
     return stemmed_fus 
 
-def ngrams(fus: list, ngrams: int, cngrams: bool) -> list:
-    if ngrams == int:
+def gen_ngrams(fus: list, ngram_range: dict, cngrams: bool) -> list:
+    """ 	/**
+	 * Generates ngrams from specified tokens.
+	 * @param tokens List of tokens 
+	 * @param n length of ngrams
+	 * @param continuous If true, ngrams will be generated across token borders
+	 * @return List of ngrams
+	 */
+	"""
+    if type(list(ngram_range.keys())[0]) == int and type(list(ngram_range.keys())[1]) == int:
+        # non continuous
+        if cngrams == False:
+            for fu in fus:
+                nngramlist=[]
+                for fu in fus:
+                    for s in ngrams(fu,n=(3)):        
+                        nngramlist.append(s)
+        # continuous --> across token borders
+        else:   
+            # join list to onestring
+            # TODO: müssen die whitespaces gelöscht werden?
+            # TODO: Was passiert mit der range? ein n wert?
+            onestring = " ".join(fus)
+            nngramlist= list()
+            for s in ngrams(onestring,n=(7)):        
+                    nngramlist.append(s)
+            #print(nngramlist)
+
         fus = fus
     return fus
     
