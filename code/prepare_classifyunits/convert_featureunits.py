@@ -5,6 +5,7 @@ import py_stringmatching as sm
 from contextlib import suppress
 from nltk.stem.snowball import GermanStemmer
 from nltk import ngrams
+from nltk.stem.cistem import Cistem
 
 # ## Set Variables
 sw_list = list()
@@ -27,17 +28,14 @@ def replace(para: str) -> str:
         returns para variable without non-alphanumerical characters"""
 
     para = re.sub('\W+',' ', para)
+
     return para
 
-def encode(fus: str) -> str:
-    # alle non-asci zeichen werden ignoriert, spezifizierung für 33-122 ascii chars
-    fus = fus.encode('ascii',errors='ignore').decode('ascii')
-    return fus
 
 def tokenize(fus: str) -> list:
-    # TODO: Tokenization überlegen -->  delimiter = "[^\\pL\\pM\\p{Nd}\\p{Nl}\\p{Pc}[\\p{InEnclosedAlphanumerics}&&\\p{So}]]"; Tokenizes specified text into sequences of alphanumeric characters
-    alnum_tok = sm.AlphanumericTokenizer()
-    fus = alnum_tok.tokenize(fus)
+    
+    WORD = re.compile(r'\w+')
+    fus = WORD.findall(fus)
     
     #fus = fus.split()
     return fus
@@ -100,18 +98,25 @@ def __check_once(sw_path):
         else:
             pass
 
-# snowball stemmer nltk 
-# TODO: Spacy als alternative ansehen
+
 def stem(fus: list, stem: bool) -> list:
+    # snowball stemmer nltk 
     stemmed_fus=list()
     if stem:
+        # Snowball Stemmer from NLTK
         stemmer = GermanStemmer()
         for token in fus:
             stemmed_fus.append(stemmer.stem(token))
-        # TODO: stems = stemmed_fus --> Lösche Token, die bestimmte Größe haben?
-        """ if(stems.get(stems.size()-1).length() <=1){
-				stems.remove(stems.size()-1);
-			} """
+        
+        # remove empty strings and strings <= 1
+        stemmed_fus = list(filter(lambda n: 1 <= len(n), stemmed_fus))
+
+        
+        # TODO: Auch von NLTK: im Beispiel etwas schlecht --> In Klassifikation ausprobieren
+        """ stemmer = Cistem()
+        for token in fus:
+            stemmed_fus.append(stemmer.segment(token)[0]) """
+
     return stemmed_fus 
 
 def gen_ngrams(fus: list, ngram_range: dict, cngrams: bool) -> list:

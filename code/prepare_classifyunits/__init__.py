@@ -8,7 +8,6 @@ from database import session
 from orm_handling import orm
 from orm_handling.models import ClassifyUnits, JobAds
 from itertools import zip_longest as izip
-from itertools import tee, islice, chain
 import sys
 from pathlib import Path
 import yaml
@@ -50,10 +49,6 @@ def generate_classifyunits(jobad: object):
         A lot of fus will be empty lists afterwards, so only ClassifyUnits for filled
         fus are instantiated."""
         fus = convert_featureunits.replace(para)
-
-        # TODO: 
-        #Encoding mit den Paragaphen --> Ignore non ascii chars
-        fus = convert_featureunits.encode(fus)
 
         # Check if fus is a empty list
         if fus != []:
@@ -142,7 +137,6 @@ def __get_featureunits(cu: object) -> str:
     # sind nicht alle non-alphanumerics schon draußen?
     fus = convert_featureunits.tokenize(cu.featureunits)
     cu.set_featureunits(fus)
-
     # TODO: FEATUREUNIT  
     # normalize, stem, filterSW, nGrams, continousNGrams
     fus = convert_featureunits.normalize(cu.featureunits, fus_config['normalize'])
