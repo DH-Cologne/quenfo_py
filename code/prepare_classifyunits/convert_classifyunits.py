@@ -103,15 +103,16 @@ def __merge_listitems(previous: str, para: str, previous_to_remember: str) -> Un
 
 # Check if two paragraphs contain the required list characters and join them if true.
 def __isListItem(previous, para, previous_to_remember):
-    # Regex for list items at the end of a paragraph or if previous ends with ":" or contains only one line ending with ":" (eg anforderungen:)
-    regex_previous = re.compile(r"((\n(\s)*((-\*|-|\*|\d(\.|\\)|\.\\)(\s)*)(\w)+$)|((\s+[^.!?]*[:])|(^[^.!?]*[:])))")
-    # Regex for list items at the beginning of a paragraph + TODO: Der ganze para muss ein list element sein!
-    regex_para = re.compile(r"((\s)*((-\*|\+|-|\*|\d(\.|\\)|\.\\)(\s)*)\w*)")
     
-    if not re.fullmatch(regex_para, para) and regex_previous.search(previous):
-    #if regex_previous.search(previous) and regex_para.search(para):
+    # Regex for list items at the end of a paragraph or if previous ends with ":" or contains only one line ending with ":" (eg anforderungen:)
+    regex_previous = re.compile(r"(.*)[:]$|((-\*|-|\*|\d(\.|\\)|\.\\)(.*)$)")
+    # Regex for list item that starts and ends with list-characteristics
+    regex_para = re.compile(r"(^((\s)*(-\*|\+|-|\*|\d(\.|\\)|\.\\)(.*))+$)")
+
+    if regex_previous.search(previous) and regex_para.search(para) :
         previous = "\n".join([previous, para])
         previous_to_remember = previous
+        
         # return changed previous to write in output
         return previous, previous_to_remember
     else:
@@ -174,7 +175,7 @@ def __merge_whatbelongstogether(previous, para, previous_to_remember):
 
 def __BelongsItem(previous, para, previous_to_remember):
     if previous != '' and para!= '':
-        if (previous.endswith('.') or previous.endswith(':')) and (para[0].isupper() or __looksLikeJobTitle(para)):
+        if (not previous.endswith('.')) and (not para[0].isupper() or __looksLikeJobTitle(para)):
             previous = "\n".join([previous, para])
             previous_to_remember = previous
             # return changed previous to write in output
@@ -184,7 +185,9 @@ def __BelongsItem(previous, para, previous_to_remember):
     else:
         # return unchanged previous to write in output
         return previous, previous_to_remember
+    #return previous, previous_to_remember
 
 def __looksLikeJobTitle(para):
-    regex_jobtitle = re.compile(r"^.*\w+(/-?|\*)\w+.*$")
+    #regex_jobtitle = re.compile(r"^.*\w+[\(]?\w+[/|\*|:|/-]?\w+[\)]?.*$")
+    regex_jobtitle = re.compile(r"^.*[\(]?\w+[/|\*|:|/-]?\w+[\)]?.*$")
     return regex_jobtitle.match(para)

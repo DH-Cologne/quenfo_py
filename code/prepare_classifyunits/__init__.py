@@ -151,6 +151,7 @@ def __get_featureunits(cu: object) -> str:
 
 
 
+
 # TODO: rückgabe später sollte kein string sein sondern ein vector
 def __get_featurevectors(cu):
     fvs = cu.featureunits

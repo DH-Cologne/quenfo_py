@@ -119,7 +119,7 @@ def stem(fus: list, stem: bool) -> list:
 
     return stemmed_fus 
 
-def gen_ngrams(fus: list, ngram_range: dict, cngrams: bool) -> list:
+def gen_ngrams(fus: list, ngram_numbers: dict, cngrams: bool) -> list:
     """ 	/**
 	 * Generates ngrams from specified tokens.
 	 * @param tokens List of tokens 
@@ -128,25 +128,27 @@ def gen_ngrams(fus: list, ngram_range: dict, cngrams: bool) -> list:
 	 * @return List of ngrams
 	 */
 	"""
-    if type(list(ngram_range.keys())[0]) == int and type(list(ngram_range.keys())[1]) == int:
+    if type(list(ngram_numbers.keys())[0]) == int and type(list(ngram_numbers.keys())[1]) == int:
         # non continuous
         if cngrams == False:
+            ngrams_complete = list()
             for fu in fus:
-                nngramlist=[]
-                for fu in fus:
-                    for s in ngrams(fu,n=(3)):        
-                        nngramlist.append(s)
+                ngrams_store=list()
+                for ngram_nr in ngram_numbers:
+                    for s in ngrams(fu,n=(ngram_nr)):        
+                        ngrams_store.append(s)
+                    ngrams_complete.extend(ngrams_store)
+            fus = ngrams_complete
+            #print(fus)
         # continuous --> across token borders
         else:   
-            # join list to onestring
             # TODO: müssen die whitespaces gelöscht werden?
-            # TODO: Was passiert mit der range? ein n wert?
-            onestring = " ".join(fus)
-            nngramlist= list()
-            for s in ngrams(onestring,n=(7)):        
-                    nngramlist.append(s)
-            #print(nngramlist)
-
-        fus = fus
+            onestring = "".join(fus)
+            ngrams_store= list()
+            for ngram_nr in ngram_numbers:
+                for s in ngrams(onestring,n=(ngram_nr)):        
+                        ngrams_store.append(s)
+            fus = ngrams_store
+            #print(fus)
     return fus
     
