@@ -1,14 +1,9 @@
 """Script to split jobads into paragraphs and generate classifyunits for each paragraphs."""
 
 # ## Imports
-from re import I
-from database import session
-from orm_handling import orm
+
 from orm_handling.models import ClassifyUnits, JobAds
-from itertools import zip_longest as izip
 import sys
-from pathlib import Path
-import yaml
 from . import classify_units
 from . import feature_units
 from . import feature_vectors
@@ -63,4 +58,3 @@ def generate_classifyunits(jobad: object):
         feature_vectors.get_featurevectors(cu)
     
     #sys.exit()
-        
