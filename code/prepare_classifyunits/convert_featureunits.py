@@ -129,26 +129,25 @@ def gen_ngrams(fus: list, ngram_numbers: dict, cngrams: bool) -> list:
 	 */
 	"""
     if type(list(ngram_numbers.keys())[0]) == int and type(list(ngram_numbers.keys())[1]) == int:
-        # non continuous
+        # non continuous --> False, Token werden jeweils für sich verarbeitet
         if cngrams == False:
             ngrams_complete = list()
             for fu in fus:
                 ngrams_store=list()
+                # erst werden 3-gramme gebildet und dann 4-gramme (dafür steht {3,4})
                 for ngram_nr in ngram_numbers:
                     for s in ngrams(fu,n=(ngram_nr)):        
                         ngrams_store.append(s)
                     ngrams_complete.extend(ngrams_store)
             fus = ngrams_complete
-            #print(fus)
-        # continuous --> across token borders
         else:   
-            # TODO: müssen die whitespaces gelöscht werden?
+            # continuous == True --> across token borders
+            # whitespaces werden behalten und die token zu einem string zusammengefügt über den dann iteriert wird
             onestring = "".join(fus)
             ngrams_store= list()
             for ngram_nr in ngram_numbers:
                 for s in ngrams(onestring,n=(ngram_nr)):        
                         ngrams_store.append(s)
             fus = ngrams_store
-            #print(fus)
     return fus
     

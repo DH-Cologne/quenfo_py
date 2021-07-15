@@ -18,7 +18,7 @@ fus_config:
   filterSW: true
   nGrams: {3,4}
   continousNGrams: false
-  
+
 
 
 resources:

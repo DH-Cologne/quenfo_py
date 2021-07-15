@@ -188,6 +188,5 @@ def __BelongsItem(previous, para, previous_to_remember):
     #return previous, previous_to_remember
 
 def __looksLikeJobTitle(para):
-    #regex_jobtitle = re.compile(r"^.*\w+[\(]?\w+[/|\*|:|/-]?\w+[\)]?.*$")
-    regex_jobtitle = re.compile(r"^.*[\(]?\w+[/|\*|:|/-]?\w+[\)]?.*$")
+    regex_jobtitle = re.compile(r"^(.*)[\(.*\)|/|\*|:|/-].*$")
     return regex_jobtitle.match(para)
