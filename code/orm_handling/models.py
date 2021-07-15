@@ -93,7 +93,6 @@ class ClassifyUnits(Base):
 
 # -------------------------------------------------------------------------------
 
-# fungiert letztlich als classifyunit (TODO umbenennen)
 class TrainingData(Base):
     __tablename__ = 'traindata'
     index = Column(Integer, Sequence('index'), primary_key=True)
