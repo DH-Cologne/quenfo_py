@@ -151,6 +151,4 @@ def gen_ngrams(fus: list, ngram_numbers: dict, cngrams: bool) -> list:
                         ngrams_store.append(s)
             fus = ngrams_store
     return fus
-
-    
     
