@@ -152,3 +152,4 @@ def gen_ngrams(fus: list, ngram_numbers: dict, cngrams: bool) -> list:
             fus = ngrams_store
     return fus
     
+    
