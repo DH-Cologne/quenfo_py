@@ -127,6 +127,7 @@ def gen_ngrams(fus: list, ngram_numbers: dict, cngrams: bool) -> list:
 	 * @param continuous If true, ngrams will be generated across token borders
 	 * @return List of ngrams
 	 */
+     klar machen, dass es hier eine diskrepanz zum java code gibt
 	"""
     if type(list(ngram_numbers.keys())[0]) == int and type(list(ngram_numbers.keys())[1]) == int:
         # non continuous --> False, Token werden jeweils für sich verarbeitet
