@@ -8,8 +8,7 @@ from . import classify_units
 from . import feature_units
 from . import feature_vectors
 
-   
-# ### Main-Function of the Script
+# ### Main-Function for ClassifyUnit generation (+ featureunits and featurevectors)
 def generate_classifyunits(jobad: object):
     """ Function manages the preparation for the textclassification. Therefore classifyunits are needed and will be generated in this step.
         Following steps are used:

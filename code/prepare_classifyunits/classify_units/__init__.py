@@ -1,4 +1,7 @@
+# ## Imports
 from . import convert_classifyunits
+
+# ## Functions
 
 def get_paragraphs(jobad: object) -> list:
     """ 

@@ -17,7 +17,7 @@ fus_config:
   stem: true
   filterSW: true
   nGrams: {3,4}
-  continousNGrams: false
+  continousNGrams: true
 
 
 

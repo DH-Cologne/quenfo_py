@@ -5,7 +5,9 @@ import re
 from sys import prefix
 from typing import Union
 
+# ## Functions
 
+# Split into paragraphs
 def split_at_empty_line(jobad: object) -> list:
     """ Get Paragraphs:
         +++ Step 1: Split at emtpy line +++ 
@@ -23,7 +25,7 @@ def split_at_empty_line(jobad: object) -> list:
     # Returns list of paragraphs per object
     return jobad.content.split("\n\n")
 
-
+# Remove whitespaces
 def remove_whitespaces(list_paragraphs: list) -> list:
     """ Get Paragraphs:
         +++ Step 2: Remove Whitespaces +++ 
@@ -49,10 +51,11 @@ def remove_whitespaces(list_paragraphs: list) -> list:
         cleaned_paralist.append((newpara.join([(line.strip() + '\n') for line in para.split('\n')])).strip())
     return cleaned_paralist
 
+# Merge Listitems
 def identify_listitems(list_paragraphs: list) -> list:
     """ Clean Paragraphs:
         +++ Step 3: Merge List Items +++ 
-        Compare two paragraphs and if they match in the same list-characteristics, merge those two together
+        Compare two paragraphs and if they both have specific list-characteristics, merge those two together
         
     Parameters
     ----------
@@ -104,27 +107,28 @@ def __merge_listitems(previous: str, para: str, previous_to_remember: str) -> Un
 # Check if two paragraphs contain the required list characters and join them if true.
 def __isListItem(previous, para, previous_to_remember):
     
-    # Regex for list items at the end of a paragraph or if previous ends with ":" or contains only one line ending with ":" (eg anforderungen:)
+    # Regex for list items at the end of a paragraph or if previous ends with ":" or contains only one line ending with ":" (eg "Benötigte Anforderungen:")
     regex_previous = re.compile(r"(.*)[:]$|((-\*|-|\*|\d(\.|\\)|\.\\)(.*)$)")
-    # Regex for list item that starts and ends with list-characteristics
+    # Regex to match string that contains only list-items
     regex_para = re.compile(r"(^((\s)*(-\*|\+|-|\*|\d(\.|\\)|\.\\)(.*))+$)")
 
+    # Compare a paragraph and the previous paragraph, if they match --> join them
     if regex_previous.search(previous) and regex_para.search(para) :
         previous = "\n".join([previous, para])
+        # Set joined paragraphs as previous_to_remember => approach to eliminate overwriting
         previous_to_remember = previous
-        
         # return changed previous to write in output
         return previous, previous_to_remember
     else:
         # return unchanged previous to write in output
         return previous, previous_to_remember
 
-
+# Merge WhatBelongsTogether
 def identify_whatbelongstogether(list_paragraphs: list) -> list:
     """ Clean Paragraphs:
         +++ Step 4: Merge What Belongs Together +++
         Check if two paragraphs contain the required charactistics 
-        (previous ends with '.' or ':' and para is upper or jobtitle) and join them if true.
+        (previous !ends with '.' and para is !upper or jobtitle) and join them if true.
     
     Parameters
     ----------
@@ -188,5 +192,6 @@ def __BelongsItem(previous, para, previous_to_remember):
     #return previous, previous_to_remember
 
 def __looksLikeJobTitle(para):
+    # Regex to match strings as jobtitles (e.g. Bewerber:innen, Bewerber(w/m), Bewerber*innen...)
     regex_jobtitle = re.compile(r"^(.*)[\(.*\)|/|\*|:|/-].*$")
     return regex_jobtitle.match(para)
