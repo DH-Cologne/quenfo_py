@@ -56,4 +56,5 @@ def generate_classifyunits(jobad: object):
         # 6. Make featurevectors
         feature_vectors.get_featurevectors(cu)
     
-    sys.exit()
+    #sys.exit()
+    

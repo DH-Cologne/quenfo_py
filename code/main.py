@@ -27,7 +27,7 @@ for jobad in jobads:
 
     # ## TODO: PREPARE CLASSIFY UNITS
     # Pass list of JobAds-objects to be converted to clean paragraphs, featureunits and feature vectors
-    generate_classifyunits(jobad)
+    listo = generate_classifyunits(jobad)
 
 
 

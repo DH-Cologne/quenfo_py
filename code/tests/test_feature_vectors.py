@@ -1,4 +1,6 @@
 """
+INPUT: Cu und TRAININGSDATEN (HIERFÜR AUCH NOCH ORM ANLEGEN)
+
 TODO: Replikation der featurevector Generierung:
 
 1. wir gehen von allen cus aus zusammen! dh aus dem alten loop raus! dann Für jede cu und die dazugehörigen fus wird überprüft, ob diese in fuo sind
@@ -16,6 +18,8 @@ TODO: Replikation der featurevector Generierung:
     --> dh. ich habe hier jetzt drei bows: bow2 (aus trainingsdaten), bow1 (aus allen featureunits einer cu nicht bereinigt), bowtemp (kopie des bow2 abzüglich der bow1)
      und die liste featureunitsorder (fuso) --> die das vokabular der testdaten (bow1 enthält, aber ohne dopplungen und sortiert)
 4. hier kommt die uniquefeatureunits liste ins spiel (aufgerufen über this.featureUnitOrder) --> wird zum scoring benötigt
+
+OUTPUT: Vector pro CU
 
 Frage: Was ist wenn TFIDF? Fallen ann alle schritte weg oder lediglich 3, 4?
 -------------------------
