@@ -3,14 +3,16 @@
 # ## Imports
 from pathlib import Path
 import re
-import py_stringmatching as sm
 from contextlib import suppress
 from nltk.stem.snowball import GermanStemmer
 from nltk import ngrams
 from nltk.stem.cistem import Cistem
+from sqlalchemy.util.langhelpers import counter
 
 # ## Set Variables
 sw_list = list()
+counter = 0
+fussize=list()
 
 # TODO: A: Hier wird bei java noch irgendwo hinterlegt, wie die Featureunits generiert wurden, also in den hashcodes? wird gespeichert, wie die values
 # für die verarbeitung gesetzt wurden (normalize = true etc...), vllt dohc eine klasse einrichten, die das speichert und setted und hinterlegt in db?
@@ -197,18 +199,19 @@ def gen_ngrams(fus: list, ngram_numbers: dict, cngrams: bool) -> list:
     --------
     fus: list
         list with ngrams generated from fus-token """
-    
+    global counter
+    global fussize
     # Check if the config-settings are valid numbers
     if type(list(ngram_numbers.keys())[0]) == int and type(list(ngram_numbers.keys())[1]) == int:
         # False == Non-Continuous: Ngrams are generated for each token isolated
         if cngrams == False:
             ngrams_complete = list()
-            for fu in fus:
-                ngrams_store=list()
-                # e.g. first 3-grams and then 4-grams are generated ({3,4})
-                for ngram_nr in ngram_numbers:
+            # e.g. first 3-grams and then 4-grams are generated ({3,4})
+            for ngram_nr in ngram_numbers:
+                for fu in fus:
+                    ngrams_store=list()
                     for s in ngrams(fu,n=(ngram_nr)):        
-                        ngrams_store.append(s)
+                        ngrams_store.append("".join(s))
                     # add 3-grams to list (extend) and then add 4-grams to list
                     ngrams_complete.extend(ngrams_store)
             fus = ngrams_complete
@@ -220,6 +223,6 @@ def gen_ngrams(fus: list, ngram_numbers: dict, cngrams: bool) -> list:
             # e.g. first 3-grams and then 4-grams are generated ({3,4})
             for ngram_nr in ngram_numbers:
                 for s in ngrams(onestring,n=(ngram_nr)):        
-                        ngrams_store.append(s)
+                        ngrams_store.append("".join(s))
             fus = ngrams_store
     return fus
