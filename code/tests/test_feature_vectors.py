@@ -17,6 +17,7 @@ TODO: Replikation der featurevector Generierung:
      und die liste featureunitsorder (fuso) --> die das vokabular der testdaten (bow1 enthält, aber ohne dopplungen und sortiert)
 4. hier kommt die uniquefeatureunits liste ins spiel (aufgerufen über this.featureUnitOrder) --> wird zum scoring benötigt
 
+Frage: Was ist wenn TFIDF? Fallen ann alle schritte weg oder lediglich 3, 4?
 -------------------------
 
 private void initialize(List<ClassifyUnit> trainingdata){
