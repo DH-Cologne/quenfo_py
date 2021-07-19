@@ -8,10 +8,16 @@ TODO:
 # ## Imports
 from prepare_classifyunits import generate_classifyunits
 from database import session
-from ORM_structure import orm
-from ORM_structure.models import ClassifyUnits
+from orm_handling import orm
+from orm_handling.models import ClassifyUnits
 from database import engine
+import logging
 
+""" # ## Initiate Logging-Module
+logging.basicConfig(
+    format='%(asctime)s : %(threadName)s : %(levelname)s : %(message)s',
+    level=logging.DEBUG, filename='logger.log', filemode='w+',
+) """
 
 
 # Load the Input data: JobAds in JobAds Class.
@@ -22,6 +28,7 @@ for jobad in jobads:
     # ## TODO: PREPARE CLASSIFY UNITS
     # Pass list of JobAds-objects to be converted to clean paragraphs, featureunits and feature vectors
     generate_classifyunits(jobad)
+
 
 
     # TODO: TEXTCLASSIFICATION
@@ -41,6 +48,8 @@ for jobad in jobads:
 
 # Commit generated classify units with paragraphs and class assignments to table
 orm.pass_output(session)
+
+session.close()
 
 
 """ # Load traindata and store it in list of objects

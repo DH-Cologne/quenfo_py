@@ -1,5 +1,5 @@
 # ## Imports
-from ORM_structure import orm
+from orm_handling import orm
 from database import session
 
 # TODO: Kommentare hier irgendwie unnötig. Vllt kann diese init auch leer bleiben.
