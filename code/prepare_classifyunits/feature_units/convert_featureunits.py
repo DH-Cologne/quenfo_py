@@ -225,4 +225,5 @@ def gen_ngrams(fus: list, ngram_numbers: dict, cngrams: bool) -> list:
                 for s in ngrams(onestring,n=(ngram_nr)):        
                         ngrams_store.append("".join(s))
             fus = ngrams_store
+    print(fus)
     return fus

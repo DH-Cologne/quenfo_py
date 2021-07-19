@@ -6,16 +6,30 @@ TODO: Replikation der featurevector Generierung:
     Alle fus werden der liste fuo hinzugefügt. dh nach diesem schritt gibt es nach wie vor die classifyunits mit ihren fus, aber es gibt auch noch
     eine Liste uniqueFeatureunits, die alle fus aller cus enthält (alphabetisch und sortiert)
 
-2. initalisiere set FeatureValues (s. funktion unten aus Loglikelihood script)
+2. bow2 wird mit den Trainingsdaten erstellt /gefüllt
+
+3. initalisiere set FeatureValues (s. funktion unten aus Loglikelihood script)
     - hier wird das bow2 (aus den trainingsdaten) als bowtemp gesetzt und das bow1 erstellt. 
     - bow1 bekommt alle Featureunits einer cu geadded (kein remove von doppelten (deshalb add all)) (featureunitorder kommt erst unter punkt 3 ins spiel)
     - aus bowtemp werden die bow1 features gelöscht
 
-    --> dh. ich habe hier jetzt drei bows: bow2 (aus trainingsdaten), bow1 (aus allen featureunits einer cu), bowtemp (kopie des bow2 abzüglich der bow1)
-
-3. hier kommt die uniquefeatureunits liste ins spiel (aufgerufen über this.featureUnitOrder) --> wird zum scoring benötigt
+    --> dh. ich habe hier jetzt drei bows: bow2 (aus trainingsdaten), bow1 (aus allen featureunits einer cu nicht bereinigt), bowtemp (kopie des bow2 abzüglich der bow1)
+     und die liste featureunitsorder (fuso) --> die das vokabular der testdaten (bow1 enthält, aber ohne dopplungen und sortiert)
+4. hier kommt die uniquefeatureunits liste ins spiel (aufgerufen über this.featureUnitOrder) --> wird zum scoring benötigt
 
 -------------------------
+
+private void initialize(List<ClassifyUnit> trainingdata){
+		
+		for (ClassifyUnit classifyUnit : trainingdata) {
+			bagOfWords2.addAll((classifyUnit.getFeatureUnits()));
+		}
+		
+	}
+	
+	public Multiset<String> getBoW() {
+		return bagOfWords2;
+	}
 
 public void setFeatureValues(List<ClassifyUnit> classifyUnits, List<String> featureUnitOrder) {
 			
@@ -52,20 +66,21 @@ public void setFeatureValues(List<ClassifyUnit> classifyUnits, List<String> feat
 
 """
 
-# Erster Test: Funktion (gen_featureunitorder)
+# Erster Test: Funktion (gen_featureunitorder) --> Vokabular für die Testdaten erstellen
 # Input: eine cu (mit fus)
 # todo: adde fus to fuso list, aber keine duplikate und sortiere liste alphabetisch
 # output: liste fuso (alle zusammen von allen featureunits aller cus) (duplikate raus und sortiert)
 
 import unittest
 
-class TestSum(unittest.TestCase):
 
-    def test_sum(self):
-        self.assertEqual(sum([1, 2, 3]), 6, "Should be 6")
+class TestCalc(unittest.TestCase):
 
-    def test_sum_tuple(self):
-        self.assertEqual(sum((1, 2, 2)), 6, "Should be 6")
+	# test müssen alle mit test anfangen!!
+    def test_add(self):
+        result = 10 +5
+        self.assertEqual(result, 15)
+
 
 if __name__ == '__main__':
     unittest.main()
