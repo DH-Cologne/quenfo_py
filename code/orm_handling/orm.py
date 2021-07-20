@@ -1,14 +1,20 @@
 """Script to build data and to create data"""
 
 # ## Imports
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, query
 from .models import ClassifyUnits, OutputData, TrainingData, JobAds
 import sqlalchemy
 from database import engine
+import yaml
+from pathlib import Path
 
 # ## Variables
 is_created = None
 
+# ## Open Configuration-file and set variables + paths
+with open(Path('config.yaml'), 'r') as yamlfile:
+    cfg = yaml.load(yamlfile, Loader=yaml.FullLoader)
+    query_limit = cfg['query_limit']
 
 # Function to query the data from the db table
 def get_jobads(session: Session) -> list:
@@ -26,14 +32,16 @@ def get_jobads(session: Session) -> list:
 
     """ ClassifyUnits.__table__.drop(engine)
     ClassifyUnits.__table__.create(engine) """
-
-    job_ads = session.query(JobAds).limit(500).all()
-    # delete the handles from jobads to classifunits
+    
+    job_ads = session.query(JobAds).limit(query_limit).all()
+    # delete the handles from jobads to classifunits or create new table
     try:
         session.query(ClassifyUnits).delete()
     except sqlalchemy.exc.OperationalError:
-        print("classifyunit still empty")
+        print("table classify_unit not existing --> create new one")
         ClassifyUnits.__table__.create(engine)
+    # TODO: wenn mode nicht overwrite ist, sonder append, dann muss hier noch eine andere option hin.
+
     pass_output(session)
 
     return job_ads

@@ -17,9 +17,11 @@ fus_config:
   stem: true
   filterSW: true
   nGrams: {3,4}
-  continousNGrams: true
+  continousNGrams: false
 
 
+
+query_limit: 500
 
 resources:
   stopwords_path: '..\..\quenfo_data\resources\classification\stopwords.txt'
