@@ -1,2 +1,5 @@
 # ## Imports
-from database.connection import engine, session
+from . import connection
+
+session = connection.session
+engine = connection.engine
