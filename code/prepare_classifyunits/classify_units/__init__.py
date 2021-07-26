@@ -1,6 +1,7 @@
 # ## Imports
 from . import convert_classifyunits
 
+
 # ## Functions
 
 def get_paragraphs(jobad: object) -> list:
@@ -24,7 +25,7 @@ def get_paragraphs(jobad: object) -> list:
 
     # 1. Split the jobad texts (content) and receive a list of paragraphs for each jobad
     list_paragraphs = convert_classifyunits.split_at_empty_line(jobad)
-    
+
     # 2. # Remove whitespaces at the beginning and at the end of each paragraph and in each line
     list_paragraphs = convert_classifyunits.remove_whitespaces(list_paragraphs)
 

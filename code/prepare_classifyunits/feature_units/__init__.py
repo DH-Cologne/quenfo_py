@@ -9,6 +9,7 @@ with open(Path('config.yaml'), 'r') as yamlfile:
     fus_config = cfg['fus_config']
     resources = cfg['resources']
 
+
 # FEATUREUNIT-MANAGER
 def get_featureunits(cu: object) -> None:
     """ Function to manage preprocessing steps as tokenization, normalization, stopwords removal, stemming and ngrams.
@@ -19,7 +20,7 @@ def get_featureunits(cu: object) -> None:
     ----------
     cu: object
         classifyunit-object which contains the instantiated featureunits --> consisting of cu-paragraphs without non-alphanumerical characters """
-    
+
     # Tokenization
     fus = convert_featureunits.tokenize(cu.featureunits)
     cu.set_featureunits(fus)

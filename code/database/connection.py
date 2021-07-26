@@ -12,7 +12,7 @@ with open(Path('config.yaml'), 'r') as yamlfile:
     cfg = yaml.load(yamlfile, Loader=yaml.FullLoader)
 
 # ## Input-Paths
-input_path = cfg['input_path']
+input_path = cfg['resources']['input_path']
 
 # input_path = os.path.join('..','..', 'traindata_sql.db')
 # input_path = os.path.join('..','..', 'text_kernel_orm_2018_03.db')

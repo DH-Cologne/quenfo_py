@@ -81,9 +81,9 @@ import unittest
 
 class TestCalc(unittest.TestCase):
 
-	# test müssen alle mit test anfangen!!
+    # test müssen alle mit test anfangen!!
     def test_add(self):
-        result = 10 +5
+        result = 10 + 5
         self.assertEqual(result, 15)
 
 

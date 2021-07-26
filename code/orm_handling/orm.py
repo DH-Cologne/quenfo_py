@@ -16,6 +16,7 @@ with open(Path('config.yaml'), 'r') as yamlfile:
     cfg = yaml.load(yamlfile, Loader=yaml.FullLoader)
     query_limit = cfg['query_limit']
 
+
 # Function to query the data from the db table
 def get_jobads(session: Session) -> list:
     """ Function manages the data query and instantiates the Schema for the class JobAds in models.py
@@ -32,7 +33,7 @@ def get_jobads(session: Session) -> list:
 
     """ ClassifyUnits.__table__.drop(engine)
     ClassifyUnits.__table__.create(engine) """
-    
+
     job_ads = session.query(JobAds).limit(query_limit).all()
     # delete the handles from jobads to classifunits or create new table
     try:
