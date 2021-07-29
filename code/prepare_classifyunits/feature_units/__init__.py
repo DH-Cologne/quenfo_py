@@ -34,5 +34,5 @@ def get_featureunits(cu: object) -> None:
     fus = convert_featureunits.stem(cu.featureunits, fus_config['stem'])
     cu.set_featureunits(fus)
     # NGram Generation
-    fus = convert_featureunits.gen_ngrams(cu.featureunits, fus_config['nGrams'], fus_config['continousNGrams'])
+    fus = convert_featureunits.gen_ngrams(cu.featureunits, fus_config['nGrams'], fus_config['continuousNGrams'])
     cu.set_featureunits(fus)
