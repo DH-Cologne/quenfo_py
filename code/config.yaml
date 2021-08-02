@@ -10,18 +10,17 @@
 # in subfolder resources/classification/trainingSets
 #trainingDataFile=trainingdata_anonymized.tsv
 
-input_path: '..\..\text_kernel_orm_2018_03.db'
-
 fus_config:
   normalize: true
   stem: true
   filterSW: true
   nGrams: {3,4}
-  continousNGrams: false
+  continuousNGrams: false
 
 
 
 query_limit: 500
 
 resources:
+  input_path: '..\..\quenfo_data\sqlite\orm\text_kernel_orm_2018_03.db'
   stopwords_path: '..\..\quenfo_data\resources\classification\stopwords.txt'

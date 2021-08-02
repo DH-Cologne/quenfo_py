@@ -8,9 +8,9 @@ from sqlalchemy.sql.functions import array_agg
 from database import session
 import itertools
 
-
 # get Base connection
 Base = declarative_base()
+
 
 # ## Define Classes
 
@@ -43,6 +43,7 @@ class JobAds(Base):
     # Name the objects
     def __repr__(self):
         return "(%s, %s)" % (self.id, self.postingID)
+
 
 # Class ClassifyUnits
 class ClassifyUnits(Base):
@@ -84,11 +85,9 @@ class ClassifyUnits(Base):
 
     def set_featureunits(self, value):
         self.featureunits = value
-    
+
     def set_featurevectors(self, value):
         self.featurevectors = value
-
-
 
 
 # -------------------------------------------------------------------------------
@@ -98,7 +97,7 @@ class TrainingData(Base):
     index = Column(Integer, Sequence('index'), primary_key=True)
     postingId = Column('postingId')
     zeilennr = Column('zeilennr')
-    classID = Column ('classID')
+    classID = Column('classID')
     content = Column('content')
 
     def __init__(self, postingId, zeilennr, classID, content):
@@ -117,9 +116,9 @@ class OutputData(Base):
     index = Column(Integer, Sequence('index'), primary_key=True)
     postingId = Column(String(225))
     zeilennr = Column(Integer)
-    classID = Column (Integer)
+    classID = Column(Integer)
     content = Column(String(225))
-    prepro = Column('prepro',String(225))
+    prepro = Column('prepro', String(225))
 
     def __init__(self, postingId, zeilennr, classID, content, prepro):
         self.postingId = postingId
@@ -130,6 +129,3 @@ class OutputData(Base):
 
     def __repr__(self):
         return "(%s, %s, %s, %s, %s)" % (self.postingId, self.zeilennr, self.classID, self.content, self.prepro)
-
-
-

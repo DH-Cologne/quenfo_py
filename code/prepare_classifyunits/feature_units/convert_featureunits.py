@@ -3,6 +3,7 @@
 # ## Imports
 from pathlib import Path
 import re
+# import py_stringmatching as sm
 from contextlib import suppress
 from nltk.stem.snowball import GermanStemmer
 from nltk import ngrams
@@ -12,12 +13,15 @@ from sqlalchemy.util.langhelpers import counter
 # ## Set Variables
 sw_list = list()
 counter = 0
-fussize=list()
+fussize = list()
 
-# TODO: A: Hier wird bei java noch irgendwo hinterlegt, wie die Featureunits generiert wurden, also in den hashcodes? wird gespeichert, wie die values
-# für die verarbeitung gesetzt wurden (normalize = true etc...), vllt dohc eine klasse einrichten, die das speichert und setted und hinterlegt in db?
 
-# TODO: B: HIER VLLT NOCH EIN CHECKER, dass die CONFIGS AUCH WIRKLICH DIE ENTSPRECHENDEN WERTE HABEN; SONST DEFAULT SETZEN
+# TODO: A: Hier wird bei java noch irgendwo hinterlegt, wie die Featureunits generiert wurden, also in den hashcodes?
+#  wird gespeichert, wie die values für die verarbeitung gesetzt wurden (normalize = true etc...), vllt dohc eine
+#  klasse einrichten, die das speichert und setted und hinterlegt in db?
+
+# TODO: B: HIER VLLT NOCH EIN CHECKER, dass die CONFIGS AUCH WIRKLICH DIE ENTSPRECHENDEN WERTE HABEN; SONST DEFAULT
+#  SETZEN
 
 # ## Functions
 
@@ -36,9 +40,10 @@ def replace(para: str) -> str:
         returns para variable without non-alphanumerical characters"""
 
     # Regex to replace all non-alphanumerical chars with whitespaces
-    para = re.sub('\W+',' ', para)
+    para = re.sub('\W+', ' ', para)
 
     return para
+
 
 # Tokenization
 def tokenize(fus: str) -> list:
@@ -53,15 +58,16 @@ def tokenize(fus: str) -> list:
     -------
     fus: list
         returns fus as list with token """
-    
+
     # Regex to tokenize the given string
     WORD = re.compile(r'\w+')
     fus = WORD.findall(fus)
-    
+
     # different approach 
     # fus = fus.split()
 
     return fus
+
 
 # Normalization
 def normalize(fus: list, normalize: bool) -> list:
@@ -98,6 +104,7 @@ def normalize(fus: list, normalize: bool) -> list:
                 norm_fus.append(fu)
         return norm_fus
 
+
 # Stopwords Removal
 def filterSW(fus: list, filterSW: bool, sw_path: Path) -> list:
     """ Function filterSW compares the given token list with the stopwords in the lookup file and removes them.
@@ -121,21 +128,24 @@ def filterSW(fus: list, filterSW: bool, sw_path: Path) -> list:
     # remove all stopwords from fus
     if filterSW:
         for sw in sw_list:
-            # Normally if the stopword sw is found in fus it skips to the next sw. But it is possible that a sw occurs multiple times in fus:
-            # with suppress(ValueError) is another way of handling try and except statements.
+            # Normally if the stopword sw is found in fus it skips to the next sw. But it is possible that a sw
+            # occurs multiple times in fus: with suppress(ValueError) is another way of handling try and except
+            # statements.
             with suppress(ValueError):
                 # remove also duplicated sw in fus --> while True
                 while True:
                     fus.remove(sw.lower())
     return fus
 
-def __check_once(sw_path): 
+
+def __check_once(sw_path):
     global sw_list
     if not sw_list:
         with open(sw_path, 'r') as sw_file:
             sw_list = [sw.strip() for sw in sw_file.readlines()]
     else:
         pass
+
 
 # Stemming
 def stem(fus: list, stem: bool) -> list:
@@ -155,7 +165,7 @@ def stem(fus: list, stem: bool) -> list:
         list with  stemmed token """
 
     # Variables
-    stemmed_fus=list()
+    stemmed_fus = list()
     # Check config-setting
     if stem:
         # Snowball Stemmer from NLTK
@@ -163,7 +173,7 @@ def stem(fus: list, stem: bool) -> list:
         # Stem each token
         for token in fus:
             stemmed_fus.append(stemmer.stem(token))
-        
+
         # remove empty strings and strings <= 1
         stemmed_fus = list(filter(lambda n: 1 <= len(n), stemmed_fus))
 
@@ -172,28 +182,24 @@ def stem(fus: list, stem: bool) -> list:
         for token in fus:
             stemmed_fus.append(stemmer.segment(token)[0]) """
 
-    return stemmed_fus 
+    return stemmed_fus
+
 
 # NGram Generation
 def gen_ngrams(fus: list, ngram_numbers: dict, cngrams: bool) -> list:
-    """ Function is used to generate ngrams from given token list (fus). 
-    1. ngram_numbers: With the var ngram_numbers to numbers are passed for two different ngram-cycles: 
-        e.g. {3, 4} means, that at first 3-grams are generated from 
-        the fus-list and added to an output list. Then 4-grams are generated from the same fus-list and those are added to the output-list too.
-        So in the end the output contains 3-grams and 4-grams of the passed fus-list. 
-    2. cngrams: the bool determines if the ngrams are genereated continuously across token borders (true) or only for each isolated token (false): 
-        e.g. pasta basta (in the example only 3-grams are shown, but normally also 4-grams are added)
-                --> true: (p,a,s), (a,s,t), (s,t,a), (t,a,' '), (a,' ',b), (' ',b,a), (b,a,s), (a,s,t), (s,t,a) (including whitespaces)
-                --> false: (p,a,s), (a,s,t), (s,t,a), (b,a,s), (a,s,t), (s,t,a) (only each token is separated)
+    """ Function is used to generate ngrams from given token list (fus). 1. ngram_numbers: With the var ngram_numbers
+    to numbers are passed for two different ngram-cycles: e.g. {3, 4} means, that at first 3-grams are generated from
+    the fus-list and added to an output list. Then 4-grams are generated from the same fus-list and those are added
+    to the output-list too. So in the end the output contains 3-grams and 4-grams of the passed fus-list. 2. cngrams:
+    the bool determines if the ngrams are genereated continuously across token borders (true) or only for each
+    isolated token (false): e.g. pasta basta (in the example only 3-grams are shown, but normally also 4-grams are
+    added) --> true: (p,a,s), (a,s,t), (s,t,a), (t,a,' '), (a,' ',b), (' ',b,a), (b,a,s), (a,s,t), (s,t,a) (including
+    whitespaces) --> false: (p,a,s), (a,s,t), (s,t,a), (b,a,s), (a,s,t), (s,t,a) (only each token is separated)
 
-    Parameters
-    ----------
-    fus: list
-        the list contains the featureunits as token
-    ngram_numbers: dict
-        dictionary contains the config-setting for what length of ngrams are generated --> passed numbers determine two different cycles.
-    cngrams: boolean
-        bool value from config to determine if ngrams or continuous ngrams (across tokenborders) are generated
+    Parameters ---------- fus: list the list contains the featureunits as token ngram_numbers: dict dictionary
+    contains the config-setting for what length of ngrams are generated --> passed numbers determine two different
+    cycles. cngrams: boolean bool value from config to determine if ngrams or continuous ngrams (across tokenborders)
+    are generated
    
     Returns
     --------
@@ -204,25 +210,25 @@ def gen_ngrams(fus: list, ngram_numbers: dict, cngrams: bool) -> list:
     # Check if the config-settings are valid numbers
     if type(list(ngram_numbers.keys())[0]) == int and type(list(ngram_numbers.keys())[1]) == int:
         # False == Non-Continuous: Ngrams are generated for each token isolated
-        if cngrams == False:
+        if not cngrams:
             ngrams_complete = list()
             # e.g. first 3-grams and then 4-grams are generated ({3,4})
             for ngram_nr in ngram_numbers:
                 for fu in fus:
-                    ngrams_store=list()
-                    for s in ngrams(fu,n=(ngram_nr)):        
+                    ngrams_store = list()
+                    for s in ngrams(fu, n=ngram_nr):
                         ngrams_store.append("".join(s))
                     # add 3-grams to list (extend) and then add 4-grams to list
                     ngrams_complete.extend(ngrams_store)
             fus = ngrams_complete
-        else:   
+        else:
             # continuous == True --> across token borders
             # join token to one string and keep whitespaces
             onestring = " ".join(fus)
-            ngrams_store= list()
+            ngrams_store = list()
             # e.g. first 3-grams and then 4-grams are generated ({3,4})
             for ngram_nr in ngram_numbers:
-                for s in ngrams(onestring,n=(ngram_nr)):        
-                        ngrams_store.append("".join(s))
+                for s in ngrams(onestring, n=ngram_nr):
+                    ngrams_store.append("".join(s))
             fus = ngrams_store
     return fus

@@ -8,16 +8,15 @@ from . import classify_units
 from . import feature_units
 from . import feature_vectors
 
+
 # ### Main-Function for ClassifyUnit generation (+ featureunits and featurevectors)
 def generate_classifyunits(jobad: object):
-    """ Function manages the preparation for the textclassification. Therefore classifyunits are needed and will be generated in this step.
-        Following steps are used:
-        --> Each Jobad is splitted into paragraphs and each paragraph is a value paragraph of the Class ClassifyUnit.
-        --> JobAds and ClassifyUnits are organized in a parent --> children relationship
-        --> One JobAd contains several classifyunits with the following values:
-            a. paragraph = slightly cleaned content (whitespaces at the beginning and the end)
-            b. featureunit = normalized, stemmed, Stopwords filtered and nGrams processed paragraph
-            c. featurevector = vectorized featureunit
+    """ Function manages the preparation for the textclassification. Therefore classifyunits are needed and will be
+    generated in this step. Following steps are used: --> Each Jobad is splitted into paragraphs and each paragraph
+    is a value paragraph of the Class ClassifyUnit. --> JobAds and ClassifyUnits are organized in a parent -->
+    children relationship --> One JobAd contains several classifyunits with the following values: a. paragraph =
+    slightly cleaned content (whitespaces at the beginning and the end) b. featureunit = normalized, stemmed,
+    Stopwords filtered and nGrams processed paragraph c. featurevector = vectorized featureunit
 
     Parameters
     ----------
@@ -32,7 +31,7 @@ def generate_classifyunits(jobad: object):
 
     # Iterate over each paragraph in list_paragraphs for one jobad
     for para in list_paragraphs:
-    
+
         """ Remove all non-alphanumerical characters from para and return fus. 
         A lot of fus will be empty lists afterwards, so only ClassifyUnits for filled
         fus are instantiated."""
@@ -49,12 +48,10 @@ def generate_classifyunits(jobad: object):
 
     # Iterate over each jobad and make featureunits and featurevectors vor each cu
     for cu in jobad.children:
-        
         # 5. Make feature units
         feature_units.get_featureunits(cu)
-        
+
         # 6. Make featurevectors
         feature_vectors.get_featurevectors(cu)
     
     #sys.exit()
-    
