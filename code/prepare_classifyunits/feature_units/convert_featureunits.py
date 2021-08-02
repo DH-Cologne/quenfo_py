@@ -9,13 +9,10 @@ from contextlib import suppress
 from nltk.stem.snowball import GermanStemmer
 from nltk import ngrams
 from nltk.stem.cistem import Cistem
-from sqlalchemy.util.langhelpers import counter
 from yaml.reader import ReaderError
 
 # ## Set Variables
 sw_list = list()
-counter = 0
-fussize = list()
 
 
 # TODO: A: Hier wird bei java noch irgendwo hinterlegt, wie die Featureunits generiert wurden, also in den hashcodes?
@@ -220,9 +217,7 @@ def gen_ngrams(fus: list, ngram_numbers: dict, cngrams: bool) -> list:
     --------
     fus: list
         list with ngrams generated from fus-token """
-        
-    global counter
-    global fussize
+    
     # Check if the config-settings are valid numbers
     if all(isinstance(x, int) for x in ngram_numbers):
         # False == Non-Continuous: Ngrams are generated for each token isolated
