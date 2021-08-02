@@ -1,6 +1,7 @@
 """Script contains several functions modify featureunits."""
 
 # ## Imports
+from os import error
 from pathlib import Path
 import re
 # import py_stringmatching as sm
@@ -9,6 +10,7 @@ from nltk.stem.snowball import GermanStemmer
 from nltk import ngrams
 from nltk.stem.cistem import Cistem
 from sqlalchemy.util.langhelpers import counter
+from yaml.reader import ReaderError
 
 # ## Set Variables
 sw_list = list()
@@ -103,6 +105,8 @@ def normalize(fus: list, normalize: bool) -> list:
             if len(fu) > 1:
                 norm_fus.append(fu)
         return norm_fus
+    else:
+        return fus
 
 
 # Stopwords Removal
@@ -128,21 +132,28 @@ def filterSW(fus: list, filterSW: bool, sw_path: Path) -> list:
     # remove all stopwords from fus
     if filterSW:
         for sw in sw_list:
-            # Normally if the stopword sw is found in fus it skips to the next sw. But it is possible that a sw
-            # occurs multiple times in fus: with suppress(ValueError) is another way of handling try and except
-            # statements.
-            with suppress(ValueError):
-                # remove also duplicated sw in fus --> while True
-                while True:
-                    fus.remove(sw.lower())
+            if sw != "ERROR":
+                # Normally if the stopword sw is found in fus it skips to the next sw. But it is possible that a sw
+                # occurs multiple times in fus: with suppress(ValueError) is another way of handling try and except
+                # statements.
+                with suppress(ValueError):
+                    # remove also duplicated sw in fus --> while True
+                    while True:
+                        fus.remove(sw.lower())
+            else:
+                pass
     return fus
 
 
 def __check_once(sw_path):
     global sw_list
     if not sw_list:
-        with open(sw_path, 'r') as sw_file:
-            sw_list = [sw.strip() for sw in sw_file.readlines()]
+        try:
+            with open(sw_path, 'r') as sw_file:
+                sw_list = [sw.strip() for sw in sw_file.readlines()]
+        except (FileNotFoundError, ReaderError) as error:
+            # logging.warning(error)
+            sw_list = "ERROR"
     else:
         pass
 
@@ -182,7 +193,9 @@ def stem(fus: list, stem: bool) -> list:
         for token in fus:
             stemmed_fus.append(stemmer.segment(token)[0]) """
 
-    return stemmed_fus
+        return stemmed_fus
+    else:
+        return fus
 
 
 # NGram Generation
@@ -190,13 +203,15 @@ def gen_ngrams(fus: list, ngram_numbers: dict, cngrams: bool) -> list:
     """ Function is used to generate ngrams from given token list (fus). 1. ngram_numbers: With the var ngram_numbers
     to numbers are passed for two different ngram-cycles: e.g. {3, 4} means, that at first 3-grams are generated from
     the fus-list and added to an output list. Then 4-grams are generated from the same fus-list and those are added
-    to the output-list too. So in the end the output contains 3-grams and 4-grams of the passed fus-list. 2. cngrams:
+    to the output-list too. So in the end the output contains 3-grams and 4-grams of the passed fus-list. ({3} or {2,4,5} also possible) 2. cngrams:
     the bool determines if the ngrams are genereated continuously across token borders (true) or only for each
     isolated token (false): e.g. pasta basta (in the example only 3-grams are shown, but normally also 4-grams are
     added) --> true: (p,a,s), (a,s,t), (s,t,a), (t,a,' '), (a,' ',b), (' ',b,a), (b,a,s), (a,s,t), (s,t,a) (including
     whitespaces) --> false: (p,a,s), (a,s,t), (s,t,a), (b,a,s), (a,s,t), (s,t,a) (only each token is separated)
 
-    Parameters ---------- fus: list the list contains the featureunits as token ngram_numbers: dict dictionary
+    Parameters 
+    ---------- 
+    fus: list the list contains the featureunits as token ngram_numbers: dict dictionary
     contains the config-setting for what length of ngrams are generated --> passed numbers determine two different
     cycles. cngrams: boolean bool value from config to determine if ngrams or continuous ngrams (across tokenborders)
     are generated
@@ -205,10 +220,11 @@ def gen_ngrams(fus: list, ngram_numbers: dict, cngrams: bool) -> list:
     --------
     fus: list
         list with ngrams generated from fus-token """
+        
     global counter
     global fussize
     # Check if the config-settings are valid numbers
-    if type(list(ngram_numbers.keys())[0]) == int and type(list(ngram_numbers.keys())[1]) == int:
+    if all(isinstance(x, int) for x in ngram_numbers):
         # False == Non-Continuous: Ngrams are generated for each token isolated
         if not cngrams:
             ngrams_complete = list()

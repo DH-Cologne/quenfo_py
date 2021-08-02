@@ -14,6 +14,7 @@ fus_config:
   normalize: true
   stem: true
   filterSW: true
+  # Generates sets of 3-Grams and 4-Grams joined in one list --> other valid options: {3} or {2,3,6} ...
   nGrams: {3,4}
   continuousNGrams: false
 
