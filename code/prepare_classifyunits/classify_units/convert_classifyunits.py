@@ -9,13 +9,13 @@ from typing import Union
 # ## Functions
 
 # Split into paragraphs
-def split_at_empty_line(jobad: object) -> list:
+def split_at_empty_line(jobad_content: str) -> list:
     """ Get Paragraphs:
         +++ Step 1: Split at emtpy line +++ 
         
     Parameters
     ----------
-    jobad: object
+    jobad_content: str
         Receives a jobad object of class JobAds
     
     Returns
@@ -24,7 +24,7 @@ def split_at_empty_line(jobad: object) -> list:
         list of paragraphs from the jobad.content text """
 
     # Returns list of paragraphs per object
-    return jobad.content.split("\n\n")
+    return jobad_content.split("\n\n")
 
 
 # Remove whitespaces

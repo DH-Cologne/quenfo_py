@@ -59,7 +59,7 @@ class TestNLPTools(unittest.TestCase):
             "Ausrüstungst. GeHatec-Gesellschaft für Haustechnik Berlin mbH "
             "Ausbildungsplatz für 2018 als Technischer Zeichner für Tga Tech.Gebäudeausrüstung Technische / -r "
             "Systemplaner / - in - Versorgungs - und Ausrüstungst. in Berlin bei GeHatec - Gesellschaft für "
-            "Haustechnik Berlin mbH.Aussagekräftige Bewerbung bitte direkt über den Bewerben - Button "
+            "Haustechnik Berlin mbH. Aussagekräftige Bewerbung bitte direkt über den Bewerben - Button "
             "versenden.\n",
             "Ein solides Handwerk kommt nicht aus der Mode.Egal welche technischen Neuerungen auf den Markt "
             "kommen, in unserer Ausbildung als Technischer Zeichner für Tga Tech.Gebäudeausrüstung Technische "
@@ -78,7 +78,7 @@ class TestNLPTools(unittest.TestCase):
             "Technischer Zeichner für Tga Tech. Gebäudeausrüstung Technische/-r Systemplaner/-in - Versorgungs- und "
             "Ausrüstungst. GeHatec-Gesellschaft für Haustechnik Berlin mbH Ausbildungsplatz für 2018 als Technischer "
             "Zeichner für Tga Tech.Gebäudeausrüstung Technische / -r Systemplaner / - in - Versorgungs - und "
-            "Ausrüstungst. in Berlin bei GeHatec - Gesellschaft für Haustechnik Berlin mbH.Aussagekräftige Bewerbung "
+            "Ausrüstungst. in Berlin bei GeHatec - Gesellschaft für Haustechnik Berlin mbH. Aussagekräftige Bewerbung "
             "bitte direkt über den Bewerben - Button versenden.\nEin solides Handwerk kommt nicht aus der Mode.Egal "
             "welche technischen Neuerungen auf den Markt kommen, in unserer Ausbildung als Technischer Zeichner für "
             "Tga Tech.Gebäudeausrüstung Technische  / -r Systemplaner / - in - Versorgungs - und Ausrüstungst.werden "
