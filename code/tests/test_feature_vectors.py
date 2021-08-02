@@ -8,7 +8,7 @@ TODO: Replikation der featurevector Generierung:
     Alle fus werden der liste fuo hinzugefügt. dh nach diesem schritt gibt es nach wie vor die classifyunits mit ihren fus, aber es gibt auch noch
     eine Liste uniqueFeatureunits, die alle fus aller cus enthält (alphabetisch und sortiert)
 
-2. bow2 wird mit den Trainingsdaten erstellt /gefüllt
+2. bow2 wird mit den Trainingsdaten erstellt /gefüllt --> trainingsdaten werden zuvor als classifyunit object eingelesen
 
 3. initalisiere set FeatureValues (s. funktion unten aus Loglikelihood script)
     - hier wird das bow2 (aus den trainingsdaten) als bowtemp gesetzt und das bow1 erstellt. 
