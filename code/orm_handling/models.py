@@ -75,13 +75,13 @@ class ClassifyUnits(Base):
     def __init__(self, classID, paragraph, featureunits, featurevectors):
         self.classID = classID
         self.paragraph = paragraph
-        self.id = next(ClassifyUnits.id_iter)
+        #self.id = next(ClassifyUnits.id_iter)
         self.featureunits = featureunits
         self.featurevectors = featurevectors
 
     # Name the objects
     def __repr__(self):
-        return "(%s, %s)" % (self.id, self.parent.id)
+        return "(%s)" % (self.parent.id)
 
     def set_featureunits(self, value):
         self.featureunits = value

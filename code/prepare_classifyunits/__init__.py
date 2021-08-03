@@ -38,30 +38,33 @@ def generate_classifyunits(jobad: object):
         fus are instantiated."""
         fus = feature_units.convert_featureunits.replace(para)
 
-        # Check if fus is an empty list or if child already exists  or fus == []
-        """ if any(para == v.paragraph for v in jobad.children):
-            print("HERE --> paragraph already has been processed")
-
-            cu.set_featureunits(fus)
-        else: 
-            print("stillmissing")"""
-
-        if fus != []:
-            # 3. Add cleaned paragraph, default classID, featureunits and featurevectors to classify unit
-            cu = ClassifyUnits(classID=0, paragraph=para, featureunits=list(), featurevectors=list())
-            # set the list of token without non-alphanumerical characters as prototype-fus
-            cu.set_featureunits(fus)
-            # 4. Connect the cu (classifyunit) as a child to its parent (jobad)
-            jobad.children.append(cu)
-
+        # Check if fus is an empty list or if child does not exists
+        if not(any(para == v.paragraph for v in jobad.children)):
+            if fus != []:
+                # 3. Add cleaned paragraph, default classID, featureunits and featurevectors to classify unit
+                cu = ClassifyUnits(classID=0, paragraph=para, featureunits=list(), featurevectors=list())
+                # set the list of token without non-alphanumerical characters as prototype-fus
+                cu.set_featureunits(fus)
+                # 4. Connect the cu (classifyunit) as a child to its parent (jobad)
+                jobad.children.append(cu)
+        #if paragraph is already processed in a classifyunit --> store it again at the same place (to avoid duplicates)
+        else:
+            if fus != []:
+                for child in jobad.children:
+                    if child.paragraph == para:
+                        child.set_featureunits(fus)
 
 
     # Iterate over each jobad and make featureunits and featurevectors vor each cu
     for cu in jobad.children:
+        print(jobad.id)
+        print(cu)
+        
         # 5. Make feature units
         feature_units.get_featureunits(cu)
 
         # 6. Make featurevectors
         feature_vectors.get_featurevectors(cu)
+
     
     #sys.exit()

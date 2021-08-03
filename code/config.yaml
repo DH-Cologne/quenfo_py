@@ -20,7 +20,7 @@ fus_config:
 
 
 
-query_limit: 200
+query_limit: 500
 
 resources:
   input_path: '..\..\quenfo_data\sqlite\orm\text_kernel_orm_2018_03.db'
