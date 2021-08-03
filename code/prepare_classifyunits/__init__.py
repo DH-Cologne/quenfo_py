@@ -2,6 +2,7 @@
 
 # ## Imports
 
+import orm_handling
 from orm_handling.models import ClassifyUnits, JobAds
 import sys
 from . import classify_units
@@ -37,7 +38,14 @@ def generate_classifyunits(jobad: object):
         fus are instantiated."""
         fus = feature_units.convert_featureunits.replace(para)
 
-        # Check if fus is an empty list
+        # Check if fus is an empty list or if child already exists  or fus == []
+        """ if any(para == v.paragraph for v in jobad.children):
+            print("HERE --> paragraph already has been processed")
+
+            cu.set_featureunits(fus)
+        else: 
+            print("stillmissing")"""
+
         if fus != []:
             # 3. Add cleaned paragraph, default classID, featureunits and featurevectors to classify unit
             cu = ClassifyUnits(classID=0, paragraph=para, featureunits=list(), featurevectors=list())
@@ -45,6 +53,8 @@ def generate_classifyunits(jobad: object):
             cu.set_featureunits(fus)
             # 4. Connect the cu (classifyunit) as a child to its parent (jobad)
             jobad.children.append(cu)
+
+
 
     # Iterate over each jobad and make featureunits and featurevectors vor each cu
     for cu in jobad.children:

@@ -10,6 +10,7 @@ from pathlib import Path
 
 # ## Variables
 is_created = None
+mode = "overwrite"
 
 # ## Open Configuration-file and set variables + paths
 with open(Path('config.yaml'), 'r') as yamlfile:
@@ -31,20 +32,26 @@ def get_jobads(session: Session) -> list:
     jobads: list
         Data contains the orm-objects from class JobAds """
 
-    """ ClassifyUnits.__table__.drop(engine)
-    ClassifyUnits.__table__.create(engine) """
-
+    
+    # load the jobads
     job_ads = session.query(JobAds).limit(query_limit).all()
+
+    
     # delete the handles from jobads to classifunits or create new table
     try:
-        session.query(ClassifyUnits).delete()
+        if mode == "overwrite" or "append":
+            session.query(ClassifyUnits).delete()
+        else:
+            print(".")
+            #session.query(ClassifyUnits).filter(JobAds.id == ClassifyUnits.id)
+        
     except sqlalchemy.exc.OperationalError:
         print("table classify_unit not existing --> create new one")
         ClassifyUnits.__table__.create(engine)
-    # TODO: wenn mode nicht overwrite ist, sonder append, dann muss hier noch eine andere option hin.
-
     pass_output(session)
+    
 
+    
     return job_ads
 
 
@@ -67,11 +74,37 @@ def create_output(session: Session, output: object):
     Parameters
     ----------
     session: Session
-        Session object, generated in module database. Contains the database path. """
+        Session object, generated in module database. Contains the database path. 
+    output: object
+        output object --> contains the jobad """
+    
+    if mode == "overwrite":
+        print("OVERWRITE")
+        __check_once()
+        session.add(output)
+    else:
+        print("APPEND")
+        #session.add(output)
+        while True:
+            if session.query(session.query(ClassifyUnits).filter_by(paragraph = output.children[0].paragraph).exists()).scalar():
+                #if session.query(ClassifyUnits).filter(ClassifyUnits.paragraph == output.children[0].paragraph and ClassifyUnits.id == output.children[0].id):
+                # print("jetzige cu",output.children[0])
+                print(output.children[0].parent_id)
+                output.children.remove(output.children[0])
+                #print(output.children)
+                print("bereits in der db")
+                
+                if output.children == []:
+                    break
+            else:
+                print("noch nicht in der db")
 
-    __check_once()
-    session.add(output)
+        if output.children != []:
+            session.add(output)
 
+
+ 
+                
 
 # Private function to check if needed table already exists, else drop it and create a new empty table
 def __check_once():

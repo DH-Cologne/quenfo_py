@@ -81,7 +81,7 @@ class ClassifyUnits(Base):
 
     # Name the objects
     def __repr__(self):
-        return "(%s, %s,%s)" % (self.id, self.parent.id, self.featureunits)
+        return "(%s, %s)" % (self.id, self.parent.id)
 
     def set_featureunits(self, value):
         self.featureunits = value
