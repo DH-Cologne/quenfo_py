@@ -26,7 +26,10 @@ def get_featurevectors(cu: object, fuso_list: list, traindata: list):
     INPUT:
         a. fuso_list: unique and ordered vocab of the testdata
         b. traindata: as ngram set
-        c. testdata current object"""
+        c. testdata current object
+        
+        aus cu wird das bow1, aus traindata wird das bow2 und das bowtemp"""
+
 
     # TODO: FEATUREVECTOR
     #print(len(fuso_list))

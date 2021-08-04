@@ -64,7 +64,7 @@ def generate_classifyunits(jobad: object):
         fuso_list = feature_vectors.gen_fuso(cu.featureunits)
     return fuso_list
 
-
+# No split into paragraphs needed
 def generate_train_cus(train_obj):
     para = train_obj.content
     
