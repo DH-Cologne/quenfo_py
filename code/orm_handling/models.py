@@ -94,8 +94,10 @@ class ClassifyUnits(Base):
 
 
 # -------------------------------------------------------------------------------
-
+# Class TrainingData
 class TrainingData(Base):
+    """ Checks and sets all TrainingData values. Defines tablename, columnnames and makes values reachable. """
+
     __tablename__ = 'traindata'
     index = Column(Integer, Sequence('index'), primary_key=True)
     postingId = Column('postingId', Integer)
@@ -114,7 +116,7 @@ class TrainingData(Base):
     def __repr__(self):
         return "(%s, %s, %s, %s)" % (self.postingId, self.zeilennr, self.classID, self.content)
 
-# Class ClassifyUnits
+# Class ClassifyUnits_Train
 class ClassifyUnits_Train(Base):
     
     __tablename__ = 'classify_units_train'
@@ -126,7 +128,6 @@ class ClassifyUnits_Train(Base):
     classID = Column('classID', Integer)
     content = Column('content', String)
 
-    # ClassifyUnits have a parent-child relationship as a child with JobAds.
     # ForeignKey to connect both Classes
     parent2 = relationship("TrainingData", back_populates="children2")
     parent_id2 = Column(Integer, ForeignKey('traindata.index'))
@@ -160,7 +161,7 @@ class ClassifyUnits_Train(Base):
     
 
 
-# Class OutputData
+""" # Class OutputData
 class OutputData(Base):
     __tablename__ = 'outputdata'
     index = Column(Integer, Sequence('index'), primary_key=True)
@@ -178,4 +179,4 @@ class OutputData(Base):
         self.prepro = prepro
 
     def __repr__(self):
-        return "(%s, %s, %s, %s, %s)" % (self.postingId, self.zeilennr, self.classID, self.content, self.prepro)
+        return "(%s, %s, %s, %s, %s)" % (self.postingId, self.zeilennr, self.classID, self.content, self.prepro) """

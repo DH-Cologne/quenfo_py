@@ -43,6 +43,7 @@ for jobad in jobads:
 # STEP 2: generate classify_units and feature_units for Traindata
 
 for train_obj in traindata:
+
     generate_train_cus(train_obj)
 
 
@@ -74,6 +75,6 @@ for jobad in jobads:
 
 # Commit generated classify units with paragraphs and class assignments to table
 orm.pass_output(session)
-
+orm.delete_filler(session2)
 session.close()
 

@@ -2,8 +2,8 @@
 
 # ## Imports
 from database.connection import Session2
-from sqlalchemy.orm import Session, query
-from .models import ClassifyUnits, ClassifyUnits_Train, OutputData, TrainingData, JobAds
+from sqlalchemy.orm import Session, query, session
+from .models import ClassifyUnits, ClassifyUnits_Train, TrainingData, JobAds
 import sqlalchemy
 from database import engine, engine2
 import yaml
@@ -76,17 +76,20 @@ def get_traindata(session2: Session) -> list:
     traindata = session2.query(TrainingData).all()
     # TODO: REMEBER TO DROP THE TABLE LATER ON
     try:
-        ClassifyUnits.__table__.create(engine2)
+        ClassifyUnits_Train.__table__.create(engine2)
     except sqlalchemy.exc.OperationalError:
         print("table does already exist")
-        ClassifyUnits.__table__.drop(engine2)
-        ClassifyUnits.__table__.create(engine2)
+        ClassifyUnits_Train.__table__.drop(engine2)
+        ClassifyUnits_Train.__table__.create(engine2)
         pass
 
     # return Trainindata objects as list
     return traindata
 
-
+def delete_filler(session2):
+    # remove all unwanted in memory stored objects and just drp the table in traindata
+    session2.rollback()
+    ClassifyUnits_Train.__table__.drop(engine2)
 
 def pass_output(session: Session):
     """ The session.commit() statement commits all adds to the current session.
