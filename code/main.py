@@ -7,7 +7,7 @@ TODO:
 
 # ## Imports
 from prepare_classifyunits import generate_classifyunits
-from database import session
+from database import session, session2
 from orm_handling import orm
 from orm_handling.models import ClassifyUnits
 from database import engine
@@ -22,6 +22,10 @@ logging.basicConfig(
 
 # Load the Input data: JobAds in JobAds Class.
 jobads = orm.get_jobads(session)
+
+# Load the TrainingData: TrainingData in TrainingData Class
+traindata = orm.get_traindata(session2)
+
 
 for jobad in jobads:
 

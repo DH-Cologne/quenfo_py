@@ -27,4 +27,5 @@ mode : append
 
 resources:
   input_path: '..\..\quenfo_data\sqlite\orm\text_kernel_orm_2018_03.db'
+  traindata_path: '..\..\traindata_sql.db'
   stopwords_path: '..\..\quenfo_data\resources\classification\stopwords.txt'

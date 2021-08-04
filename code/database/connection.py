@@ -13,9 +13,8 @@ with open(Path('config.yaml'), 'r') as yamlfile:
 
 # ## Input-Paths
 input_path = cfg['resources']['input_path']
+traindata_path = cfg['resources']['traindata_path']
 
-# input_path = os.path.join('..','..', 'traindata_sql.db')
-# input_path = os.path.join('..','..', 'text_kernel_orm_2018_03.db')
 
 # Create engine with path
 engine = create_engine('sqlite:///' + input_path, echo=False)
@@ -25,3 +24,8 @@ Session = sessionmaker(bind=engine)
 
 # Instantiate a session object
 session = Session()
+
+engine2 = create_engine('sqlite:///' + traindata_path, echo=False)
+Session2 = sessionmaker(bind=engine2)
+session2 = Session2()
+

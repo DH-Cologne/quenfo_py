@@ -39,19 +39,18 @@ def generate_classifyunits(jobad: object):
         fus = feature_units.convert_featureunits.replace(para)
 
         # Check if fus is an empty list or if child does not exists
-        if not(any(para == v.paragraph for v in jobad.children)):
-            if fus != []:
-                # 3. Add cleaned paragraph, default classID, featureunits and featurevectors to classify unit
-                cu = ClassifyUnits(classID=0, paragraph=para, featureunits=list(), featurevectors=list())
-                # set the list of token without non-alphanumerical characters as prototype-fus
-                cu.set_featureunits(fus)
-                # 4. Connect the cu (classifyunit) as a child to its parent (jobad)
-                jobad.children.append(cu)
+        if not(any(para == v.paragraph for v in jobad.children)) and fus != []:
+            # 3. Add cleaned paragraph, default classID, featureunits and featurevectors to classify unit
+            cu = ClassifyUnits(classID=0, paragraph=para, featureunits=list(), featurevectors=list())
+            # set the list of token without non-alphanumerical characters as prototype-fus
+            cu.set_featureunits(fus)
+            # 4. Connect the cu (classifyunit) as a child to its parent (jobad)
+            jobad.children.append(cu)
         #if paragraph is already processed in a classifyunit --> store it again at the same place (to avoid duplicates)
         else:
             if fus != []:
                 for child in jobad.children:
-                    if child.paragraph == para:
+                    if child.paragraph == para :
                         child.set_featureunits(fus)
 
 

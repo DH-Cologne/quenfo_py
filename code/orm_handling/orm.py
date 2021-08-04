@@ -1,6 +1,7 @@
 """Script to build data and to create data"""
 
 # ## Imports
+from database.connection import Session2
 from sqlalchemy.orm import Session, query
 from .models import ClassifyUnits, OutputData, TrainingData, JobAds
 import sqlalchemy
@@ -31,9 +32,13 @@ def get_jobads(session: Session) -> list:
     Returns
     -------
     jobads: list
-        Data contains the orm-objects from class JobAds """
-
+        Data contains the orm-objects from class JobAds 
     
+    Raises
+    ------
+    sqlalchemy.exc.OperationalError
+        If changes in db are not possible, OperationalError is raised to continue with creation of table """
+
     # load the jobads
     job_ads = session.query(JobAds).limit(query_limit).all()
 
@@ -52,6 +57,27 @@ def get_jobads(session: Session) -> list:
     pass_output(session)
     
     return job_ads
+
+
+def get_traindata(session2: Session) -> list:
+    """ Function manages the data query and instantiates the Schema for the class TrainingData in models.py
+
+    Parameters
+    ----------
+    session2: Session
+        Session object, generated in module database. Contains the database path
+
+    Returns
+    -------
+    traindata: list
+        Data contains the orm-objects from class TrainingData """
+
+    # load the TrainingData
+    traindata = session2.query(TrainingData).all()
+    
+    # return Trainindata objects as list
+    return traindata
+
 
 
 def pass_output(session: Session):
