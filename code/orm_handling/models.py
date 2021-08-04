@@ -7,6 +7,7 @@ from sqlalchemy.orm import backref, relationship
 from sqlalchemy.sql.functions import array_agg
 from database import session
 import itertools
+import weakref
 
 # get Base connection
 Base = declarative_base()
@@ -158,6 +159,7 @@ class ClassifyUnits_Train(Base):
 
     def set_featurevectors(self, value):
         self.featurevectors = value
+
     
 
 

@@ -20,7 +20,7 @@ fus_config:
 
 
 
-query_limit: 200
+query_limit: 50
 
 #mode : overwrite
 mode : append

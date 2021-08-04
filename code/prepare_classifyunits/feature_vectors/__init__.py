@@ -1,6 +1,8 @@
-from orm_handling.models import JobAds
+from orm_handling.models import JobAds, TrainingData
 from . import convert_featurevectors
 import itertools
+import sys
+import numpy as np
 
 fuso_list = list()
 
@@ -30,7 +32,32 @@ def get_featurevectors(cu: object, fuso_list: list, traindata: list):
         
         aus cu wird das bow1, aus traindata wird das bow2 und das bowtemp"""
 
+    # Adde alle Featureunits der traindata zum bow_train (aka bow2) muss nureinmal gemacht werden
+    bow_train = convert_featurevectors.initialize_bow_train(traindata)
+    # Adde alle Featureunits der testdaten zuum bow_cu (aka bow1) wird jedes mal neue für jede cu gemacht
+    bow_cu = convert_featurevectors.gen_bow_cu(cu.featureunits)
 
+    # TODO: REMOVE BOW_CU FROM BOW_TRAIN = BOW_TEMP
+    #bow_temp = bow_train.remove(bow_cu)
+    #bow_temp = np.delete(bow_train, np.where(bow_train == bow_cu), axis=0)
+    #bow_temp = np.all(np.equal(bow_train, bow_cu), axis=1)
+    #bow_temp = np.delete(bow_train,np.where(bow_train==bow_cu))
+
+    # SEHR ZEITAUFWENDIG
+    bow_temp = np.delete(bow_train, np.where(bow_train==bow_cu))
+
+    """ bow_temp = bow_train
+    try:
+        bow_temp = np.ndarray(list(bow_train).remove(bow_cu)) 
+    except ValueError:
+        print("bow1 is not part of bowtemp")
+        pass """
+    
+    #print(bow_temp)
+
+    #print(bow_temp)
+
+    #sys.exit()
     # TODO: FEATUREVECTOR
     #print(len(fuso_list))
 

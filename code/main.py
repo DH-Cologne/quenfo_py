@@ -52,7 +52,7 @@ for train_obj in traindata:
 # STEP 3: generate Featurevectors for Testdata
 # extra loop because already processed featureunits are needed here
 for jobad in jobads:
-
+    
     # TODO: Check if fuso_list is filled
     generate_featurevectors(jobad, fuso_list, traindata)
 
