@@ -57,9 +57,7 @@ def generate_classifyunits(jobad: object):
 
     # Iterate over each jobad and make featureunits and featurevectors vor each cu
     for cu in jobad.children:
-        print(jobad.id)
-        print(cu)
-        
+
         # 5. Make feature units
         feature_units.get_featureunits(cu)
 

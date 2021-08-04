@@ -10,13 +10,13 @@ from pathlib import Path
 
 # ## Variables
 is_created = None
-mode = "overwrite"
-#mode = "append"
+
 
 # ## Open Configuration-file and set variables + paths
 with open(Path('config.yaml'), 'r') as yamlfile:
     cfg = yaml.load(yamlfile, Loader=yaml.FullLoader)
     query_limit = cfg['query_limit']
+    mode = cfg['mode']
 
 
 # Function to query the data from the db table
