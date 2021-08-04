@@ -3,7 +3,7 @@
 # ## Imports
 
 import orm_handling
-from orm_handling.models import ClassifyUnits, JobAds
+from orm_handling.models import ClassifyUnits, ClassifyUnits_Train, JobAds
 import sys
 from . import classify_units
 from . import feature_units
@@ -60,8 +60,39 @@ def generate_classifyunits(jobad: object):
         # 5. Make feature units
         feature_units.get_featureunits(cu)
 
+        # Prepare fuso list (unique and ordered vocab of testdata)
+        fuso_list = feature_vectors.gen_fuso(cu.featureunits)
+    return fuso_list
+
+
+def generate_train_cus(train_obj):
+    para = train_obj.content
+    
+    fus = feature_units.convert_featureunits.replace(para)
+
+    # Check if fus is an empty list or if child does not exists
+    if fus != []:
+        # 3. Add cleaned paragraph, default classID, featureunits and featurevectors to classify unit
+        cu = ClassifyUnits_Train(classID=0, content=para, featureunits=list(), featurevectors=list())
+        # set the list of token without non-alphanumerical characters as prototype-fus
+        cu.set_featureunits(fus)
+        # 4. Connect the cu (classifyunit) as a child to its parent (jobad)
+        train_obj.children2.append(cu)
+
+    
+    for cu in train_obj.children2:
+
+        # 5. Make feature units
+        feature_units.get_featureunits(cu)
+
+
+
+def generate_featurevectors(jobad, fuso_list, traindata):
+
+    for cu in jobad.children:
+
         # 6. Make featurevectors
-        feature_vectors.get_featurevectors(cu)
+        feature_vectors.get_featurevectors(cu, fuso_list, traindata)
 
     
     #sys.exit()

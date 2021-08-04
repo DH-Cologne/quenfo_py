@@ -3,9 +3,9 @@
 # ## Imports
 from database.connection import Session2
 from sqlalchemy.orm import Session, query
-from .models import ClassifyUnits, OutputData, TrainingData, JobAds
+from .models import ClassifyUnits, ClassifyUnits_Train, OutputData, TrainingData, JobAds
 import sqlalchemy
-from database import engine
+from database import engine, engine2
 import yaml
 from pathlib import Path
 
@@ -74,7 +74,15 @@ def get_traindata(session2: Session) -> list:
 
     # load the TrainingData
     traindata = session2.query(TrainingData).all()
-    
+    # TODO: REMEBER TO DROP THE TABLE LATER ON
+    try:
+        ClassifyUnits.__table__.create(engine2)
+    except sqlalchemy.exc.OperationalError:
+        print("table does already exist")
+        ClassifyUnits.__table__.drop(engine2)
+        ClassifyUnits.__table__.create(engine2)
+        pass
+
     # return Trainindata objects as list
     return traindata
 

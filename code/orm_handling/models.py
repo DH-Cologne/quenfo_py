@@ -88,6 +88,9 @@ class ClassifyUnits(Base):
 
     def set_featurevectors(self, value):
         self.featurevectors = value
+    
+    def set_classID(self, value):
+        self.classID = value
 
 
 # -------------------------------------------------------------------------------
@@ -95,10 +98,12 @@ class ClassifyUnits(Base):
 class TrainingData(Base):
     __tablename__ = 'traindata'
     index = Column(Integer, Sequence('index'), primary_key=True)
-    postingId = Column('postingId')
+    postingId = Column('postingId', Integer)
     zeilennr = Column('zeilennr')
     classID = Column('classID')
     content = Column('content')
+
+    children2 = relationship("ClassifyUnits_Train", back_populates="parent2")
 
     def __init__(self, postingId, zeilennr, classID, content):
         self.postingId = postingId
@@ -108,6 +113,51 @@ class TrainingData(Base):
 
     def __repr__(self):
         return "(%s, %s, %s, %s)" % (self.postingId, self.zeilennr, self.classID, self.content)
+
+# Class ClassifyUnits
+class ClassifyUnits_Train(Base):
+    
+    __tablename__ = 'classify_units_train'
+
+    # Columns to query
+    id = Column(Integer, primary_key=True)
+    postingId = Column('postingId', Integer)
+    zeilennr = Column('zeilennr', Integer)
+    classID = Column('classID', Integer)
+    content = Column('content', String)
+
+    # ClassifyUnits have a parent-child relationship as a child with JobAds.
+    # ForeignKey to connect both Classes
+    parent2 = relationship("TrainingData", back_populates="children2")
+    parent_id2 = Column(Integer, ForeignKey('traindata.index'))
+
+    # Set uid for each classify unit
+    id_iter = itertools.count()
+
+    # Set featureunit
+    featureunits = list()
+
+    # Set featurevector
+    featurevectors = list()
+
+    # init-function to set values, works as constructor
+    def __init__(self, classID, content, featureunits, featurevectors):
+        self.classID = classID
+        self.content = content
+        #self.id = next(ClassifyUnits.id_iter)
+        self.featureunits = featureunits
+        self.featurevectors = featurevectors
+
+    # Name the objects
+    def __repr__(self):
+        return "(%s, %s)" % (self.id, self.parent_id2)
+
+    def set_featureunits(self, value):
+        self.featureunits = value
+
+    def set_featurevectors(self, value):
+        self.featurevectors = value
+    
 
 
 # Class OutputData

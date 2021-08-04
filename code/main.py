@@ -6,7 +6,7 @@ TODO:
     * Information Extraction and Matching"""
 
 # ## Imports
-from prepare_classifyunits import generate_classifyunits
+from prepare_classifyunits import generate_classifyunits, generate_featurevectors, generate_train_cus
 from database import session, session2
 from orm_handling import orm
 from orm_handling.models import ClassifyUnits
@@ -27,44 +27,53 @@ jobads = orm.get_jobads(session)
 traindata = orm.get_traindata(session2)
 
 
+# ## PREPARATION 
+# STEP 1: generate classify_units, feature_units for Testdata
 for jobad in jobads:
 
     # ## TODO: PREPARE CLASSIFY UNITS
     # Pass list of JobAds-objects to be converted to clean paragraphs, featureunits and feature vectors
-    listo = generate_classifyunits(jobad)
+    fuso_list = generate_classifyunits(jobad)
 
-
-
-    # TODO: TEXTCLASSIFICATION
-    # Pass cleaned and vectorized jobad to Text-Classification via KNN
-    # child is a classify unit for a specific jobad
-    """ for child in jobad.children:
-        print(child.paragraph)
-        print(child.featureunit) 
-        print(child.featurevector) """
-
-
-    # erst nach der Text-classification soll jede jobad inkl. cu mit classID in den output geschrieben werden.
     # add obj to current session --> to be written in db
     orm.create_output(session, jobad)
 
 
+
+# STEP 2: generate classify_units and feature_units for Traindata
+
+for train_obj in traindata:
+    generate_train_cus(train_obj)
+
+
+
+
+# STEP 3: generate Featurevectors for Testdata
+# extra loop because already processed featureunits are needed here
+for jobad in jobads:
+
+    # TODO: Check if fuso_list is filled
+    generate_featurevectors(jobad, fuso_list, traindata)
+
+    # add obj to current session --> to be written in db
+    orm.create_output(session, jobad)
+
+
+
+# TODO: TEXTCLASSIFICATION
+    # Pass cleaned and vectorized jobad to Text-Classification via KNN
+    # child is a classify unit for a specific jobad
+    """ for child in jobad.children:
+    print(child.paragraph)
+    print(child.featureunit) 
+    print(child.featurevector) """
+    # working!!!
+    """ for cu in jobad.children:
+        print(cu.featureunits)
+        cu.set_classID(2) """
 
 # Commit generated classify units with paragraphs and class assignments to table
 orm.pass_output(session)
 
 session.close()
 
-
-""" # Load traindata and store it in list of objects
-data = use_traindata()
-
-for obj in data:
-    # preprocess each obj
-    print(obj)
-    onestring = manipulate_data(obj)
-    # write output
-    generate_output(obj, onestring)
-
-# commit sollte besser in orm.py aber dann wirds mehrmals aufgerufen deshalb erstmal hier.
-session.commit() """
