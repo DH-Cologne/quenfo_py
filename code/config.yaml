@@ -22,8 +22,8 @@ fus_config:
 
 query_limit: 50
 
-#mode : overwrite
-mode : append
+mode : overwrite
+#mode : append
 
 resources:
   input_path: '..\..\quenfo_data\sqlite\orm\text_kernel_orm_2018_03.db'

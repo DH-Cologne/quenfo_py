@@ -182,13 +182,15 @@ def stem(fus: list, stem: bool) -> list:
         for token in fus:
             stemmed_fus.append(stemmer.stem(token))
 
+        """ # NLTK Cistem Stemmer --> other possibility for stemming --> test in classification
+        stemmer = Cistem()
+        for token in fus:
+            stemmed_fus.append(stemmer.segment(token)[0]) """
+
         # remove empty strings and strings <= 1
         stemmed_fus = list(filter(lambda n: 1 <= len(n), stemmed_fus))
 
-        # NLTK Cistem Stemmer --> other possibility for stemming --> test in classification
-        """ stemmer = Cistem()
-        for token in fus:
-            stemmed_fus.append(stemmer.segment(token)[0]) """
+        
 
         return stemmed_fus
     else:

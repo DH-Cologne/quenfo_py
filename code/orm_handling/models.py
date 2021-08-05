@@ -82,7 +82,7 @@ class ClassifyUnits(Base):
 
     # Name the objects
     def __repr__(self):
-        return "(%s)" % (self.parent.id)
+        return "(%s, %s)" % (self.id, self.parent.id)
 
     def set_featureunits(self, value):
         self.featureunits = value
@@ -115,7 +115,7 @@ class TrainingData(Base):
         self.content = content
 
     def __repr__(self):
-        return "(%s, %s, %s, %s)" % (self.postingId, self.zeilennr, self.classID, self.content)
+        return "(%s, %s, %s)" % (self.postingId, self.zeilennr, self.classID)
 
 # Class ClassifyUnits_Train
 class ClassifyUnits_Train(Base):
@@ -146,19 +146,22 @@ class ClassifyUnits_Train(Base):
     def __init__(self, classID, content, featureunits, featurevectors):
         self.classID = classID
         self.content = content
-        #self.id = next(ClassifyUnits.id_iter)
+        self.id = next(ClassifyUnits.id_iter)
         self.featureunits = featureunits
         self.featurevectors = featurevectors
 
     # Name the objects
     def __repr__(self):
-        return "(%s, %s)" % (self.id, self.parent_id2)
+        return "(%s, %s)" % (self.id, self.parent2)
 
     def set_featureunits(self, value):
         self.featureunits = value
 
     def set_featurevectors(self, value):
         self.featurevectors = value
+
+    def set_classID(self, value):
+        self.classID = value
 
     
 

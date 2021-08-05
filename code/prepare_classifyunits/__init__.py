@@ -73,16 +73,12 @@ def generate_train_cus(train_obj):
     # Check if fus is an empty list or if child does not exists
     if fus != []:
         # 3. Add cleaned paragraph, default classID, featureunits and featurevectors to classify unit
-        cu = ClassifyUnits_Train(classID=0, content=para, featureunits=list(), featurevectors=list())
+        cu = ClassifyUnits_Train(classID=train_obj.classID, content=para, featureunits=list(), featurevectors=list())
         # set the list of token without non-alphanumerical characters as prototype-fus
         cu.set_featureunits(fus)
         # 4. Connect the cu (classifyunit) as a child to its parent (jobad)
         train_obj.children2.append(cu)
 
-    
-    for cu in train_obj.children2:
-
-        # 5. Make feature units
         feature_units.get_featureunits(cu)
 
 
