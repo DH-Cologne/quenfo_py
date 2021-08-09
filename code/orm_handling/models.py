@@ -90,6 +90,37 @@ class ClassifyUnits(Base):
         self.featurevectors = value
 
 
+class ExtractionUnits(Base):
+    __tablename__ = 'extraction_units'
+    id = Column(Integer, primary_key=True)
+    paragraph = Column('paragraph', ClassifyUnits)
+    position_index = Column('position_index', int)
+    sentence = Column('sentence', String(225))
+    # TODO type for token_array, in java: Texttoken
+    token_array = Column("token_array")
+
+    parent_id = Column(Integer, ForeignKey('classify_units.id'))
+    parent = relationship('ClassifyUnits', back_populates="children")
+
+    token = list()
+    lemmata = list()
+    pos_tags = list()
+
+    def __init__(self, paragraph, position_index, sentence, token_array, token, lemmata, pos_tags):
+        self.paragraph = paragraph
+        self.position_index = position_index
+        self.sentence = sentence
+        self.token_array = token_array
+        self.token = token
+        self.lemmata = lemmata
+        self.pos_tags = pos_tags
+
+    def set_lexicaldata(self, token, lemmata, pos_tags):
+        self.token = token
+        self.lemmata = lemmata
+        self.pos_tags = pos_tags
+
+
 # -------------------------------------------------------------------------------
 
 class TrainingData(Base):

@@ -13,7 +13,6 @@ with open(Path('config.yaml'), 'r') as yamlfile:
 
 
 class TestNLPTools(unittest.TestCase):
-    @unittest.skip
     def test_split_text_into_paragraphs(self):
         example_input = "Wir stellen ab sofort ein:\n\nAltenpflegehelfer/in\n\nWas Sie mitbringen " \
                         "sollten:\n-Abgeschlossenes Studium\n-Gute Sprachkenntnisse in Deutsch und Englisch"
@@ -23,11 +22,27 @@ class TestNLPTools(unittest.TestCase):
                                                                                 "Studium\n-Gute Sprachkenntnisse in "
                                                                                 "Deutsch und Englisch"]
 
-        # TODO Methode bekommt als Parameter ein Objekt der Klasse JobAds und keinen String übergeben
         self.assertEqual(convert_classifyunits.split_at_empty_line(example_input), example_output)
 
-    # TODO Funktion schreiben
-    # def test_remove_whitespaces(self):
+    def test_remove_whitespaces(self):
+        test_input = ["     Wir stellen ab sofort ein:\n\nAltenpflegehelfer/in\n\nWas Sie mitbringen "
+                      "sollten:\n-Abgeschlossenes Studium\n-Gute Sprachkenntnisse in Deutsch und Englisch           ",
+                      "             Technischer Zeichner für Tga Tech.Gebäudeausrüstung Technische / -r "
+                      "Systemplaner / - in - Versorgungs - und "
+                      "Ausrüstungst. GeHatec-Gesellschaft für Haustechnik Berlin mbH\n\n            ",
+                      "             Ausbildungsplatz für 2018 als Technischer Zeichner für Tga Tech.Gebäudeausrüstung "
+                      "Technische / -r Haustechnik Berlin mbH. \n"
+                      "Aussagekräftige Bewerbung bitte direkt über den Bewerben - Button versenden.             "]
+
+        test_output = ['Wir stellen ab sofort ein:\n\nAltenpflegehelfer/in\n\nWas Sie mitbringen '
+                       'sollten:\n-Abgeschlossenes Studium\n-Gute Sprachkenntnisse in Deutsch und Englisch',
+                       'Technischer Zeichner für Tga Tech.Gebäudeausrüstung Technische / -r Systemplaner / - in - '
+                       'Versorgungs - und Ausrüstungst. GeHatec-Gesellschaft für Haustechnik Berlin mbH',
+                       'Ausbildungsplatz für 2018 als Technischer Zeichner für Tga Tech.Gebäudeausrüstung Technische '
+                       '/ -r Haustechnik Berlin mbH.\nAussagekräftige Bewerbung bitte direkt über den Bewerben - '
+                       'Button versenden.']
+
+        self.assertEqual(convert_classifyunits.remove_whitespaces(test_input), test_output)
 
     def test_identify_and_merge_listitems(self):
         example_input = ["Ihre Aufgabe:\n"
@@ -51,8 +66,6 @@ class TestNLPTools(unittest.TestCase):
         self.assertEqual(convert_classifyunits.identify_listitems(example_input), example_output)
         self.assertIsInstance(convert_classifyunits.identify_listitems(example_input), list)
 
-    @unittest.skip
-    # Output ist nicht gleich
     def test_mergewhatbelongstogether(self):
         test_input = [
             "Technischer Zeichner für Tga Tech. Gebäudeausrüstung Technische/-r Systemplaner/-in - Versorgungs- und "
@@ -61,7 +74,7 @@ class TestNLPTools(unittest.TestCase):
             "Systemplaner / - in - Versorgungs - und Ausrüstungst. in Berlin bei GeHatec - Gesellschaft für "
             "Haustechnik Berlin mbH. Aussagekräftige Bewerbung bitte direkt über den Bewerben - Button "
             "versenden.\n",
-            "Ein solides Handwerk kommt nicht aus der Mode.Egal welche technischen Neuerungen auf den Markt "
+            "Ein solides Handwerk kommt nicht aus der Mode. Egal welche technischen Neuerungen auf den Markt "
             "kommen, in unserer Ausbildung als Technischer Zeichner für Tga Tech.Gebäudeausrüstung Technische "
             " / -r Systemplaner / - in - Versorgungs - und Ausrüstungst.werden Innovationen aufgenommen "
             "und mit altbewährten Methoden ergänzt.Mit der Ausbildung zur / zum Technischer Zeichner.\n",
@@ -74,20 +87,26 @@ class TestNLPTools(unittest.TestCase):
             "+ Kontakte zu arabischsprachigen Experte/-innen, Lotse/-innen und ehrenamtlichen Helfer/-innen\n"
             "+ Erfahrung mit MS Office"]
 
-        test_output = [
-            "Technischer Zeichner für Tga Tech. Gebäudeausrüstung Technische/-r Systemplaner/-in - Versorgungs- und "
-            "Ausrüstungst. GeHatec-Gesellschaft für Haustechnik Berlin mbH Ausbildungsplatz für 2018 als Technischer "
-            "Zeichner für Tga Tech.Gebäudeausrüstung Technische / -r Systemplaner / - in - Versorgungs - und "
-            "Ausrüstungst. in Berlin bei GeHatec - Gesellschaft für Haustechnik Berlin mbH. Aussagekräftige Bewerbung "
-            "bitte direkt über den Bewerben - Button versenden.\nEin solides Handwerk kommt nicht aus der Mode.Egal "
-            "welche technischen Neuerungen auf den Markt kommen, in unserer Ausbildung als Technischer Zeichner für "
-            "Tga Tech.Gebäudeausrüstung Technische  / -r Systemplaner / - in - Versorgungs - und Ausrüstungst.werden "
-            "Innovationen aufgenommen und mit altbewährten Methoden ergänzt.Mit der Ausbildung zur / zum Technischer "
-            "Zeichner.\n', '  Anforderungsprofil\n+ Erfahrung in der Terminplanung\n+ Abgeschlossenes "
-            "betriebswirtschaftliches Studium wünschenswert\n+ Pflege des Projektplans und des Kostenplans\n+ "
-            "Freundliches Auftreteten, auch in schwierigen Situationen\n+ Sichere Deutsch- und Arabischkenntnisse in "
-            "Wort und Schrift\n+ Kontakte zu arabischsprachigen Experte/-innen, Lotse/-innen und ehrenamtlichen "
-            "Helfer/-innen\n+ Erfahrung mit MS Office"]
+        test_output = ['Technischer Zeichner für Tga Tech. Gebäudeausrüstung Technische/-r Systemplaner/-in - '
+                       'Versorgungs- und Ausrüstungst. GeHatec-Gesellschaft für Haustechnik Berlin mbH '
+                       'Ausbildungsplatz für 2018 als Technischer Zeichner für Tga Tech.Gebäudeausrüstung Technische '
+                       '/ -r Systemplaner / - in - Versorgungs - und Ausrüstungst. in Berlin bei GeHatec - '
+                       'Gesellschaft für Haustechnik Berlin mbH. Aussagekräftige Bewerbung bitte direkt über den '
+                       'Bewerben - Button versenden.\n\nEin solides Handwerk kommt nicht aus der Mode. Egal welche '
+                       'technischen Neuerungen auf den Markt kommen, in unserer Ausbildung als Technischer Zeichner '
+                       'für Tga Tech.Gebäudeausrüstung Technische  / -r Systemplaner / - in - Versorgungs - und '
+                       'Ausrüstungst.werden Innovationen aufgenommen und mit altbewährten Methoden ergänzt.Mit der '
+                       'Ausbildung zur / zum Technischer Zeichner.\n', '  Anforderungsprofil\n+ Erfahrung in der '
+                                                                       'Terminplanung\n+ Abgeschlossenes '
+                                                                       'betriebswirtschaftliches Studium '
+                                                                       'wünschenswert\n+ Pflege des Projektplans und '
+                                                                       'des Kostenplans\n+ Freundliches Auftreteten, '
+                                                                       'auch in schwierigen Situationen\n+ Sichere '
+                                                                       'Deutsch- und Arabischkenntnisse in Wort und '
+                                                                       'Schrift\n+ Kontakte zu arabischsprachigen '
+                                                                       'Experte/-innen, Lotse/-innen und '
+                                                                       'ehrenamtlichen Helfer/-innen\n+ Erfahrung mit '
+                                                                       'MS Office']
 
         self.assertEqual(convert_classifyunits.identify_whatbelongstogether(test_input), test_output)
         self.assertIsInstance(convert_classifyunits.identify_whatbelongstogether(test_input), list)

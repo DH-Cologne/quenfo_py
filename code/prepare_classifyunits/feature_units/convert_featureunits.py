@@ -102,7 +102,7 @@ def normalize(fus: list, normalize: bool) -> list:
             # filter 
             if len(fu) > 1:
                 norm_fus.append(fu)
-        return norm_fus
+    return norm_fus
 
 
 # Stopwords Removal

@@ -46,12 +46,15 @@ def generate_classifyunits(jobad: object):
             # 4. Connect the cu (classifyunit) as a child to its parent (jobad)
             jobad.children.append(cu)
 
+    cus = list()
+
     # Iterate over each jobad and make featureunits and featurevectors vor each cu
     for cu in jobad.children:
         # 5. Make feature units
         feature_units.get_featureunits(cu)
+        cus.append(cu)
 
-        # 6. Make featurevectors
-        feature_vectors.get_featurevectors(cu)
+    # 6. Make featurevectors (parameter: list of ClassifyUnits)
+    feature_vectors.get_featurevectors(cus)
     
     #sys.exit()

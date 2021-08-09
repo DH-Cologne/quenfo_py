@@ -17,8 +17,10 @@ class TestGetJobAds(unittest.TestCase):
                                                                           "exist.")
 
     def test_type_of_jobads(self):
-        # TODO: check if object type of list is JobAds
-        self.assertIsInstance(orm_handling.orm.get_jobads(connection.session), list)
+        output = orm_handling.orm.get_jobads(connection.session)
+        self.assertIsInstance(output, list)
+        if not any(isinstance(item, JobAds) for item in output):
+            print("List is not type JobAds.")
 
 
 if __name__ == '__main__':

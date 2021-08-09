@@ -3,7 +3,7 @@ from . import convert_featurevectors
 
 # from . import convert_featurevectors
 # TODO: rückgabe später sollte kein string sein sondern ein vector
-def get_featurevectors(cu):
+def get_featurevectors(cus: list):
     # TODO: FEATUREVECTOR
 
     # generate featurevector
@@ -12,4 +12,5 @@ def get_featurevectors(cu):
 
     fvs = 'filler'  # filler
 
-    cu.set_featurevectors(fvs)
+    for cu in cus:
+        cu.set_featurevectors(fvs)
