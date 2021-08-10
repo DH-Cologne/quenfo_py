@@ -91,7 +91,12 @@ class ClassifyUnits(Base):
 
 
 class ExtractionUnits(Base):
+    """ Checks and sets all ExtractionUnits values. Defines tablename, columnnames and makes values reachable. """
+
+    # Tablename for matching with db table
+    # TODO: declare in config
     __tablename__ = 'extraction_units'
+    # Columns to query
     id = Column(Integer, primary_key=True)
     paragraph = Column('paragraph', ClassifyUnits)
     position_index = Column('position_index', int)
@@ -99,13 +104,17 @@ class ExtractionUnits(Base):
     # TODO type for token_array, in java: Texttoken
     token_array = Column("token_array")
 
+    # ExtractionUnits have a parent-child relationship as a child with ClassifyUnits.
+    # ForeignKey to connect both Classes
     parent_id = Column(Integer, ForeignKey('classify_units.id'))
     parent = relationship('ClassifyUnits', back_populates="children")
 
+    # Set lexical data
     token = list()
     lemmata = list()
     pos_tags = list()
 
+    # init-function to set values, works as constructor
     def __init__(self, paragraph, position_index, sentence, token_array, token, lemmata, pos_tags):
         self.paragraph = paragraph
         self.position_index = position_index

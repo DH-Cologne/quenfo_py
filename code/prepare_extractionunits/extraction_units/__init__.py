@@ -2,6 +2,7 @@ from . import convert_extractionunits
 
 
 def get_extractionunits(classifyunit: object) -> list:
-    list_extractionunits = convert_extractionunits.tokenize(classifyunit.content)
+    extractionunits = list()
+    sentences = convert_extractionunits.split_into_sentences(classifyunit.content)
 
-    return list_extractionunits
+    return extractionunits
