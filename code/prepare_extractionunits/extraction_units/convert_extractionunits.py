@@ -1,41 +1,124 @@
+"""Script contains several functions used to preprocess the passed texts, objects, strings etc."""
+
+# ## Imports
 import spacy
 import re
+import nltk
 
 from prepare_classifyunits.classify_units import convert_classifyunits
 
 
+# ##Functions
+
+# Split into Sentences
 def split_into_sentences(content: str) -> list:
+    """Get ExtractionUnits:
+        +++ Step 1: Split Paragraph into Sentences. Take use of SentenceRecognizer from Spacy.+++
+
+        Parameters:
+        -----------
+        content: str
+            Receives the content of an ClassifyUnit-Object
+
+        Returns:
+        --------
+        list
+            list of sentences from the ClassifyUnit-Content"""
+
     extractionunits = list()
-    # Construction from class
+    # Construction from class and apply the SentenceRecognizer
     nlp = spacy.load("de_core_news_sm")
     list_extractionunits = nlp(content)
 
     for eu in list_extractionunits.sents:
+        # Paragraphs with list items will be separated as single sentences
         splitted = __split_list_items(str(eu))
         extractionunits.extend(splitted)
 
+    # returns list with sentences from ClassifyUnit
     return extractionunits
 
 
+# Split list items into single sentences
 def __split_list_items(sentence: str) -> list:
     extractionunits = list()
+    # split sentence at empty lines
     splitted_eu = convert_classifyunits.split_at_empty_line(sentence)
-    list_item_regex = re.compile(r"(^(-\*|\+|-|\*))")
+    # regex for match any existing list item in the sentence
+    list_item_regex = re.compile(r"^[0-9][\\.| ]?|^[\+|\-|\*]")
     for string in splitted_eu:
+        # remove whitespaces, tabstops etc.
         string = string.strip()
+        # compare regex with given sentence
         m = re.match(list_item_regex, string)
         if m:
+            # if regex matches, the list item is removed from the sentence
             string = string[m.end():]
-            print(string)
             string = string.strip()
-        if len(string) > 0:
+        if len(string) > 0 & __contains_only_word_characters(string):
             extractionunits.append(string)
 
+    # returns the sentence without any list items
     return extractionunits
 
 
-def __contains_only_non_word_characters(string: str) -> bool:
+# check if sentence contains word characters
+def __contains_only_word_characters(string: str) -> bool:
+    # regex for word character
     word_regex = re.compile(r"\w")
     if re.match(word_regex, string):
         return True
     return False
+
+
+# correct sentence
+# TODO Beziehen sich diese Fälle auf Textkernel-Daten? Sind sie notwendig?
+def correct_sentence(sentence: str) -> str:
+    """Get ExtractionUnits:
+            +++ Step 2: Correct specific elements of the sentence. +++
+
+            Parameters:
+            -----------
+            sentence: str
+                Receives a sentence as potential ExtractionUnit
+
+            Returns:
+            --------
+            str
+                given string with corrections """
+    if sentence.__contains__("UND"):
+        sentence = sentence.replace("UND", "und")
+    if sentence.__contains__("ODER"):
+        sentence = sentence.replace("ODER", "oder")
+    regex = re.compile(" und[-|\\/| ][\\/| ]?[ ]?oder ")
+    m = re.match(regex, sentence)
+    if m:
+        sentence = sentence.replace(m.group(), "oder")
+    regex = " oder[-|\\/| ][\\/| ]?[ ]?und "
+    m = re.match(regex, sentence)
+    if m:
+        sentence = sentence.replace(m.group(), "und")
+
+    # TODO 3 weitere Fälle
+
+    return sentence
+
+
+# get POS-tags for each token
+def get_pos_tags(tokens: list) -> list:
+    """Get ExtractionUnits:
+                +++ Step 3: Get lexical data from tokens. +++
+
+                Parameters:
+                -----------
+                tokens: list
+                    Receives a list of tokens from a sentence.
+
+                Returns:
+                --------
+                list
+                    list of POS-tags for each token"""
+    # TODO Pos-Tagger nur fürs Englische
+    pos_tags = nltk.pos_tag(tokens)
+
+    return pos_tags
