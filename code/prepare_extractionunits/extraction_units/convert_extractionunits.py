@@ -3,12 +3,13 @@
 # ## Imports
 import spacy
 import re
-import nltk
 
 from prepare_classifyunits.classify_units import convert_classifyunits
 
-
+# load nlp-model for sentence detection, pos tagger and lemmatizer
+nlp = spacy.load("de_core_news_sm")
 # ##Functions
+
 
 # Split into Sentences
 def split_into_sentences(content: str) -> list:
@@ -27,7 +28,7 @@ def split_into_sentences(content: str) -> list:
 
     extractionunits = list()
     # Construction from class and apply the SentenceRecognizer
-    nlp = spacy.load("de_core_news_sm")
+
     list_extractionunits = nlp(content)
 
     for eu in list_extractionunits.sents:
@@ -104,21 +105,49 @@ def correct_sentence(sentence: str) -> str:
     return sentence
 
 
-# get POS-tags for each token
-def get_pos_tags(tokens: list) -> list:
+# get POS-tag for each token of given sentence
+def get_pos_tags(sentence: str) -> list:
     """Get ExtractionUnits:
                 +++ Step 3: Get lexical data from tokens. +++
 
                 Parameters:
                 -----------
-                tokens: list
-                    Receives a list of tokens from a sentence.
+                sentence: str
+                        Receives sentence as potential ExtractionUnit.
 
                 Returns:
                 --------
                 list
                     list of POS-tags for each token"""
-    # TODO Pos-Tagger nur fürs Englische
-    pos_tags = nltk.pos_tag(tokens)
+    pos_tags = list()
+
+    pre_pos_tags = nlp(sentence)
+    for token in pre_pos_tags:
+        print(token.text, token.pos_)
+        pos_tags.append(token.pos_)
 
     return pos_tags
+
+
+# get lemma for each token of given sentence
+def get_lemmata(sentence: str) -> list:
+    """Get ExtractionUnits:
+                    +++ Step 3: Get lexical data from tokens. +++
+
+                    Parameters:
+                    -----------
+                    sentence: str
+                        Receives sentence as potential ExtractionUnit.
+
+                    Returns:
+                    --------
+                    list
+                        list of lemma for each token"""
+    lemmata = list()
+
+    pre_lemmata = nlp(sentence)
+    for token in pre_lemmata:
+        print(token.text, token.lemma_)
+        lemmata.append(token.lemma_)
+
+    return lemmata

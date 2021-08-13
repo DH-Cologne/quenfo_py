@@ -17,8 +17,8 @@ def get_extractionunits(classifyunit: object) -> list:
         sentence = convert_extractionunits.correct_sentence(sentence)
         # set lexical data
         token = convert_featureunits.tokenize(sentence)
-        postags = convert_extractionunits.get_pos_tags(token)
-        lemmata = convert_extractionunits.get_lemmata(token)
+        postags = convert_extractionunits.get_pos_tags(sentence)
+        lemmata = convert_extractionunits.get_lemmata(sentence)
 
         if len(sentence) > 1:
             eu = ExtractionUnits(paragraph=classifyunit, sentence=sentence, token=token, posTags=postags,
