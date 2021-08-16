@@ -39,8 +39,9 @@ def replace(para: str) -> str:
         returns para variable without non-alphanumerical characters"""
 
     # Regex to replace all non-alphanumerical chars with whitespaces
-    #para = re.sub('\W+', ' ', para)
-    para = re.sub('\W+|[_]+', ' ', para)
+    para = re.sub('\W+', ' ', para)
+    #para = re.sub('\W+|[_]+', ' ', para)
+
     return para
 
 

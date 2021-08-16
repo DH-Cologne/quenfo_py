@@ -60,9 +60,6 @@ def generate_classifyunits(jobad: object):
         # 5. Make feature units
         feature_units.get_featureunits(cu)
 
-        # Prepare fuso list (unique and ordered vocab of testdata)
-        fuso_list = feature_vectors.gen_fuso(cu.featureunits)
-    return fuso_list
 
 # No split into paragraphs needed
 def generate_train_cus(train_obj):
@@ -83,12 +80,12 @@ def generate_train_cus(train_obj):
 
 
 
-def generate_featurevectors(jobad, fuso_list, traindata):
+def generate_featurevectors(jobad, traindata):
 
     for cu in jobad.children:
-
+        
         # 6. Make featurevectors
-        feature_vectors.get_featurevectors(cu, fuso_list, traindata)
+        feature_vectors.get_featurevectors(cu, traindata)
 
     
     #sys.exit()
