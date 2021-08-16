@@ -35,23 +35,47 @@ def get_featurevectors(cu: object, fuso_list: list, traindata: list):
         
         aus cu wird das bow1, aus traindata wird das bow2 und das bowtemp"""
 
-    # vectorize die trainingsdaten durch bow-fitter und return
+    # überprüfen ob fuso list gefüllt ist, sonst neu generieren
+    # wenn bereits trainiertes modell vorliegt dann liegt auch traindata bow2 schon vor, sonst nochmal füllen
+
+    # bow2 generieren und dann multiset erstellen mögl. mit dictionary vllt --> dict mit featureunits und dann entsprechende anzahl an vorkommen {fu(blume): 3}
+    # bow2 ist dann das dictionary#
+    bow_train, fitter, clf, all_classes = convert_featurevectors.initialize_bow_train(traindata, cu.featureunits)
+
+    # dann bow_temp = bow2
+    bow_temp = bow_train
+
+    # dann bow1 erstellt und mit featureuntis gefüllt und zum multisets
+    bow_cu = convert_featurevectors.gen_bow_cu(cu.featureunits, fitter)
+    # dann wird bow_temp = bow_temp - bow1
+
+    # prototyp prediction
+    predicted = clf.predict(bow_cu)
+    print(cu, predicted)
+    
+    cu.set_classID(predicted[0])
+
+
+    #bow_temp = np.delete(bow_temp, np.where(bow_temp==bow_cu))
+
+
+    # aus bow1 und bow_temp wird mittels loglikelihood dann die scores berechnet
+
+
+
+    """ # vectorize die trainingsdaten durch bow-fitter und return
     bow_train, all_classes, clf, fitter = convert_featurevectors.initialize_bow_train(traindata, cu.featureunits)
 
     bow_temp = bow_train
     
     
     # vectorize die cu mittels fitter
-    bow_cu = convert_featurevectors.gen_bow_cu(cu.featureunits, fitter)
+    bow_cu = convert_featurevectors.gen_bow_cu(cu.featureunits, fitter) """
     
     #bow_temp = np.delete(bow_train, np.where(bow_train==bow_cu))
     #print(bow_temp)
     
-    # prototyp prediction
-    predicted = clf.predict(bow_cu)
-    print(cu, predicted)
-    
-    cu.set_classID(predicted[0])
+
 
     
 

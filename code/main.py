@@ -21,35 +21,30 @@ logging.basicConfig(
 ) """
 
 
+# ## STEP 2:
+# Load the TrainingData: TrainingData in TrainingData Class
+traindata = orm.get_traindata(session2)
+
+# generate classify_units and feature_units for Traindata
+for train_obj in traindata:
+    generate_train_cus(train_obj)
+
+
+# ## STEP 1:
 # Load the Input data: JobAds in JobAds Class.
 jobads = orm.get_jobads(session)
 
-
-# ## PREPARATION 
-# STEP 1: generate classify_units, feature_units for Testdata
+#generate classify_units, feature_units for Testdata
 for jobad in jobads:
-
     # ## TODO: PREPARE CLASSIFY UNITS
     # Pass list of JobAds-objects to be converted to clean paragraphs, featureunits and feature vectors
     fuso_list = generate_classifyunits(jobad)
-
     # add obj to current session --> to be written in db
     orm.create_output(session, jobad)
 
 
-# Load the TrainingData: TrainingData in TrainingData Class
-traindata = orm.get_traindata(session2)
-
-# STEP 2: generate classify_units and feature_units for Traindata
-
-for train_obj in traindata:
-
-    generate_train_cus(train_obj)
-
-
-
-
-# STEP 3: generate Featurevectors for Testdata
+# ## STEP 3: 
+# generate Featurevectors for Testdata
 # extra loop because already processed featureunits are needed here
 for jobad in jobads:
     
