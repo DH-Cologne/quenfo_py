@@ -14,7 +14,6 @@ clf = ''
 fitter =''
 all_features = list()
 all_classes=list()
-import sys
 
 
 def initialize_bow_train(traindata):
@@ -26,7 +25,6 @@ def initialize_bow_train(traindata):
     global all_features
 
     if is_created is None:
-        print("HELLO")
         for train_obj in traindata:
             for cu in train_obj.children2:
                 #df = df.append([{'id':cu.id, 'classID': cu.classID, 'parent': cu.parent2, 'fus': cu.featureunits}], ignore_index=True)
@@ -35,10 +33,8 @@ def initialize_bow_train(traindata):
         
         fitter = TfidfVectorizer(tokenizer=lambda doc: doc, lowercase=False).fit(all_features)
         bow_train = fitter.transform(all_features)
-        print(bow_train)
         # knn prototyp
         knn = KNeighborsClassifier(n_neighbors=5)
-        print(all_classes)
         clf = knn.fit(bow_train, all_classes)
         is_created = 'checked' 
         return clf, fitter

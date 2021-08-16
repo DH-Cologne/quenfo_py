@@ -42,4 +42,3 @@ def get_featurevectors(cu: object, traindata: list):
     print(cu, predicted)
     
     cu.set_classID(predicted[0])
-
