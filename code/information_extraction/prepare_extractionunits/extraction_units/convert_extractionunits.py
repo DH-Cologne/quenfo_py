@@ -73,8 +73,7 @@ def __contains_only_word_characters(string: str) -> bool:
 
 
 # correct sentence
-# TODO Beziehen sich diese Fälle auf Textkernel-Daten? Sind sie notwendig?
-def correct_sentence(sentence: str) -> str:
+def normalize_sentence(sentence: str) -> str:
     """Get ExtractionUnits:
             +++ Step 2: Correct specific elements of the sentence. +++
 
@@ -87,20 +86,51 @@ def correct_sentence(sentence: str) -> str:
             --------
             str
                 given string with corrections """
+
+    # 'und'/'oder' in uppercase change to be lowercase
     if sentence.__contains__("UND"):
         sentence = sentence.replace("UND", "und")
     if sentence.__contains__("ODER"):
         sentence = sentence.replace("ODER", "oder")
-    regex = re.compile(" und[-|\\/| ][\\/| ]?[ ]?oder ")
-    m = re.match(regex, sentence)
-    if m:
-        sentence = sentence.replace(m.group(), "oder")
-    regex = " oder[-|\\/| ][\\/| ]?[ ]?und "
-    m = re.match(regex, sentence)
-    if m:
-        sentence = sentence.replace(m.group(), "und")
 
-    # TODO 3 weitere Fälle
+    # 'und/oder' in sentence change to be 'oder'
+    regex = re.compile(r"^.*( und[-\\/ ][\\/ ]?[ ]?oder )")
+    m = re.match(regex, sentence)
+    if m:
+        sentence = sentence.replace(m.group(1), " oder ")
+
+    # 'oder/und' in sentence change to be 'und'
+    regex = re.compile(r"^.*( oder[-|\\/| ][\\/| ]?[ ]?und )")
+    m = re.match(regex, sentence)
+    if m:
+        sentence = sentence.replace(m.group(1), " und ")
+
+    # normalizes dot or comma if there is a space before them but none after them
+    # adds a space after dot or comma
+    regex = re.compile(r"^.*(\s[\\.\\,])(\w+)")
+    m = re.match(regex, sentence)
+    if m:
+        # exception: .NET (Microsoft-Framework)
+        if m.group(2).lower() != "net":
+            sentence = sentence.replace(m.group(1), m.group(1) + " ")
+
+    # if there is a comma or semicolon without a space between two words,
+    # a space is inserted after the comma or semicolon
+    regex = re.compile(r"^.*[A-Za-z]+([\\,\\;])[A-Za-z]+")
+    m = re.match(regex, sentence)
+    if m:
+        sentence = sentence.replace(m.group(1), m.group(1) + " ")
+
+    # checks the sentence for occurrences of / and * followed by two word characters and preceded by a space character
+    # and normalizes them
+    # e.g. Entwickler *in -> Entwickler/in
+    regex = re.compile(r"^.*(\s[\\/\\*])(\w\w)")
+    m = re.match(regex, sentence)
+    if m:
+        if m.group(2) != "in":
+            sentence = sentence.replace(m.group(1), " ")
+        else:
+            sentence = sentence.replace(m.group(1), "/")
 
     return sentence
 

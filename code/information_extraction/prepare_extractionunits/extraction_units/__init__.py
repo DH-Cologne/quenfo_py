@@ -18,7 +18,7 @@ def get_extractionunits(classifyunit: object) -> list:
 
     for sentence in sentences:
         token_array = list()
-        sentence = convert_extractionunits.correct_sentence(sentence)
+        sentence = convert_extractionunits.normalize_sentence(sentence)
         # set lexical data
         token = convert_featureunits.tokenize(sentence)
         postags = convert_extractionunits.get_pos_tags(sentence)

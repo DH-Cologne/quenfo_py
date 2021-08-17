@@ -2,7 +2,8 @@
 
 # ## Imports
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import create_engine, String, Integer, Float, Boolean, Column, Sequence, ForeignKey
+from sqlalchemy import create_engine, String, Integer, Float, Boolean, Column, Sequence, ForeignKey, PickleType
+from sqlalchemy.ext.mutable import MutableList
 from sqlalchemy.orm import backref, relationship
 from sqlalchemy.sql.functions import array_agg
 from database import session
@@ -56,7 +57,7 @@ class ClassifyUnits(Base):
     # TODO: declare in config
     __tablename__ = 'classify_units'
     # Columns to query
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, Sequence('id'), primary_key=True)
     classID = Column('classID', Integer)
     paragraph = Column('paragraph', String(225))
 
@@ -64,6 +65,7 @@ class ClassifyUnits(Base):
     # ForeignKey to connect both Classes
     parent_id = Column(Integer, ForeignKey('jobads.id'))
     parent = relationship("JobAds", back_populates="children")
+    children = relationship("ExtractionUnits", back_populates="parent")
 
     # Set uid for each classify unit
     id_iter = itertools.count()
@@ -95,22 +97,23 @@ class ClassifyUnits(Base):
 
 class ExtractionUnits(Base):
     """ Checks and sets all ExtractionUnits values. Defines tablename, columnnames and makes values reachable. """
+    # ExtractionUnits have a parent-child relationship as a child with ClassifyUnits.
+    # ForeignKey to connect both Classes
+    parent_id = Column(Integer, ForeignKey('classify_units.id'))
+    parent = relationship('ClassifyUnits', back_populates="children")
 
     # Tablename for matching with db table
     # TODO: declare in config
     __tablename__ = 'extraction_units'
     # Columns to query
     id = Column(Integer, primary_key=True)
-    paragraph = Column('paragraph', ClassifyUnits)
-    position_index = Column('position_index', int)
+    # not possible to use different class as column type
+    # paragraph should be ClassifyUnit-type
+    paragraph = Column('paragraph', String(225))
+    position_index = Column('position_index', Integer)
     sentence = Column('sentence', String(225))
     # TODO type for token_array, in java: Texttoken
-    token_array = Column("token_array", Token)
-
-    # ExtractionUnits have a parent-child relationship as a child with ClassifyUnits.
-    # ForeignKey to connect both Classes
-    parent_id = Column(Integer, ForeignKey('classify_units.id'))
-    parent = relationship('ClassifyUnits', back_populates="children")
+    token_array = Column("token_array", MutableList.as_mutable(PickleType), default=[])
 
     # Set lexical data
     token = list()
