@@ -9,11 +9,8 @@ TODO:
 from prepare_classifyunits import generate_classifyunits
 from database import session
 from orm_handling import orm
-from orm_handling.models import ClassifyUnits
-from database import engine
-import logging
 
-from prepare_extractionunits import generate_extractionunits
+from information_extraction.prepare_extractionunits import generate_extractionunits
 
 """ # ## Initiate Logging-Module
 logging.basicConfig(

@@ -8,6 +8,9 @@ from sqlalchemy.sql.functions import array_agg
 from database import session
 import itertools
 
+# import IE-Classes
+from information_extraction.prepare_extractionunits.extraction_units.models import Token
+
 # get Base connection
 Base = declarative_base()
 
@@ -102,7 +105,7 @@ class ExtractionUnits(Base):
     position_index = Column('position_index', int)
     sentence = Column('sentence', String(225))
     # TODO type for token_array, in java: Texttoken
-    token_array = Column("token_array")
+    token_array = Column("token_array", Token)
 
     # ExtractionUnits have a parent-child relationship as a child with ClassifyUnits.
     # ForeignKey to connect both Classes
