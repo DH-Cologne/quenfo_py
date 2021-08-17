@@ -8,7 +8,7 @@ import logging
 import sys
 
 # hier wird eigentlich das model übergeben
-def classify(traindata):
+def classify(model):
     # ## STEP 1:
     # Load the Input data: JobAds in JobAds Class.
     jobads = orm.get_jobads(session)
@@ -28,7 +28,7 @@ def classify(traindata):
     for jobad in jobads:
         
         # TODO: Check if fuso_list is filled
-        generate_featurevectors(jobad, traindata)
+        generate_featurevectors(jobad, model)
 
         # add obj to current session --> to be written in db
         orm.create_output(session, jobad)

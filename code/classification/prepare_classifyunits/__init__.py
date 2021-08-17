@@ -80,12 +80,12 @@ def generate_train_cus(train_obj):
 
 
 
-def generate_featurevectors(jobad, traindata):
+def generate_featurevectors(jobad, model):
 
     for cu in jobad.children:
         
         # 6. Make featurevectors
-        feature_vectors.get_featurevectors(cu, traindata)
+        feature_vectors.get_featurevectors(cu, model)
 
     
     #sys.exit()

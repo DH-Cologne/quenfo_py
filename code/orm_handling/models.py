@@ -8,6 +8,7 @@ from sqlalchemy.sql.functions import array_agg
 from database import session
 import itertools
 import weakref
+import sklearn
 
 # get Base connection
 Base = declarative_base()
@@ -162,6 +163,43 @@ class ClassifyUnits_Train(Base):
 
     def set_classID(self, value):
         self.classID = value
+
+    
+# ---------------------------------------------
+class Model():
+    """ __tablename__ = 'knn' """
+
+    model_knn = ''
+
+    # Set fitter
+    vectorizer = list()
+
+    # Set tfidf_train
+    tfidf_train = list()
+
+    # init-function to set values, works as constructor
+    def __init__(self, model_knn, vectorizer):
+        self.model_knn = model_knn
+        self.vectorizer = vectorizer
+
+    """ # Name the objects
+    def __repr__(self):
+        return "(%s)" % (self) """
+
+    """ def set_vectorizer(self, value):
+        self.vectorizer = value
+
+    def set_tfidf_train(self, value):
+        self.tfidf_train = value
+    
+    def get_model_knn(self):
+        return self.model_knn
+
+    def get_vectorizer(self): 
+        return self.vectorizer
+
+    def get_tfidf_train(self): 
+        return self.tfidf_train """
 
     
 
