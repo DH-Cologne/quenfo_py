@@ -23,9 +23,10 @@ logging.basicConfig(
     level=logging.DEBUG, filename='logger.log', filemode='w+',
 ) """
 
+# STEP 1: Train or Load Vectorizer and KNN as Class-object model
 model = initialize_model()
-#traindata = train()
 
+# STEP 2: Start Classification
 classify(model)
 
 

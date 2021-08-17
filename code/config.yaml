@@ -18,8 +18,6 @@ fus_config:
   nGrams: {3,4}
   continuousNGrams: false
 
-
-
 query_limit: 50
 
 mode : overwrite
@@ -32,3 +30,4 @@ resources:
 
 models:
   tfidf_path: '..\..\quenfo_data\resources\model_tfidf'
+  knn_path: '..\..\quenfo_data\resources\model_knn'

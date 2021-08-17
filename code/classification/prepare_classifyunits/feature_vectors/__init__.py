@@ -20,13 +20,7 @@ def get_featurevectors(cu: object, model):
 
     vectorizer = model.vectorizer
 
-    clf = model.model_knn
 
     # das bleibt hier
     tfidf_cu = convert_featurevectors.gen_tfidf_cu(cu.featureunits, vectorizer)
-    
-    # prototyp prediction
-    predicted = clf.predict(tfidf_cu)
-    print(cu, predicted)
-    
-    cu.set_classID(predicted[0])
+    cu.set_featurevector(tfidf_cu)

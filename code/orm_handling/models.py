@@ -74,12 +74,12 @@ class ClassifyUnits(Base):
     featurevectors = list()
 
     # init-function to set values, works as constructor
-    def __init__(self, classID, paragraph, featureunits, featurevectors):
+    def __init__(self, classID, paragraph, featureunits, featurevector):
         self.classID = classID
         self.paragraph = paragraph
         #self.id = next(ClassifyUnits.id_iter)
         self.featureunits = featureunits
-        self.featurevectors = featurevectors
+        self.featurevector = featurevector
 
     # Name the objects
     def __repr__(self):
@@ -88,8 +88,8 @@ class ClassifyUnits(Base):
     def set_featureunits(self, value):
         self.featureunits = value
 
-    def set_featurevectors(self, value):
-        self.featurevectors = value
+    def set_featurevector(self, value):
+        self.featurevector = value
     
     def set_classID(self, value):
         self.classID = value
@@ -144,12 +144,12 @@ class ClassifyUnits_Train(Base):
     featurevectors = list()
 
     # init-function to set values, works as constructor
-    def __init__(self, classID, content, featureunits, featurevectors):
+    def __init__(self, classID, content, featureunits, featurevector):
         self.classID = classID
         self.content = content
         self.id = next(ClassifyUnits.id_iter)
         self.featureunits = featureunits
-        self.featurevectors = featurevectors
+        self.featurevector = featurevector
 
     # Name the objects
     def __repr__(self):
@@ -158,8 +158,8 @@ class ClassifyUnits_Train(Base):
     def set_featureunits(self, value):
         self.featureunits = value
 
-    def set_featurevectors(self, value):
-        self.featurevectors = value
+    def set_featurevector(self, value):
+        self.featurevector = value
 
     def set_classID(self, value):
         self.classID = value
@@ -167,39 +167,17 @@ class ClassifyUnits_Train(Base):
     
 # ---------------------------------------------
 class Model():
-    """ __tablename__ = 'knn' """
 
+    # Set knn
     model_knn = ''
 
     # Set fitter
     vectorizer = list()
 
-    # Set tfidf_train
-    tfidf_train = list()
-
     # init-function to set values, works as constructor
     def __init__(self, model_knn, vectorizer):
         self.model_knn = model_knn
         self.vectorizer = vectorizer
-
-    """ # Name the objects
-    def __repr__(self):
-        return "(%s)" % (self) """
-
-    """ def set_vectorizer(self, value):
-        self.vectorizer = value
-
-    def set_tfidf_train(self, value):
-        self.tfidf_train = value
-    
-    def get_model_knn(self):
-        return self.model_knn
-
-    def get_vectorizer(self): 
-        return self.vectorizer
-
-    def get_tfidf_train(self): 
-        return self.tfidf_train """
 
     
 
