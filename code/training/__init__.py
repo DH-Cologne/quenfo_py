@@ -1,18 +1,17 @@
+""" Script manages the training-process. The Class Model is filled with the knn classifier and the tfidf vectorizer."""
+
 # ## Imports
-from inspect import Attribute
 from training.tfidfvectorizer import start_tfidf
+from training.knnclassifier import start_knn
 from classification import prepare_classifyunits
 from database import session, session2
 from orm_handling import models, orm
 import logging
-import sys
-from sklearn.utils.validation import check_is_fitted
 import sklearn
 import pickle
 import yaml
 from pathlib import Path
 from orm_handling.models import Model
-from training.knnclassifier import start_knn
 from typing import Union
 import inspect
 
@@ -23,19 +22,27 @@ with open(Path('config.yaml'), 'r') as yamlfile:
     models = cfg['models']
     tfidf_path = models['tfidf_path']
     knn_path = models['knn_path']
+    tfidf_config = cfg['tfidf_config']
 
-
-# load traindata 
-# check if tfidfmodel is already there and if it is filled with the same trainingdata and the same parameter
-    #if true: load the vectorizer and transform traindata
-        # output: fitter and tfidf_train matrix -- set all_classes and all_features
-    # if false: use traindata to fit the model and transform traindata
-        # output: fitter tfidf_trainmatrix -- set all_classes and all_features
-
+# ## Set variables
 all_features = list()
 all_classes=list()
 
-def initialize_model():
+# ## Functions
+def initialize_model() -> Model:
+    """ Function to start the training/loading process of the Model. 
+    a. try to load the models tfidf and knn
+    b. check if models are already trained with the same configurations
+    c. train again if loading fails or new configurations are set
+    """
+    # load traindata 
+    # check if tfidfmodel is already there and if it is filled with the same trainingdata and the same parameter
+        #if true: load the vectorizer and transform traindata
+            # output: fitter and tfidf_train matrix -- set all_classes and all_features
+        # if false: use traindata to fit the model and transform traindata
+            # output: fitter tfidf_trainmatrix -- set all_classes and all_features
+
+    # set variables global
     global all_classes
     global all_features
 
@@ -51,8 +58,11 @@ def initialize_model():
 
     # check if one of the models is None (not yet trained or loading failed) or if the models were already trained with the same trainingdata
     # TODO: irgendwo vllt auch in models oder in der config festlegen unter welchen parametern die modelle traineirt werden sollen (zum Abgleich)
+    
+    #print([item for item in tfidf_config.items()] in (model_tfidf.get_params()).items())
 
-    if model_tfidf is None or model_knn is None or model_tfidf.get_feature_names() != sorted(list(dict.fromkeys((" ".join(all_features)).split()))):
+    if model_tfidf is None or model_knn is None \
+        or model_tfidf.get_feature_names() != sorted(list(dict.fromkeys((" ".join(all_features)).split()))):
         print('one of the models tfidf or knn was not filled. Both need to be redone')
         
         model_tfidf, tfidf_train = start_tfidf(all_features)
@@ -64,6 +74,7 @@ def initialize_model():
 
     return model
 
+#  Help function to generate a list with all features and a list with all classes
 def __prepare_lists(traindata):
     for train_obj in traindata:
         for cu in train_obj.children2:

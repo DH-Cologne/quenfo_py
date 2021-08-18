@@ -4,11 +4,10 @@
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import create_engine, String, Integer, Float, Boolean, Column, Sequence, ForeignKey
 from sqlalchemy.orm import backref, relationship
-from sqlalchemy.sql.functions import array_agg
 from database import session
 import itertools
-import weakref
-import sklearn
+import sklearn.neighbors
+import sklearn.feature_extraction
 
 # get Base connection
 Base = declarative_base()
@@ -166,38 +165,15 @@ class ClassifyUnits_Train(Base):
 
     
 # ---------------------------------------------
+# class Model which contains the knnclassifier and the tfidfvectorizer
 class Model():
 
     # Set knn
-    model_knn = ''
-
-    # Set fitter
-    vectorizer = list()
+    model_knn = sklearn.neighbors.KNeighborsClassifier()
+    # Set vectorizer
+    vectorizer = sklearn.feature_extraction.text.TfidfVectorizer()
 
     # init-function to set values, works as constructor
     def __init__(self, model_knn, vectorizer):
         self.model_knn = model_knn
         self.vectorizer = vectorizer
-
-    
-
-
-""" # Class OutputData
-class OutputData(Base):
-    __tablename__ = 'outputdata'
-    index = Column(Integer, Sequence('index'), primary_key=True)
-    postingId = Column(String(225))
-    zeilennr = Column(Integer)
-    classID = Column(Integer)
-    content = Column(String(225))
-    prepro = Column('prepro', String(225))
-
-    def __init__(self, postingId, zeilennr, classID, content, prepro):
-        self.postingId = postingId
-        self.zeilennr = zeilennr
-        self.classID = classID
-        self.content = content
-        self.prepro = prepro
-
-    def __repr__(self):
-        return "(%s, %s, %s, %s, %s)" % (self.postingId, self.zeilennr, self.classID, self.content, self.prepro) """

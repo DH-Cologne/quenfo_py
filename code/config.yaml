@@ -31,3 +31,11 @@ resources:
 models:
   tfidf_path: '..\..\quenfo_data\resources\model_tfidf'
   knn_path: '..\..\quenfo_data\resources\model_knn'
+
+tfidf_config: 
+  lowercase: False
+  max_df: 1.0 
+  min_df: 1
+  ngram_range: (1, 1)
+  sublinear_tf: False
+  use_idf: True
