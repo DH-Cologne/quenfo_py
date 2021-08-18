@@ -37,7 +37,7 @@ for jobad in jobads:
     # erst nach der Text-classification soll jede jobad inkl. cu mit classID in den output geschrieben werden.
     # add obj to current session --> to be written in db
 
-# Erstellung der ExtrqactionUnits für IE
+# generate ExtractionUnits for IE
 for classifyunit in listo:
     extractionunits = generate_extractionunits(classifyunit)
 

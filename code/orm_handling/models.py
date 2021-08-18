@@ -107,12 +107,13 @@ class ExtractionUnits(Base):
     __tablename__ = 'extraction_units'
     # Columns to query
     id = Column(Integer, primary_key=True)
-    # not possible to use different class as column type
-    # paragraph should be ClassifyUnit-type
+    # TODO not possible to use different class as column type
+    # paragraph should be ClassifyUnit-type not string
     paragraph = Column('paragraph', String(225))
     position_index = Column('position_index', Integer)
     sentence = Column('sentence', String(225))
     # TODO type for token_array, in java: Texttoken
+    # try pickle?
     token_array = Column("token_array", MutableList.as_mutable(PickleType), default=[])
 
     # Set lexical data

@@ -13,6 +13,8 @@ from .models import Token
 
 def get_extractionunits(classifyunit: object) -> list:
     extractionunits = list()
+    position_index = 0
+
     # split each ClassifyUnit into sentences
     sentences = convert_extractionunits.split_into_sentences(classifyunit.content)
 
@@ -36,8 +38,11 @@ def get_extractionunits(classifyunit: object) -> list:
 
         if len(sentence) > 1:
             eu = ExtractionUnits(paragraph=classifyunit, sentence=sentence, token=token, posTags=postags,
-                                 lemmata=lemmata, token_array=token_array)
+                                 lemmata=lemmata, token_array=token_array, position_index=position_index)
             extractionunits.append(eu)
         classifyunit.children.append(eu)
+        position_index += 1
+
+    position_index = 0
 
     return extractionunits

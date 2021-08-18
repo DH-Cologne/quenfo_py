@@ -8,6 +8,8 @@ from prepare_classifyunits.classify_units import convert_classifyunits
 
 # load nlp-model for sentence detection, pos tagger and lemmatizer
 nlp = spacy.load("de_core_news_sm")
+
+
 # ##Functions
 
 
@@ -181,3 +183,15 @@ def get_lemmata(sentence: str) -> list:
         lemmata.append(token.lemma_)
 
     return lemmata
+
+
+def annotate_token(token: list):
+    """Get ExtractionUnits:
+                    +++ Step 4: Annotate tokens by comparing them with list of extraction errors,
+                    modifiers and known extractions. +++
+
+                    Parameters:
+                    -----------
+                        token: list
+                            Receives list with tokens from ExtractionUnit"""
+
