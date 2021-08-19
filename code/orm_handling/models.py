@@ -2,15 +2,12 @@
 
 # ## Imports
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import create_engine, String, Integer, Float, Boolean, Column, Sequence, ForeignKey, PickleType
+from sqlalchemy import String, Integer, Column, Sequence, ForeignKey, PickleType
 from sqlalchemy.ext.mutable import MutableList
-from sqlalchemy.orm import backref, relationship
-from sqlalchemy.sql.functions import array_agg
-from database import session
+from sqlalchemy.orm import relationship
 import itertools
 
 # import IE-Classes
-from information_extraction.prepare_extractionunits.extraction_units.models import Token
 
 # get Base connection
 Base = declarative_base()

@@ -155,7 +155,6 @@ def get_pos_tags(sentence: str) -> list:
 
     pre_pos_tags = nlp(sentence)
     for token in pre_pos_tags:
-        print(token.text, token.pos_)
         pos_tags.append(token.pos_)
 
     return pos_tags
@@ -179,7 +178,6 @@ def get_lemmata(sentence: str) -> list:
 
     pre_lemmata = nlp(sentence)
     for token in pre_lemmata:
-        print(token.text, token.lemma_)
         lemmata.append(token.lemma_)
 
     return lemmata

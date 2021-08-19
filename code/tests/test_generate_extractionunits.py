@@ -1,7 +1,8 @@
 import unittest
 
-from information_extraction import connection_resources
+from information_extraction.prepare_resources import connection_resources, convert_entities
 from information_extraction.prepare_extractionunits.extraction_units import convert_extractionunits
+
 
 
 class TestGenerateExtractionUnits(unittest.TestCase):
@@ -39,3 +40,26 @@ class TestGenerateExtractionUnits(unittest.TestCase):
 
     def test_get_entities_list(self):
         self.assertIsInstance(connection_resources.get_entities_from_file("tools"), list)
+
+    def test_normalize_entities(self):
+        case1 = "<end-"
+        case2 = "<root-"
+        case3 = "--"
+        case4 = "_personentransport"
+        case5 = ".personentransport"
+        case6 = "personentransport_"
+        case7 = "personentransport."
+
+        output1 = "<end-"
+        output2 = "root"
+        output3 = "--"
+        output4 = "personentransport"
+
+        self.assertEqual(convert_entities.normalize_entities_from_file(case1), output1)
+        self.assertEqual(convert_entities.normalize_entities_from_file(case2), output2)
+        self.assertEqual(convert_entities.normalize_entities_from_file(case3), output3)
+        self.assertEqual(convert_entities.normalize_entities_from_file(case4), output4)
+        self.assertEqual(convert_entities.normalize_entities_from_file(case5), output4)
+        self.assertEqual(convert_entities.normalize_entities_from_file(case6), output4)
+        self.assertEqual(convert_entities.normalize_entities_from_file(case7), output4)
+

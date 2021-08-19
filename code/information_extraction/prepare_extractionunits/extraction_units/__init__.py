@@ -8,7 +8,7 @@ from prepare_classifyunits.feature_units import convert_featureunits
 
 
 # ### Main-Function for ExtractionUnit generation
-from .models import Token
+from information_extraction.models import Token
 
 
 def get_extractionunits(classifyunit: object) -> list:
