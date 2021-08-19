@@ -14,6 +14,8 @@ from pathlib import Path
 from orm_handling.models import Model
 from typing import Union
 import inspect
+import os
+import datetime
 
 
 # ## Open Configuration-file and set variables + paths
@@ -23,6 +25,8 @@ with open(Path('config.yaml'), 'r') as yamlfile:
     tfidf_path = models['tfidf_path']
     knn_path = models['knn_path']
     tfidf_config = cfg['tfidf_config']
+    resources = cfg['resources']
+    traindata_path = resources['traindata_path']
 
 # ## Set variables
 all_features = list()
@@ -51,23 +55,26 @@ def initialize_model() -> Model:
 
     model_knn = load_model('model_knn')
     
-    traindata = prepare_traindata()
-    all_features, all_classes = __prepare_lists(traindata)
-
-    tfidf_train = None
-
-    # check if one of the models is None (not yet trained or loading failed) or if the models were already trained with the same trainingdata
-    # TODO: irgendwo vllt auch in models oder in der config festlegen unter welchen parametern die modelle traineirt werden sollen (zum Abgleich)
-    
-    #print([item for item in tfidf_config.items()] in (model_tfidf.get_params()).items())
+    # extract traindata name and last modification
+    try:
+        traindata_namedate = ('').join([str(Path(traindata_path).name), '$', str(datetime.datetime.fromtimestamp(os.path.getmtime(traindata_path)).replace(microsecond=0))])
+    except OSError:
+        print("Key Information for Traindata could not be extracted. Model will be saved without Traindata Information.")
+        traindata_namedate = ''
 
     if model_tfidf is None or model_knn is None \
-        or model_tfidf.get_feature_names() != sorted(list(dict.fromkeys((" ".join(all_features)).split()))):
+        or model_tfidf.input != traindata_namedate \
+        or model_knn.input != traindata_namedate: # check if inputname in model_tfidf is not the same as traindata_namedate: means, the traindata is new or modified.
         print('one of the models tfidf or knn was not filled. Both need to be redone')
         
-        model_tfidf, tfidf_train = start_tfidf(all_features)
+        traindata = prepare_traindata()
+        all_features, all_classes = __prepare_lists(traindata)
+
+        tfidf_train = None
+
+        model_tfidf, tfidf_train = start_tfidf(all_features, traindata_namedate)
         # hier wird knn trainiert mit tfidf_train und classes
-        model_knn = start_knn(tfidf_train, all_classes)
+        model_knn = start_knn(tfidf_train, all_classes, traindata_namedate)
 
     model = Model(model_knn=model_knn, vectorizer=model_tfidf)
     # bow traindata not needed --> hier an dieser stelle ist das knn auch schon vorhanden!
@@ -87,7 +94,7 @@ def prepare_traindata():
     # ## STEP 2:
     # Load the TrainingData: TrainingData in TrainingData Class
     traindata = orm.get_traindata(session2)
-
+    
     # fill classify_units (already there same as trainobjcontent) and genearte feature_units for Traindata
     for train_obj in traindata:
         prepare_classifyunits.generate_train_cus(train_obj)

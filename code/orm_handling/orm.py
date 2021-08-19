@@ -74,7 +74,7 @@ def get_traindata(session2: Session) -> list:
 
     # load the TrainingData
     traindata = session2.query(TrainingData).all()
-    # TODO: REMEBER TO DROP THE TABLE LATER ON
+    
     try:
         ClassifyUnits_Train.__table__.create(engine2)
     except sqlalchemy.exc.OperationalError:
