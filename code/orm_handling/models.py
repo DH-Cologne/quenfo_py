@@ -183,8 +183,8 @@ class Model():
         self.traindata_name = traindata_name
         self.traindata_date = traindata_date
 
-
-class Company:
+# class just to dump the traindatainfo with model
+class TraindataInfo:
     def __init__(self, name, date):
         self.name = name
         self.date = date
@@ -193,7 +193,7 @@ class Company:
         self.name = value
     def set_date(self, value):
         self.date = value
-
+# class just to dump model 
 class SaveModel:
     def __init__(self, name):
         self.name = name

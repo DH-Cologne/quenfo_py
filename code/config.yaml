@@ -36,6 +36,12 @@ tfidf_config:
   lowercase: False
   max_df: 1.0 
   min_df: 1
-  ngram_range: (1, 1)
   sublinear_tf: False
   use_idf: True
+
+knn_config:
+  n_neighbors: 5
+  weights: 'uniform'  
+  algorithm: 'auto'
+  leaf_size: 30
+  metric: 'minkowski'
