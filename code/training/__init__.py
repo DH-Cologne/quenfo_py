@@ -8,14 +8,15 @@ from database import session, session2
 from orm_handling import models, orm
 import logging
 import sklearn
-import pickle
+import dill as pickle
 import yaml
 from pathlib import Path
-from orm_handling.models import Model
+from orm_handling.models import Model, Company, SaveModel
 from typing import Union
 import inspect
 import os
 import datetime
+
 
 
 # ## Open Configuration-file and set variables + paths
@@ -28,9 +29,13 @@ with open(Path('config.yaml'), 'r') as yamlfile:
     resources = cfg['resources']
     traindata_path = resources['traindata_path']
 
+
 # ## Set variables
 all_features = list()
 all_classes=list()
+traindata_name = str()
+traindata_date = str()
+
 
 # ## Functions
 def initialize_model() -> Model:
@@ -49,22 +54,27 @@ def initialize_model() -> Model:
     # set variables global
     global all_classes
     global all_features
+    global traindata_name
+    global traindata_date
 
     # Model besteht aus vectorizer und dem knn
-    model_tfidf = load_model('model_tfidf')
-
-    model_knn = load_model('model_knn')
+    model_tfidf, compobj_tfidf = load_model('model_tfidf')
     
+    model_knn, compobj_knn = load_model('model_knn')
+
     # extract traindata name and last modification
     try:
-        traindata_namedate = ('').join([str(Path(traindata_path).name), '$', str(datetime.datetime.fromtimestamp(os.path.getmtime(traindata_path)).replace(microsecond=0))])
+        traindata_name = str(Path(traindata_path).name)
+        traindata_date = str(datetime.datetime.fromtimestamp(os.path.getmtime(traindata_path)).replace(microsecond=0))
     except OSError:
         print("Key Information for Traindata could not be extracted. Model will be saved without Traindata Information.")
-        traindata_namedate = ''
+        traindata_name = traindata_date = str()
 
+    # # check if a. models are not none b. same traindata was used c. settings are the same
     if model_tfidf is None or model_knn is None \
-        or model_tfidf.input != traindata_namedate \
-        or model_knn.input != traindata_namedate: # check if inputname in model_tfidf is not the same as traindata_namedate: means, the traindata is new or modified.
+            or compobj_tfidf.name != traindata_name or compobj_tfidf.date != traindata_date \
+                or compobj_knn.name != traindata_name or compobj_knn.date != traindata_date: 
+        
         print('one of the models tfidf or knn was not filled. Both need to be redone')
         
         traindata = prepare_traindata()
@@ -72,11 +82,12 @@ def initialize_model() -> Model:
 
         tfidf_train = None
 
-        model_tfidf, tfidf_train = start_tfidf(all_features, traindata_namedate)
+        model_tfidf, tfidf_train = start_tfidf(all_features)
         # hier wird knn trainiert mit tfidf_train und classes
-        model_knn = start_knn(tfidf_train, all_classes, traindata_namedate)
+        model_knn = start_knn(tfidf_train, all_classes)
 
-    model = Model(model_knn=model_knn, vectorizer=model_tfidf)
+
+    model = Model(model_knn=model_knn, vectorizer=model_tfidf, traindata_name = traindata_name, traindata_date = traindata_date)
     # bow traindata not needed --> hier an dieser stelle ist das knn auch schon vorhanden!
 
     return model
@@ -102,7 +113,6 @@ def prepare_traindata():
     return traindata
 
 
-
 # ## Support Functions
 """ Methods to load and save models from all parts of the program."""
 
@@ -115,8 +125,13 @@ def save_model(model: Union[sklearn.feature_extraction.text.TfidfVectorizer or s
         The model to be saved. Type: TfidfVectorizer """
     
     model_path = None
-    # set right path
 
+    # Pack Model and Traindata Information in Objects to pickle dump them
+    c = Company(traindata_name, traindata_date)
+
+    m = SaveModel(model)
+    
+    # set right path
     if type(model) == sklearn.feature_extraction.text.TfidfVectorizer:
         model_path = tfidf_path
     elif type(model) == sklearn.neighbors.KNeighborsClassifier:
@@ -124,15 +139,15 @@ def save_model(model: Union[sklearn.feature_extraction.text.TfidfVectorizer or s
     else:
         print(f'Path for {model} could not be resolved. No model was saved. Check config for path adjustment.')
 
-    def __dumper(model: sklearn.feature_extraction.text.TfidfVectorizer, model_path: Path):
+    def __dumper(model_path: Path):
         with open(Path(model_path), 'wb') as fw:
-            pickle.dump(model, fw)
+            pickle.dump([m,c], fw)
 
     if Path(model_path).exists():
         print(f'Model {model_path} does already exist, will be overwritten.')
-        __dumper(model, model_path)
+        __dumper(model_path)
     else:
-        __dumper(model, model_path)
+        __dumper(model_path)
 
 # Methods to load the tfidf-models (are used by sanity, analysis inside and outside)
 def load_model(name: str) -> Union[sklearn.feature_extraction.text.TfidfVectorizer, sklearn.neighbors.KNeighborsClassifier]: 
@@ -154,25 +169,37 @@ def load_model(name: str) -> Union[sklearn.feature_extraction.text.TfidfVectoriz
     model: sklearn.feature_extraction.text.TfidfVectorizer
         The saved model. Type: TfidfVectorizer """
 
-    model = None
+    model = compobj = None
 
     def __loader(model: None, name: str):
-
         if name == 'model_tfidf':
             try:
+                mylist = list()
                 model = pickle.load(open(Path(tfidf_path), 'rb'))
+
+                for pickle_obj in model:
+                    mylist.append(pickle_obj)
+                
+                model = mylist[0].name
+                compobj = mylist[1]
+
             except FileNotFoundError as err:
-                model = None
+                model = compobj = None
         elif name == 'model_knn':
             try:
+                mylist = list()
                 model = pickle.load(open(Path(knn_path), 'rb'))
+                for pickle_obj in model:
+                    mylist.append(pickle_obj)  
+                model = mylist[0].name
+                compobj = mylist[1]
             except FileNotFoundError as err:
-                model = None
+                model = compobj = None
         else:
-            model = None
+            model = compobj = None
 
-        return model
-    model = __loader(model, name)
+        return model, compobj
+    model, compobj = __loader(model, name)
 
     def __check_model(model: Union[sklearn.feature_extraction.text.TfidfVectorizer, sklearn.neighbors.KNeighborsClassifier], name):
         try:
@@ -187,4 +214,4 @@ def load_model(name: str) -> Union[sklearn.feature_extraction.text.TfidfVectoriz
             return model
     model = __check_model(model, name)
 
-    return model
+    return model, compobj

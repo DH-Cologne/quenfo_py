@@ -49,23 +49,25 @@ def classify(model):
         # für tfidf und auch für knn neu gesetzt werden!
 
         # also hier an der stelle muss beides neu trainiert worden sein. Abgleich ob beide auch die gleichen trainingsdaten bekommen haben:
-        if model.vectorizer.input == model.model_knn.input:
-            actual_timestamp = (model.vectorizer.input).split('$')[1]
-            overwrite_file = Path(traindata_path)
-            
-            splitter = actual_timestamp.split(' ')
-            datum = splitter[0].split('-')
-            year = datum[0]
-            month = datum[1]
-            day = datum[2]
-            kleinerezeit = splitter[1].split(':')
-            hour = kleinerezeit[0]
-            minute = kleinerezeit[1]
-            second = kleinerezeit[2]
-    
-            date = datetime.datetime(year=int(year), month=int(month), day=int(day), hour=int(hour), minute=int(minute), second=int(second), microsecond=0)
-            modTime = time.mktime(date.timetuple())
-            os.utime(overwrite_file, (modTime, modTime))
+        #if model.vectorizer.input == model.model_knn.input:
+        #actual_timestamp = (model.vectorizer.input).split('$')[1]
+        actual_date = model.traindata_date
+        print(actual_date)
+        overwrite_file = Path(traindata_path)
+        
+        splitter = actual_date.split(' ')
+        datum = splitter[0].split('-')
+        year = datum[0]
+        month = datum[1]
+        day = datum[2]
+        kleinerezeit = splitter[1].split(':')
+        hour = kleinerezeit[0]
+        minute = kleinerezeit[1]
+        second = kleinerezeit[2]
+
+        date = datetime.datetime(year=int(year), month=int(month), day=int(day), hour=int(hour), minute=int(minute), second=int(second), microsecond=0)
+        modTime = time.mktime(date.timetuple())
+        os.utime(overwrite_file, (modTime, modTime))
 
     except sqlalchemy.exc.OperationalError as err:
         print(f'{err}: No need to delete traindata-filler because traindata didnt get processed (model was already there)')
