@@ -4,7 +4,7 @@ import yaml
 from pathlib import Path
 
 # ## Open Configuration-file and set variables + paths
-with open(Path('config.yaml'), 'r') as yamlfile:
+with open(Path(r'C:\Users\Christine\Documents\Qualifikationsentwicklungsforschung\quenfo\quenfo_py\code\config.yaml'), 'r') as yamlfile:
     cfg = yaml.load(yamlfile, Loader=yaml.FullLoader)
     fus_config = cfg['fus_config']
     resources = cfg['resources']

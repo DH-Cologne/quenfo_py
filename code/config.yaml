@@ -22,14 +22,14 @@ fus_config:
 query_limit: 500
 
 resources:
-  input_path: '..\..\quenfo_data\sqlite\orm\text_kernel_orm_2018_03.db'
-  stopwords_path: '..\..\quenfo_data\resources\classification\stopwords.txt'
+  input_path: 'C:\Users\Christine\Documents\Qualifikationsentwicklungsforschung\quenfo\quenfo_data\sqlite\orm\text_kernel_orm_2018_03.db'
+  stopwords_path: 'C:\Users\Christine\Documents\Qualifikationsentwicklungsforschung\quenfo\quenfo_data\resources\classification\stopwords.txt'
 
-  competences_path: '..\..\quenfo_data\resources\information_extraction\competences\competences.txt'
-  nocompetences_path: '..\..\quenfo_data\resources\information_extraction\competences\noCompetences.txt'
-  modifier_path: '..\..\quenfo_data\resources\information_extraction\competences\modifier.txt'
-  comppattern_path: '..\..\quenfo_data\resources\information_extraction\competences\competenceContexts.txt'
+  competences_path: 'C:\Users\Christine\Documents\Qualifikationsentwicklungsforschung\quenfo\quenfo_data\resources\information_extraction\competences\competences.txt'
+  nocompetences_path: 'C:\Users\Christine\Documents\Qualifikationsentwicklungsforschung\quenfo\quenfo_data\resources\information_extraction\competences\noCompetences.txt'
+  modifier_path: 'C:\Users\Christine\Documents\Qualifikationsentwicklungsforschung\quenfo\quenfo_data\resources\information_extraction\competences\modifier.txt'
+  comppattern_path: 'C:\Users\Christine\Documents\Qualifikationsentwicklungsforschung\quenfo\quenfo_data\resources\information_extraction\competences\competenceContexts.txt'
 
-  tools_path: '..\..\quenfo_data\resources\information_extraction\tools\tools.txt'
-  notools_path: '..\..\quenfo_data\resources\information_extraction\tools\noTools.txt'
-  toolpattern_path: '..\..\quenfo_data\resources\information_extraction\tools\toolContexts.txt'
+  tools_path: 'C:\Users\Christine\Documents\Qualifikationsentwicklungsforschung\quenfo\quenfo_data\resources\information_extraction\tools\tools.txt'
+  notools_path: 'C:\Users\Christine\Documents\Qualifikationsentwicklungsforschung\quenfo\quenfo_data\resources\information_extraction\tools\noTools.txt'
+  toolpattern_path: 'C:\Users\Christine\Documents\Qualifikationsentwicklungsforschung\quenfo\quenfo_data\resources\information_extraction\tools\toolContexts.txt'

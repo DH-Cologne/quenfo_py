@@ -4,6 +4,8 @@
 import spacy
 import re
 
+from information_extraction.prepare_resources import competences, no_competences, modifier, tools, no_tools
+from information_extraction.prepare_resources.convert_entities import normalize_entities
 from prepare_classifyunits.classify_units import convert_classifyunits
 
 # load nlp-model for sentence detection, pos tagger and lemmatizer
@@ -183,7 +185,7 @@ def get_lemmata(sentence: str) -> list:
     return lemmata
 
 
-def annotate_token(token: list):
+def annotate_token(token: list) -> list:
     """Get ExtractionUnits:
                     +++ Step 4: Annotate tokens by comparing them with list of extraction errors,
                     modifiers and known extractions. +++
@@ -192,4 +194,18 @@ def annotate_token(token: list):
                     -----------
                         token: list
                             Receives list with tokens from ExtractionUnit"""
+    annotate_list = list()
+
+    for t in token:
+        lemma = normalize_entities(t.lemma)
+        if competences.__contains__(lemma) or tools.__contains__(lemma):
+            t.ie_token = True
+        if no_competences.__contains__(lemma) or no_tools.__contains__(lemma):
+            t.no_token = True
+        if modifier.__contains__(lemma):
+            t.modifier = True
+    annotate_list.append(t)
+
+    return annotate_list
+
 

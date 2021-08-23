@@ -4,7 +4,6 @@ from information_extraction.prepare_resources import connection_resources, conve
 from information_extraction.prepare_extractionunits.extraction_units import convert_extractionunits
 
 
-
 class TestGenerateExtractionUnits(unittest.TestCase):
     def test_normalize_sentence(self):
         case1 = "Der Hund UND die Maus ,unerwartet ja, gehen nach Hause."
@@ -51,15 +50,14 @@ class TestGenerateExtractionUnits(unittest.TestCase):
         case7 = "personentransport."
 
         output1 = "<end-"
-        output2 = "root"
+        output2 = "<root-"
         output3 = "--"
         output4 = "personentransport"
 
-        self.assertEqual(convert_entities.normalize_entities_from_file(case1), output1)
-        self.assertEqual(convert_entities.normalize_entities_from_file(case2), output2)
-        self.assertEqual(convert_entities.normalize_entities_from_file(case3), output3)
-        self.assertEqual(convert_entities.normalize_entities_from_file(case4), output4)
+        self.assertEqual(convert_entities.normalize_entities(case1), output1)
+        self.assertEqual(convert_entities.normalize_entities(case2), output2)
+        self.assertEqual(convert_entities.normalize_entities(case3), output3)
+        """self.assertEqual(convert_entities.normalize_entities_from_file(case4), output4)
         self.assertEqual(convert_entities.normalize_entities_from_file(case5), output4)
         self.assertEqual(convert_entities.normalize_entities_from_file(case6), output4)
-        self.assertEqual(convert_entities.normalize_entities_from_file(case7), output4)
-
+        self.assertEqual(convert_entities.normalize_entities_from_file(case7), output4)"""

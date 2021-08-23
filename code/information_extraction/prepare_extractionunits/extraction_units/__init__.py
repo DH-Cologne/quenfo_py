@@ -35,6 +35,7 @@ def get_extractionunits(classifyunit: object) -> list:
                 token_array.append(text_token)
 
         token_array.append(Token(None, "<end-LEMMA>", "<end-POS>"))
+        # TODO annotateToken if known entity, no entity or modifier
 
         if len(sentence) > 1:
             eu = ExtractionUnits(paragraph=classifyunit, sentence=sentence, token=token, posTags=postags,

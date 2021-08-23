@@ -1,4 +1,4 @@
-def normalize_entities_from_file(entity: str) -> str:
+def normalize_entities(entity: str) -> str:
     """Normalizes the given string - trim - deletes (most) special characters at the begin and end of the string
         (with some exceptions)
 
@@ -17,8 +17,7 @@ def normalize_entities_from_file(entity: str) -> str:
     if entity.startswith("<end-"):
         return entity
     if entity.startswith("<root-"):
-        if len(entity) <= 1:
-            return entity
+        return entity
     if entity == "--":
         return entity
 
@@ -28,32 +27,33 @@ def normalize_entities_from_file(entity: str) -> str:
             break
         # check first character of given string
         first_character = entity[0]
-        if first_character == "_":
-            # remove character
+        if first_character.__eq__("_"):
             entity = entity[1:len(entity)].strip()
         if len(entity) == 0:
             break
         # check if first character is not a letter, a digit or special character and remove character
-        if not (first_character.isalpha() and first_character.isdigit() and first_character == "§"):
+        if not first_character.isalpha() and not first_character.isdigit() and not first_character.__eq__("§"):
             entity = entity[1:len(entity)].strip()
         else:
             break
         if len(entity) == 0:
             break
+        break
 
     while True:
         if len(entity) == 0:
             break
         # check last character of given string
         last_character = entity[len(entity) - 1]
-        if last_character == "_":
-            # remove character
+        if last_character.__eq__("_"):
             entity = entity[0:len(entity) - 1].strip()
+        if len(entity) == 0:
+            break
         # check if first character is not a letter, a digit or special character and remove character
-        if not (last_character.isalpha() and last_character.isdigit() and last_character == "+"
-                and last_character == "#"):
+        if not last_character.isalpha() and not last_character.isdigit() and not last_character.__eq__("+") and not last_character.__eq__("#"):
             entity = entity[0:len(entity) - 1].strip()
         else:
             break
+        break
 
     return entity

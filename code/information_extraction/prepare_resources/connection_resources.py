@@ -1,13 +1,15 @@
 # ## Open Configuration-file and set paths to txt files with lists, pattern etc.
 import codecs
+
+# load config file
 from pathlib import Path
 
 import yaml
 
-# load config file
 from information_extraction.prepare_resources import convert_entities
 
-with open(Path('config.yaml'), 'r') as yamlfile:
+# ## Open Configuration-file and set paths to models (trained and retrained)
+with open(Path(r'C:\Users\Christine\Documents\Qualifikationsentwicklungsforschung\quenfo\quenfo_py\code\config.yaml'), 'r') as yamlfile:
     cfg = yaml.load(yamlfile, Loader=yaml.FullLoader)
 
 # get path from config
@@ -53,23 +55,29 @@ def get_entities_from_file(type: str) -> list:
         # read next line
         line = f.readline()
 
-        # make line usable for normalization
-        line = line.lower()
-        entity = line.split(" ")
-
-        # normalize first string of line
-        keyword = convert_entities.normalize_entities_from_file(entity[0])
-        if entity is None:
-            line = f.readline()
-            continue
-        else:
-            line = " ".join(entity)
         # if line is empty, you are done with all lines in the file
         if not line:
             break
 
-        # add line to list
-        entities.append(line)
+        # make line usable for normalization
+        line = line.lower()
+        # if there are more than one string in line, add strings to list
+        entity = line.split(" ")
+
+        # normalize strings of line
+        for e in entity:
+            index = entity.index(e)
+            entity[index] = convert_entities.normalize_entities(e)
+
+        # if return is not empty, join strings from list
+        normalize_entity = " ".join(entity).strip()
+        # if return is empty, go to next line
+        if normalize_entity:
+            # add line to list without spaces
+            entities.append(normalize_entity)
+            continue
+        else:
+            continue
 
     # close file
     f.close()
