@@ -4,6 +4,7 @@
 import spacy
 import re
 
+from information_extraction.models import Token
 from information_extraction.prepare_resources import competences, no_competences, modifier, tools, no_tools
 from information_extraction.prepare_resources.convert_entities import normalize_entities
 from prepare_classifyunits.classify_units import convert_classifyunits
@@ -50,7 +51,7 @@ def __split_list_items(sentence: str) -> list:
     # split sentence at empty lines
     splitted_eu = convert_classifyunits.split_at_empty_line(sentence)
     # regex for match any existing list item in the sentence
-    list_item_regex = re.compile(r"^[0-9][\\.| ]?|^[\+|\-|\*]")
+    list_item_regex = re.compile(r"^[0-9][\.| ]?|^[\+|\-|\*]")
     for string in splitted_eu:
         # remove whitespaces, tabstops etc.
         string = string.strip()
@@ -98,20 +99,20 @@ def normalize_sentence(sentence: str) -> str:
         sentence = sentence.replace("ODER", "oder")
 
     # 'und/oder' in sentence change to be 'oder'
-    regex = re.compile(r"^.*( und[-\\/ ][\\/ ]?[ ]?oder )")
+    regex = re.compile(r"^.*( und[\-|\/| ][\/| ]?[ ]?oder )")
     m = re.match(regex, sentence)
     if m:
         sentence = sentence.replace(m.group(1), " oder ")
 
     # 'oder/und' in sentence change to be 'und'
-    regex = re.compile(r"^.*( oder[-|\\/| ][\\/| ]?[ ]?und )")
+    regex = re.compile(r"^.*( oder[\-|\/| ][\/| ]?[ ]?und )")
     m = re.match(regex, sentence)
     if m:
         sentence = sentence.replace(m.group(1), " und ")
 
     # normalizes dot or comma if there is a space before them but none after them
     # adds a space after dot or comma
-    regex = re.compile(r"^.*(\s[\\.\\,])(\w+)")
+    regex = re.compile(r"^.*(\s[\.|\,])(\w+)")
     m = re.match(regex, sentence)
     if m:
         # exception: .NET (Microsoft-Framework)
@@ -120,7 +121,7 @@ def normalize_sentence(sentence: str) -> str:
 
     # if there is a comma or semicolon without a space between two words,
     # a space is inserted after the comma or semicolon
-    regex = re.compile(r"^.*[A-Za-z]+([\\,\\;])[A-Za-z]+")
+    regex = re.compile(r"^.*[A-Za-z]+([\,|\;])[A-Za-z]+")
     m = re.match(regex, sentence)
     if m:
         sentence = sentence.replace(m.group(1), m.group(1) + " ")
@@ -128,7 +129,7 @@ def normalize_sentence(sentence: str) -> str:
     # checks the sentence for occurrences of / and * followed by two word characters and preceded by a space character
     # and normalizes them
     # e.g. Entwickler *in -> Entwickler/in
-    regex = re.compile(r"^.*(\s[\\/\\*])(\w\w)")
+    regex = re.compile(r"^.*(\s[\/|\*])(\w\w)")
     m = re.match(regex, sentence)
     if m:
         if m.group(2) != "in":
@@ -185,27 +186,25 @@ def get_lemmata(sentence: str) -> list:
     return lemmata
 
 
-def annotate_token(token: list) -> list:
+def annotate_token(token: list) -> list[Token]:
     """Get ExtractionUnits:
                     +++ Step 4: Annotate tokens by comparing them with list of extraction errors,
                     modifiers and known extractions. +++
 
                     Parameters:
                     -----------
-                        token: list
+                        token: list of Token
                             Receives list with tokens from ExtractionUnit"""
     annotate_list = list()
 
     for t in token:
         lemma = normalize_entities(t.lemma)
         if competences.__contains__(lemma) or tools.__contains__(lemma):
-            t.ie_token = True
+            t.set_ie_token(True)
         if no_competences.__contains__(lemma) or no_tools.__contains__(lemma):
-            t.no_token = True
+            t.set_no_token(True)
         if modifier.__contains__(lemma):
-            t.modifier = True
-    annotate_list.append(t)
+            t.set_modifier_token(True)
+        annotate_list.append(t)
 
     return annotate_list
-
-

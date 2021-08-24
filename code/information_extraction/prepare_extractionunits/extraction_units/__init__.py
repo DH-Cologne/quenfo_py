@@ -3,7 +3,7 @@ ClassifyUnit. """
 
 # ## Imports
 from . import convert_extractionunits
-from orm_handling.models import ExtractionUnits
+from orm_handling.models import ExtractionUnits, ClassifyUnits
 from prepare_classifyunits.feature_units import convert_featureunits
 
 
@@ -11,12 +11,12 @@ from prepare_classifyunits.feature_units import convert_featureunits
 from information_extraction.models import Token
 
 
-def get_extractionunits(classifyunit: object) -> list:
+def get_extractionunits(classifyunit: ClassifyUnits) -> list:
     extractionunits = list()
     position_index = 0
 
     # split each ClassifyUnit into sentences
-    sentences = convert_extractionunits.split_into_sentences(classifyunit.content)
+    sentences = convert_extractionunits.split_into_sentences(classifyunit.paragraph)
 
     for sentence in sentences:
         token_array = list()
@@ -35,13 +35,14 @@ def get_extractionunits(classifyunit: object) -> list:
                 token_array.append(text_token)
 
         token_array.append(Token(None, "<end-LEMMA>", "<end-POS>"))
-        # TODO annotateToken if known entity, no entity or modifier
+
+        token_array = convert_extractionunits.annotate_token(token_array)
 
         if len(sentence) > 1:
-            eu = ExtractionUnits(paragraph=classifyunit, sentence=sentence, token=token, posTags=postags,
-                                 lemmata=lemmata, token_array=token_array, position_index=position_index)
+            eu = ExtractionUnits(paragraph=classifyunit, sentence=sentence, token_array=token_array,
+                                 position_index=position_index, token=token, pos_tags=postags, lemmata=lemmata)
             extractionunits.append(eu)
-        classifyunit.children.append(eu)
+            classifyunit.children.append(eu)
         position_index += 1
 
     position_index = 0

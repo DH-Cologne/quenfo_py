@@ -9,7 +9,8 @@ import yaml
 from information_extraction.prepare_resources import convert_entities
 
 # ## Open Configuration-file and set paths to models (trained and retrained)
-with open(Path(r'C:\Users\Christine\Documents\Qualifikationsentwicklungsforschung\quenfo\quenfo_py\code\config.yaml'), 'r') as yamlfile:
+with open(Path(r'C:\Users\Christine\Documents\Qualifikationsentwicklungsforschung\quenfo\quenfo_py\code\config.yaml'),
+          'r') as yamlfile:
     cfg = yaml.load(yamlfile, Loader=yaml.FullLoader)
 
 # get path from config
@@ -83,3 +84,15 @@ def get_entities_from_file(type: str) -> list:
     f.close()
 
     return entities
+
+
+def read_pattern_from_file(type: str) -> list:
+    pattern = list()
+    switch = {
+        "comp_pattern": comppattern_path,
+        "tool_pattern": toolpattern_path,
+    }
+
+    path = switch.get(type)
+
+    return pattern
