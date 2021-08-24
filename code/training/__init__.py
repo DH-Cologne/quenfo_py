@@ -11,7 +11,7 @@ import sklearn
 import dill as pickle
 import yaml
 from pathlib import Path
-from orm_handling.models import Model, TraindataInfo, SaveModel
+from orm_handling.models import Model, TraindataInfo, SaveModel, Configurations
 from typing import Union
 import inspect
 import os
@@ -23,12 +23,12 @@ import datetime
 with open(Path('config.yaml'), 'r') as yamlfile:
     cfg = yaml.load(yamlfile, Loader=yaml.FullLoader)
     models = cfg['models']
-    tfidf_path = models['tfidf_path']
-    knn_path = models['knn_path']
-    tfidf_config = cfg['tfidf_config']
+    #tfidf_path = models['tfidf_path']
+    #knn_path = models['knn_path']
+    #tfidf_config = cfg['tfidf_config']
     knn_config = cfg['knn_config']
-    resources = cfg['resources']
-    traindata_path = resources['traindata_path']
+    #resources = cfg['resources']
+    #traindata_path = resources['traindata_path']
 
 
 # ## Set variables
@@ -58,6 +58,10 @@ def initialize_model() -> Model:
     global traindata_name
     global traindata_date
 
+    # set config values 
+
+    
+
     # Model besteht aus vectorizer und dem knn
     model_tfidf, td_info_tfidf = load_model('model_tfidf')
     
@@ -66,8 +70,8 @@ def initialize_model() -> Model:
     # Das hier in eigene FUnktion!!!!
     # extract traindata name and last modification
     try:
-        traindata_name = str(Path(traindata_path).name)
-        traindata_date = str(datetime.datetime.fromtimestamp(os.path.getmtime(traindata_path)).replace(microsecond=0))
+        traindata_name = str(Path(Configurations.get_traindata_path()).name)
+        traindata_date = str(datetime.datetime.fromtimestamp(os.path.getmtime(str(Configurations.get_traindata_path()))).replace(microsecond=0))
     except OSError:
         print("Key Information for Traindata could not be extracted. Model will be saved without Traindata Information.")
         traindata_name = traindata_date = str()
@@ -77,7 +81,7 @@ def initialize_model() -> Model:
     if model_tfidf is None or model_knn is None \
             or td_info_tfidf.name != traindata_name or td_info_tfidf.date != traindata_date \
                 or td_info_knn.name != traindata_name or td_info_knn.date != traindata_date \
-                    or __check_configvalues(tfidf_config, model_tfidf) == False or __check_configvalues(knn_config, model_knn) == False:
+                    or __check_configvalues(Configurations.get_tfidf_config(), model_tfidf) == False or __check_configvalues(Configurations.get_knn_config(), model_knn) == False:
         
         print('one of the models tfidf or knn was not filled. Both need to be redone')
         
@@ -140,9 +144,9 @@ def save_model(model: Union[sklearn.feature_extraction.text.TfidfVectorizer or s
 
     # set right path
     if type(model) == sklearn.feature_extraction.text.TfidfVectorizer:
-        model_path = tfidf_path
+        model_path = Configurations.get_tfidf_path()
     elif type(model) == sklearn.neighbors.KNeighborsClassifier:
-        model_path = knn_path
+        model_path = Configurations.get_knn_path()
     else:
         print(f'Path for {model} could not be resolved. No model was saved. Check config for path adjustment.')
         pass
@@ -182,10 +186,9 @@ def load_model(name: str) -> Union[sklearn.feature_extraction.text.TfidfVectoriz
 
     def __loader(model: None, name: str):
         if name == 'model_tfidf':
-            model, td_info = __extract_model(tfidf_path)
-            
+            model, td_info = __extract_model(Configurations.get_tfidf_path())
         elif name == 'model_knn':
-            model, td_info = __extract_model(knn_path)
+            model, td_info = __extract_model(Configurations.get_knn_path())
         else:
             model = td_info = None
 

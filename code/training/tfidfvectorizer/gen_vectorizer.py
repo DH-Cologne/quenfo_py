@@ -1,14 +1,11 @@
+from orm_handling.models import Configurations
 from sklearn.feature_extraction.text import TfidfVectorizer
 import training
 import yaml
 from pathlib import Path
 
-## TODO: Setter einbauen für default einstellungen
 
-# ## Open Configuration-file and set variables + paths
-with open(Path('config.yaml'), 'r') as yamlfile:
-     cfg = yaml.load(yamlfile, Loader=yaml.FullLoader)
-     config = cfg['tfidf_config']
+config = Configurations.get_tfidf_config()
 
 
 def initialize_vectorizer(all_features):

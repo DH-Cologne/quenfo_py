@@ -51,19 +51,25 @@ def classify(model):
         # also hier an der stelle muss beides neu trainiert worden sein. Abgleich ob beide auch die gleichen trainingsdaten bekommen haben:
         #if model.vectorizer.input == model.model_knn.input:
         #actual_timestamp = (model.vectorizer.input).split('$')[1]
+
+        # HIER NOCH EINE EXCEPTION HIN, wenn aus dem pfad nich die namen entnommen werden können
         actual_date = model.traindata_date
         print(actual_date)
-        overwrite_file = Path(traindata_path)
-        
-        splitter = actual_date.split(' ')
-        datum = splitter[0].split('-')
-        year = datum[0]
-        month = datum[1]
-        day = datum[2]
-        kleinerezeit = splitter[1].split(':')
-        hour = kleinerezeit[0]
-        minute = kleinerezeit[1]
-        second = kleinerezeit[2]
+        try:
+            overwrite_file = Path(traindata_path)
+            splitter = actual_date.split(' ')
+            datum = splitter[0].split('-')
+            year = datum[0]
+            month = datum[1]
+            day = datum[2]
+            kleinerezeit = splitter[1].split(':')
+            hour = kleinerezeit[0]
+            minute = kleinerezeit[1]
+            second = kleinerezeit[2]
+        except IndexError:
+            hour = 00
+            minute = 00
+            second = 00
 
         date = datetime.datetime(year=int(year), month=int(month), day=int(day), hour=int(hour), minute=int(minute), second=int(second), microsecond=0)
         modTime = time.mktime(date.timetuple())

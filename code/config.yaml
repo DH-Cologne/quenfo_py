@@ -40,8 +40,7 @@ tfidf_config:
   use_idf: True
 
 knn_config:
-  n_neighbors: 5
+  n_neighbors: test
   weights: 'uniform'  
   algorithm: 'auto'
   leaf_size: 30
-  metric: 'minkowski'
