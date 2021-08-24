@@ -3,22 +3,16 @@ import sqlalchemy
 from classification.prepare_classifyunits import generate_classifyunits
 from database import session, session2
 from orm_handling import orm
-from orm_handling.models import ClassifyUnits
+from orm_handling.models import ClassifyUnits, Configurations
 from database import engine
 import logging
-import sys
-import yaml
 from pathlib import Path
 from classification import predict_classes
 import datetime
 import os 
 import time
 
-# ## Open Configuration-file and set variables + paths
-with open(Path('config.yaml'), 'r') as yamlfile:
-    cfg = yaml.load(yamlfile, Loader=yaml.FullLoader)
-    resources = cfg['resources']
-    traindata_path = resources['traindata_path']
+traindata_path = Configurations.get_traindata_path()
 
 # hier wird eigentlich das model übergeben
 def classify(model):

@@ -14,14 +14,6 @@ from yaml.reader import ReaderError
 # ## Set Variables
 sw_list = list()
 
-
-# TODO: A: Hier wird bei java noch irgendwo hinterlegt, wie die Featureunits generiert wurden, also in den hashcodes?
-#  wird gespeichert, wie die values für die verarbeitung gesetzt wurden (normalize = true etc...), vllt dohc eine
-#  klasse einrichten, die das speichert und setted und hinterlegt in db?
-
-# TODO: B: HIER VLLT NOCH EIN CHECKER, dass die CONFIGS AUCH WIRKLICH DIE ENTSPRECHENDEN WERTE HABEN; SONST DEFAULT
-#  SETZEN
-
 # ## Functions
 
 # Remove all non-alphanumerical characters

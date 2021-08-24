@@ -9,26 +9,12 @@ from orm_handling import models, orm
 import logging
 import sklearn
 import dill as pickle
-import yaml
 from pathlib import Path
 from orm_handling.models import Model, TraindataInfo, SaveModel, Configurations
 from typing import Union
 import inspect
 import os
 import datetime
-
-
-
-# ## Open Configuration-file and set variables + paths
-with open(Path('config.yaml'), 'r') as yamlfile:
-    cfg = yaml.load(yamlfile, Loader=yaml.FullLoader)
-    models = cfg['models']
-    #tfidf_path = models['tfidf_path']
-    #knn_path = models['knn_path']
-    #tfidf_config = cfg['tfidf_config']
-    knn_config = cfg['knn_config']
-    #resources = cfg['resources']
-    #traindata_path = resources['traindata_path']
 
 
 # ## Set variables
@@ -57,10 +43,6 @@ def initialize_model() -> Model:
     global all_features
     global traindata_name
     global traindata_date
-
-    # set config values 
-
-    
 
     # Model besteht aus vectorizer und dem knn
     model_tfidf, td_info_tfidf = load_model('model_tfidf')
@@ -134,7 +116,7 @@ def prepare_traindata():
 """ Methods to load and save models from all parts of the program."""
 
 def save_model(model: Union[sklearn.feature_extraction.text.TfidfVectorizer or sklearn.neighbors.KNeighborsClassifier]) -> None:
-    """ Method saves a passed model in path (set in config.yaml).
+    """ Method saves a passed model in path (set in config).
         
     Parameters
     ----------
@@ -164,7 +146,7 @@ def save_model(model: Union[sklearn.feature_extraction.text.TfidfVectorizer or s
 
 # Methods to load the tfidf-models (are used by sanity, analysis inside and outside)
 def load_model(name: str) -> Union[sklearn.feature_extraction.text.TfidfVectorizer, sklearn.neighbors.KNeighborsClassifier]: 
-    """ Method loads a model depending on chosen name. Path for model is set in config.yaml.
+    """ Method loads a model depending on chosen name. Path for model is set in config.
         1. __loader: loads the model and excepts Exceptions
         2. __check_model: checks the received model 
     Parameters
@@ -205,7 +187,7 @@ def load_model(name: str) -> Union[sklearn.feature_extraction.text.TfidfVectoriz
             else:
                 raise TypeError
         except sklearn.exceptions.NotFittedError and TypeError:
-            print(f'Model {name} failed to be loaded or is not fitted. Check Settings in config.yaml and paths for {name}. New Trainingprocess starts.')
+            print(f'Model {name} failed to be loaded or is not fitted. Check Settings in config and paths for {name}. New Trainingprocess starts.')
             return model
     model = __check_model(model, name)
 

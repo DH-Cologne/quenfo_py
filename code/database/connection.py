@@ -1,19 +1,16 @@
 """ Script to create a connection to sqlite dbs depending on input path. """
 
 # ## Imports
+from orm_handling.models import Configurations
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 import os
-import yaml
 from pathlib import Path
 
-# ## Open Configuration-file and set paths to models (trained and retrained)
-with open(Path('config.yaml'), 'r') as yamlfile:
-    cfg = yaml.load(yamlfile, Loader=yaml.FullLoader)
 
 # ## Input-Paths
-input_path = cfg['resources']['input_path']
-traindata_path = cfg['resources']['traindata_path']
+input_path = Configurations.get_input_path()
+traindata_path = Configurations.get_traindata_path()
 
 
 # Create engine with path

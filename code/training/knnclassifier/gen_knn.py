@@ -1,8 +1,6 @@
 from orm_handling.models import Configurations
 from sklearn.neighbors import KNeighborsClassifier 
 import training 
-import yaml
-from pathlib import Path
 
 
 config = Configurations.get_knn_config()

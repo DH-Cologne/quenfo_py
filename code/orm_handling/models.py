@@ -4,8 +4,6 @@
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import create_engine, String, Integer, Float, Boolean, Column, Sequence, ForeignKey
 from sqlalchemy.orm import backref, relationship
-from sqlalchemy.util.langhelpers import NoneType
-from database import session
 import itertools
 import sklearn.neighbors
 import sklearn.feature_extraction
@@ -211,177 +209,132 @@ class Configurations():
     with open(Path('config.yaml'), 'r') as yamlfile:
         cfg = yaml.load(yamlfile, Loader=yaml.FullLoader)
         models = cfg['models']
+        fus_config = cfg['fus_config']
+        query_limit = cfg['query_limit']
+        mode = cfg['mode']
         tfidf_path = models['tfidf_path']
         knn_path = models['knn_path']
         tfidf_config = cfg['tfidf_config']
         knn_config = cfg['knn_config']
         resources = cfg['resources']
         traindata_path = resources['traindata_path']
-
+        input_path = resources['input_path']
+        stopwords_path = resources['stopwords_path']
 
     # Getter
     def get_traindata_path(): 
         traindata_path = Configurations.traindata_path
-        try:
-            Path(traindata_path).exists()
-            traindata_path = traindata_path
-        except FileNotFoundError:
-            traindata_path = None
-        return traindata_path
+        return Configurations.__check_path(traindata_path)
 
     def get_tfidf_path(): 
         tfidf_path = Configurations.tfidf_path
-        try: 
-            Path(tfidf_path).exists()
-            tfidf_path = tfidf_path
-        except FileNotFoundError:
-            tfidf_path = None
-        return tfidf_path
+        return Configurations.__check_path(tfidf_path)
 
     def get_knn_path(): 
         knn_path = Configurations.knn_path
-        try: 
-            Path(knn_path).exists()
-            knn_path = knn_path
-        except FileNotFoundError:
-            knn_path = None
-        return knn_path
+        return Configurations.__check_path(knn_path)
 
+    def get_input_path(): 
+        input_path = Configurations.input_path
+        return Configurations.__check_path(input_path)
+
+    def get_stopwords_path(): 
+        stopwords_path = Configurations.stopwords_path
+        return Configurations.__check_path(stopwords_path)
+
+    def get_query_limit():
+        query_limit = Configurations.query_limit
+        return Configurations.__check_type(query_limit, 50, int)
+
+    def get_mode():
+        mode = Configurations.mode
+        return Configurations.__check_strings(mode, 'overwrite', ('append', 'overwrite'))
 
     def get_tfidf_config():
-
         tfidf_config = Configurations.tfidf_config
-        
-        if type(tfidf_config['lowercase']) == bool:
-            pass
-        else:
-            tfidf_config['lowercase'] = False
-        if type(tfidf_config['max_df']) == float:
-            pass
-        else:
-            tfidf_config['max_df'] = 1.0
-        if type(tfidf_config['min_df']) == int:
-            pass
-        else:
-            tfidf_config['min_df'] = 1
-        if type(tfidf_config['sublinear_tf']) == bool:
-            pass
-        else:
-            tfidf_config['sublinear_tf'] = False
-        if type(tfidf_config['use_idf']) == bool:
-            pass
-        else:
-            tfidf_config['use_idf'] = True
-
+        if tfidf_config == None:
+            tfidf_config = dict()
+        # with these Exceptions, missing and wrong input is fixed and also if all knn data is missing
+        # give dictionary, key to check, defaultvalue if given value is wrong and type to check
+        tfidf_config = Configurations.__check_type_for_dict(tfidf_config, 'lowercase', False, bool)
+        tfidf_config = Configurations.__check_type_for_dict(tfidf_config, 'max_df', 1.0, float)
+        tfidf_config = Configurations.__check_type_for_dict(tfidf_config, 'min_df', 1, int)
+        tfidf_config = Configurations.__check_type_for_dict(tfidf_config, 'sublinear_tf', False, bool)
+        tfidf_config = Configurations.__check_type_for_dict(tfidf_config, 'use_idf', True, bool)
         return tfidf_config
 
+    def get_fus_config():
+        fus_config = Configurations.fus_config
+        if fus_config == None:
+            fus_config = dict()
+        # with these Exceptions, missing and wrong input is fixed and also if all knn data is missing
+        fus_config = Configurations.__check_type_for_dict(fus_config, 'normalize', True, bool)
+        fus_config = Configurations.__check_type_for_dict(fus_config, 'stem', True, bool)
+        fus_config = Configurations.__check_type_for_dict(fus_config, 'filterSW', True, bool)
+        fus_config = Configurations.__check_type_for_dict(fus_config, 'nGrams', {3,4}, dict)
+        fus_config = Configurations.__check_type_for_dict(fus_config, 'continuousNGrams', False, bool)
+        return fus_config
+        
     def get_knn_config():
         knn_config = Configurations.knn_config
         if knn_config == None:
             knn_config = dict()
         # with these Exceptions, missing and wrong input is fixed and also if all knn data is missing
-        try:
-            if type(knn_config['n_neighbors']) != int:
-                raise KeyError
-        except KeyError:
-            try:
-                knn_config['n_neighbors'] = 5
-            except KeyError:
-                knn_config.update({'n_neighbors': 5})
-        try:
-            if (knn_config['weights']) != 'uniform' or (knn_config['weights']) != 'distance':
-                raise KeyError
-        except KeyError:
-            try:
-                knn_config['weights'] = 'uniform'
-            except KeyError:
-                knn_config.update({'weights': 'uniform'})
-        try:
-            a = knn_config['algorithm']
-            if a != 'auto' or a != 'ball_tree' or a != 'kd_tree' or a != 'brute':
-                raise KeyError
-        except KeyError:
-            try:
-                knn_config['algorithm'] = 'auto'
-            except KeyError:
-                knn_config.update({'algorithm': 'auto'})
-        try:
-            if type(knn_config['leaf_size']) != int:
-                raise KeyError
-        except KeyError:
-            try:
-                knn_config['leaf_size'] = 30
-            except KeyError:
-                knn_config.update({'leaf_size': 30})
-        
+        # give dictionary, key to check, defaultvalue if given value is wrong and type to check
+        knn_config = Configurations.__check_type_for_dict(knn_config, 'n_neighbors', 5, int)
+        knn_config = Configurations.__check_strings_for_dict(knn_config, 'weights', 'uniform', ('uniform', 'distance'))
+        knn_config = Configurations.__check_strings_for_dict(knn_config, 'algorithm', 'auto', ('auto', 'ball_tree', 'kd_tree', 'brute'))
+        knn_config = Configurations.__check_type_for_dict(knn_config, 'leaf_size', 30, int)
         return knn_config
-
     
+    # Checker
 
-""" class Configurations():
-
-    def __init__(self):
-        # ## Open Configuration-file and set variables + paths
-        with open(Path('config.yaml'), 'r') as yamlfile:
-            cfg = yaml.load(yamlfile, Loader=yaml.FullLoader)
-            models = cfg['models']
-            tfidf_path = models['tfidf_path']
-            knn_path = models['knn_path']
-            tfidf_config = cfg['tfidf_config']
-            knn_config = cfg['knn_config']
-            resources = cfg['resources']
-            traindata_path = resources['traindata_path']
-
-        self.tfidf_path = tfidf_path
-        self.knn_path = knn_path
-        self.tfidf_config = tfidf_config
-        self.knn_config = knn_config
-        self.traindata_path = traindata_path
-
-    # Getter
-    def get_traindata_path(self): 
-        return self.traindata_path
-
-    def get_tfidf_path(self): 
-        return self.tfidf_path
-    def get_knn_path(self): 
-        return self.knn_path
-
-    # Setter-Checker
-    def set_tfidf_path(self):
-        tfidf_path = self.tfidf_path
-        try: 
-            Path(tfidf_path).exists()
-            self.tfidf_path = tfidf_path
-        except FileNotFoundError:
-            self.tfidf_path = None
-    def set_knn_path(self):
-        knn_path = self.knn_path
-        try: 
-            Path(knn_path).exists()
-            self.tfidf_path = knn_path
-        except FileNotFoundError:
-            self.knn_path = None
-
-    def set_traindata_path(self):
-        traindata_path = self.traindata_path
+    def __check_path(path):
         try:
-            Path(traindata_path).exists()
-            self.traindata_path = "../test.db"
+            Path(path).exists()
+            path = path
         except FileNotFoundError:
-            self.traindata_path = None
+            path = None
+        return path
 
-    def set_tfidf_config(self):
-        tfidf_config = self.tfidf_config
-        print(tfidf_config)
-        lowercase: False
-        max_df: 1.0 
-        min_df: 1
-        sublinear_tf: False
-        use_idf: True
-        if type(tfidf_config['lowercase']) == bool:
-            self.tfidf_config ==
-        else:
-            self.full_param = True """
+    def __check_type_for_dict(current_dict, key, default_val, type):
+        try:
+            if type(current_dict[key]) != type:
+                raise KeyError
+        except KeyError:
+            try:
+                current_dict[key] = default_val
+            except KeyError:
+                current_dict.update({key: default_val})
+        return current_dict
 
+    def __check_type(val_to_check, default_val, type):
+        try:
+            if type(val_to_check) != type:
+                raise KeyError
+        except KeyError:
+            val_to_check = default_val
+        return val_to_check
 
+    def __check_strings(str_to_check, default_str, choices):
+        try:
+            if [s for s in choices if str(str_to_check) in s] == []:
+                raise KeyError
+        except KeyError:
+            str_to_check = default_str
+
+        return str_to_check
+
+    def __check_strings_for_dict(current_dict, key, default_str, choices):
+        str_to_check = current_dict[key]
+        try:
+            if [s for s in choices if str(str_to_check) in s] == []:
+                raise KeyError
+        except KeyError:
+            try:
+                current_dict[key] = default_str
+            except KeyError:
+                current_dict.update({key: default_str})
+
+        return current_dict
+    

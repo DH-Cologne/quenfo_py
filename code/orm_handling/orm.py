@@ -3,21 +3,15 @@
 # ## Imports
 from database.connection import Session2
 from sqlalchemy.orm import Session, query, session
-from .models import ClassifyUnits, ClassifyUnits_Train, TrainingData, JobAds
+from .models import ClassifyUnits, ClassifyUnits_Train, Configurations, TrainingData, JobAds
 import sqlalchemy
 from database import engine, engine2
-import yaml
-from pathlib import Path
 
 # ## Variables
 is_created = None
 
-
-# ## Open Configuration-file and set variables + paths
-with open(Path('config.yaml'), 'r') as yamlfile:
-    cfg = yaml.load(yamlfile, Loader=yaml.FullLoader)
-    query_limit = cfg['query_limit']
-    mode = cfg['mode']
+query_limit = Configurations.get_query_limit()
+mode = Configurations.get_mode()
 
 
 # Function to query the data from the db table

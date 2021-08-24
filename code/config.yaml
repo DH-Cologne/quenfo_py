@@ -1,14 +1,6 @@
 # +++++ Configuration ++++++
 
 # --- FeatureUnitConfiguration---
-# TODO:
-## classification
-#startPos=0
-#queryLimit=500
-#fetchSize=500
-
-# in subfolder resources/classification/trainingSets
-#trainingDataFile=trainingdata_anonymized.tsv
 
 fus_config:
   normalize: true
@@ -40,7 +32,7 @@ tfidf_config:
   use_idf: True
 
 knn_config:
-  n_neighbors: test
+  n_neighbors: 5
   weights: 'uniform'  
   algorithm: 'auto'
   leaf_size: 30

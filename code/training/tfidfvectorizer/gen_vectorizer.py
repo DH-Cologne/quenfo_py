@@ -1,8 +1,6 @@
 from orm_handling.models import Configurations
 from sklearn.feature_extraction.text import TfidfVectorizer
 import training
-import yaml
-from pathlib import Path
 
 
 config = Configurations.get_tfidf_config()
