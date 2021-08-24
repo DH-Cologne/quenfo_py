@@ -12,12 +12,6 @@ from training import initialize_model
 
 from orm_handling.models import Configurations
 
-
-
-
-
-
-
 """ # ## Initiate Logging-Module
 logging.basicConfig(
     format='%(asctime)s : %(threadName)s : %(levelname)s : %(message)s',

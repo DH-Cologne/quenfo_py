@@ -8,21 +8,19 @@ import os
 from pathlib import Path
 
 
-# ## Input-Paths
+# ## Input-Paths (Testdata and Traindata)
 input_path = Configurations.get_input_path()
 traindata_path = Configurations.get_traindata_path()
 
-
 # Create engine with path
 engine = create_engine('sqlite:///' + input_path, echo=False)
+engine2 = create_engine('sqlite:///' + traindata_path, echo=False)
 
 # Bind engine to recieve a session
 Session = sessionmaker(bind=engine)
+Session2 = sessionmaker(bind=engine2)
 
 # Instantiate a session object
 session = Session()
-
-engine2 = create_engine('sqlite:///' + traindata_path, echo=False)
-Session2 = sessionmaker(bind=engine2)
 session2 = Session2()
 

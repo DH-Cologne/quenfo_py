@@ -183,8 +183,6 @@ def stem(fus: list, stem: bool) -> list:
         # remove empty strings and strings <= 1
         stemmed_fus = list(filter(lambda n: 1 <= len(n), stemmed_fus))
 
-        
-
         return stemmed_fus
     else:
         return fus

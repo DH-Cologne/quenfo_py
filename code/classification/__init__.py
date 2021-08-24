@@ -16,13 +16,11 @@ traindata_path = Configurations.get_traindata_path()
 
 # hier wird eigentlich das model übergeben
 def classify(model):
-    # ## STEP 1:
     # Load the Input data: JobAds in JobAds Class.
     jobads = orm.get_jobads(session)
 
     #generate classify_units, feature_units for Testdata
     for jobad in jobads:
-        # ## TODO: PREPARE CLASSIFY UNITS
         # Pass list of JobAds-objects to be converted to clean paragraphs, featureunits and feature vectors
         generate_classifyunits(jobad, model)
         # add obj to current session --> to be written in db
@@ -45,8 +43,8 @@ def classify(model):
         # also hier an der stelle muss beides neu trainiert worden sein. Abgleich ob beide auch die gleichen trainingsdaten bekommen haben:
         #if model.vectorizer.input == model.model_knn.input:
         #actual_timestamp = (model.vectorizer.input).split('$')[1]
-
-        # HIER NOCH EINE EXCEPTION HIN, wenn aus dem pfad nich die namen entnommen werden können
+        # vllt funktion sogar in orm ordner und benennen als def reset modification date oä
+    
         actual_date = model.traindata_date
         print(actual_date)
         try:

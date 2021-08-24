@@ -10,7 +10,10 @@ from database import engine, engine2
 # ## Variables
 is_created = None
 
+# Get Configuration Settings from config.yaml file 
+    # query_limit: Number of JobAds to process
 query_limit = Configurations.get_query_limit()
+    # mode: append data or overwrite it
 mode = Configurations.get_mode()
 
 
@@ -64,7 +67,12 @@ def get_traindata(session2: Session) -> list:
     Returns
     -------
     traindata: list
-        Data contains the orm-objects from class TrainingData """
+        Data contains the orm-objects from class TrainingData 
+    
+    Raises
+    ------
+    sqlalchemy.exc.OperationalError
+        If changes in db are not possible, OperationalError is raised to continue with creation of table"""
 
     # load the TrainingData
     traindata = session2.query(TrainingData).all()
@@ -81,7 +89,7 @@ def get_traindata(session2: Session) -> list:
     return traindata
 
 def delete_filler(session2):
-    # remove all unwanted in memory stored objects and just drp the table in traindata
+    # remove all unwanted and in memory stored objects and just drp the table in traindata
     session2.rollback()
     ClassifyUnits_Train.__table__.drop(engine2)
 
@@ -129,23 +137,3 @@ def __check_once():
         is_created = 'checked'
     else:
         pass
-
-    """ def get_traindata(session):
-    data = session.query(TrainingData).all()
-    return data """
-
-    """ try:
-        existing_user = session.query(OutputData).all()
-        if existing_user is None:
-            session.add(user)  # Add the user
-            session.commit()  # Commit the change
-            LOGGER.success(f"Created user: {user}")
-        else:
-            LOGGER.warning(f"Users already exists in database: {existing_user}")
-        return session.query(User).filter(User.username == user.username).first()
-    except IntegrityError as e:
-        LOGGER.error(e.orig)
-        raise e.orig
-    except SQLAlchemyError as e:
-        LOGGER.error(f"Unexpected error when creating user: {e}")
-        raise e """

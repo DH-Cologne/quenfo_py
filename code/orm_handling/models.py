@@ -337,4 +337,3 @@ class Configurations():
                 current_dict.update({key: default_str})
 
         return current_dict
-    
