@@ -1,26 +1,24 @@
-from orm_handling.models import JobAds, TrainingData
+# ## Imports
+from orm_handling.models import Model
 from . import convert_featurevectors
-import itertools
-import sys
-import numpy as np
-from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.feature_extraction.text import TfidfTransformer
 
+# ## Function
+def get_featurevectors(cu: object, model: Model) -> None:
+    """ Function to vectorize the fus of a classifyunit.
 
-# TODO: rückgabe später sollte kein string sein sondern ein vector
-def get_featurevectors(cu: object, model):
+    Parameters
+    ----------
+    cu: object
+        object of Class ClassifyUnits: contains content and featureunits
+    model: Model
+        Class Model consists of tfidf_vectorizer, knn_model (further information about class in orm_handling/models.py) 
+        and traindata-information """
 
-    """
-    INPUT:
-        b. traindata: as ngram set
-        c. testdata current object
-        
-        aus cu wird das bow1, aus traindata wird das bow2 und das bowtemp"""
-
+    # Define vectorizer from model-object
     vectorizer = model.vectorizer
 
+    # Pass fus and vectorizer to vectorization
+    vectorized_cu = convert_featurevectors.gen_tfidf_cu(cu.featureunits, vectorizer)
 
-    # das bleibt hier
-    tfidf_cu = convert_featurevectors.gen_tfidf_cu(cu.featureunits, vectorizer)
-    cu.set_featurevector(tfidf_cu)
+    # Set returned vector 
+    cu.set_featurevector(vectorized_cu)

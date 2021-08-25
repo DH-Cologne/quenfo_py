@@ -4,9 +4,6 @@
 from orm_handling.models import Configurations
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-import os
-from pathlib import Path
-
 
 # ## Input-Paths (Testdata and Traindata)
 input_path = Configurations.get_input_path()
@@ -23,4 +20,3 @@ Session2 = sessionmaker(bind=engine2)
 # Instantiate a session object
 session = Session()
 session2 = Session2()
-

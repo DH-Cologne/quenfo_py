@@ -1,7 +1,7 @@
 # +++++ Configuration ++++++
 
 # --- FeatureUnitConfiguration---
-
+# Define processing steps for featureunits.
 fus_config:
   normalize: true
   stem: true
@@ -10,20 +10,29 @@ fus_config:
   nGrams: {3,4}
   continuousNGrams: false
 
+# --- General Parameters ---
+# Number of JobAds to query
 query_limit: 50
-
+# Check if JobAds are already in Output-Database and decide to append or overwrite new data
 mode : overwrite
-#mode : append
+# or mode : append
 
+# --- Paths ---
 resources:
+  # Path for Input data to be classified
   input_path: '..\..\quenfo_data\sqlite\orm\text_kernel_orm_2018_03.db'
+  # Path for Train data to be used for training process
   traindata_path: '..\..\traindata_sql.db'
+  # Path for file with stopwords
   stopwords_path: '..\..\quenfo_data\resources\classification\stopwords.txt'
 
 models:
+  # Path to Tfidf Model and Knn Model (if not already trained, leave path to store new model)
   tfidf_path: '..\..\quenfo_data\resources\model_tfidf'
   knn_path: '..\..\quenfo_data\resources\model_knn'
 
+# --- Tfidf Configuration ---
+# Define Parameter used to train Tfidf Vectorizer
 tfidf_config: 
   lowercase: False
   max_df: 1.0 
@@ -31,6 +40,8 @@ tfidf_config:
   sublinear_tf: False
   use_idf: True
 
+# --- KNN Configuration ---
+# Define Parameter used to train KNN Classifier
 knn_config:
   n_neighbors: 5
   weights: 'uniform'  

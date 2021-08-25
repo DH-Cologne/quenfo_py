@@ -16,13 +16,11 @@ import inspect
 import os
 import datetime
 
-
 # ## Set variables
 all_features = list()
 all_classes=list()
 traindata_name = str()
 traindata_date = str()
-
 
 # ## Functions
 def initialize_model() -> Model:
@@ -33,9 +31,15 @@ def initialize_model() -> Model:
         
     Returns
     -------
-    model: Class Model
-        Class consists of tfidf_vectorizer, knn_model (further information about class in orm_handling/models.py) 
+    model: Model
+        Class Model consists of tfidf_vectorizer, knn_model (further information about class in orm_handling/models.py) 
         and traindata-information """
+    
+    # Set globals
+    global all_features
+    global all_classes
+    global traindata_name
+    global traindata_date
 
     # Load tfidf-vectorizer and knn-model --> extract additional information about used traindata
     model_tfidf, td_info_tfidf = load_model('model_tfidf')
@@ -51,7 +55,6 @@ def initialize_model() -> Model:
                 or td_info_knn.name != traindata_name or td_info_knn.date != traindata_date \
                     or __check_configvalues(Configurations.get_tfidf_config(), model_tfidf) == False \
                     or __check_configvalues(Configurations.get_knn_config(), model_knn) == False:
-        
         print('one of the models tfidf or knn was not filled. Both need to be redone')
         
         # PREPARATION
@@ -96,7 +99,7 @@ def __check_configvalues(config_values: dict, model: Union[sklearn.feature_extra
 # Load traindata as orms and process them to fus
 def __prepare_traindata() -> list:
     # Load the TrainingData: TrainingData in TrainingData Class
-    traindata = orm.get_traindata(session2)
+    traindata = orm.get_traindata()
     # fill classify_units and generate feature_units for Traindata
     for train_obj in traindata:
         prepare_classifyunits.generate_train_cus(train_obj)  
@@ -110,7 +113,6 @@ def __prepare_lists(traindata: list) -> Union[list, list]:
             all_features.append(' '.join(cu.featureunits))
             all_classes.append(cu.classID)
     return all_features, all_classes
-
 
 # ## Support Functions (Model related)
 """ Methods to load and save models from all parts of the program."""

@@ -5,12 +5,12 @@ from sklearn.neighbors import KNeighborsClassifier
 import training 
 
 # ## Function
-def initialize_knn(tfidf_train: csr_matrix, all_classes: list) -> KNeighborsClassifier:
+def initialize_knn(vectorized_train: csr_matrix, all_classes: list) -> KNeighborsClassifier:
      """ Method to train a knn-classifier with given traindata matrix and classes
 
      Parameters
      ----------
-     tfidf_train: csr_matrix
+     vectorized_train: csr_matrix
         The transformed traindata.
 
      all_classes: list
@@ -29,7 +29,7 @@ def initialize_knn(tfidf_train: csr_matrix, all_classes: list) -> KNeighborsClas
           algorithm=config['algorithm'], leaf_size=config['leaf_size'])
 
      # Fit the knn with the given traindata-matrix and related classes
-     clf = knn.fit(tfidf_train, all_classes)
+     clf = knn.fit(vectorized_train, all_classes)
 
      # save the model
      training.save_model(clf)
