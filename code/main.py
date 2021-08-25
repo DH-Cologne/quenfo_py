@@ -4,6 +4,7 @@
 from classification import classify
 from training import initialize_model
 
+
 """ # ## Initiate Logging-Module
 logging.basicConfig(
     format='%(asctime)s : %(threadName)s : %(levelname)s : %(message)s',
@@ -18,7 +19,6 @@ classify(model)
 
 # STEP 3a: Information Extraction 
 # STEP 3b: Matching 
-
 
 
 

@@ -47,3 +47,12 @@ knn_config:
   weights: 'uniform'  
   algorithm: 'auto'
   leaf_size: 30
+
+competences_path: '..\..\quenfo_data\resources\information_extraction\competences\competences.txt'
+nocompetences_path: '..\..\quenfo_data\resources\information_extraction\competences\noCompetences.txt'
+modifier_path: '..\..\quenfo_data\resources\information_extraction\competences\modifier.txt'
+comppattern_path: '..\..\quenfo_data\resources\information_extraction\competences\competenceContexts.txt'
+
+tools_path: '..\..\quenfo_data\resources\information_extraction\tools\tools.txt'
+notools_path: '..\..\quenfo_data\resources\information_extraction\tools\noTools.txt'
+toolpattern_path: '..\..\quenfo_data\resources\information_extraction\tools\toolContexts.txt'

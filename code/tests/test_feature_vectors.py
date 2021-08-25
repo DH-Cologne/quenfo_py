@@ -22,6 +22,7 @@ TODO: Replikation der featurevector Generierung:
 OUTPUT: Vector pro CU
 
 Frage: Was ist wenn TFIDF? Fallen ann alle schritte weg oder lediglich 3, 4?
+    -> wahrscheinlich Schritte 2, 3 und 4, die fuo wird ja auch weiterhin gebraucht
 -------------------------
 
 private void initialize(List<ClassifyUnit> trainingdata){

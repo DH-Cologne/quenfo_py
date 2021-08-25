@@ -44,6 +44,47 @@ class TestConfiguration(unittest.TestCase):
         self.assertIsInstance(cngrams, bool, "Type of continuous-ngram-configuration is not boolean.")
         self.assertIsInstance(ngrams, dict, "Type of ngram-configuration is not dictionary.")
 
+    def test_ie_paths(self):
+        competences_path = cfg['resources']['competences_path']
+        nocompetences_path = cfg['resources']['nocompetences_path']
+        comppattern_path = cfg['resources']['comppattern_path']
+        modifier_path = cfg['resources']['modifier_path']
+        tools_path = cfg['resources']['tools_path']
+        notools_path = cfg['resources']['notools_path']
+        toolpattern_path = cfg['resources']['toolpattern_path']
+
+        self.assertNotIsInstance(competences_path, (int, float, complex, list, tuple, range, bool, bytes), "Type of competences-path is not string.")
+        self.assertNotIsInstance(nocompetences_path, (int, float, complex, list, tuple, range, bool, bytes), "Type of nocompetences-path is not string.")
+        self.assertNotIsInstance(comppattern_path, (int, float, complex, list, tuple, range, bool, bytes), "Type of comppattern-path is not string.")
+        self.assertNotIsInstance(modifier_path, (int, float, complex, list, tuple, range, bool, bytes), "Type of "
+                                                                                                        "modifier"
+                                                                                                        "-path is not "
+                                                                                                        "string.")
+        self.assertNotIsInstance(toolpattern_path, (int, float, complex, list, tuple, range, bool, bytes), "Type of toolpattern-path is not string.")
+        self.assertNotIsInstance(tools_path, (int, float, complex, list, tuple, range, bool, bytes), "Type of "
+                                                                                                     "tool-path is "
+                                                                                                     "not string.")
+        self.assertNotIsInstance(notools_path, (int, float, complex, list, tuple, range, bool, bytes), "Type of "
+                                                                                                       "notool-path "
+                                                                                                       "is not "
+                                                                                                       "string.")
+
+        self.assertIsInstance(competences_path, str)
+        self.assertIsInstance(nocompetences_path, str)
+        self.assertIsInstance(comppattern_path, str)
+        self.assertIsInstance(modifier_path, str)
+        self.assertIsInstance(tools_path, str)
+        self.assertIsInstance(notools_path, str)
+        self.assertIsInstance(toolpattern_path, str)
+
+        self.assertRegex(competences_path, ".*txt$", "Path does not end with string 'txt'.")
+        self.assertRegex(nocompetences_path, ".*txt$", "Path does not end with string 'txt'.")
+        self.assertRegex(comppattern_path, ".*txt$", "Path does not end with string 'txt'.")
+        self.assertRegex(modifier_path, ".*txt$", "Path does not end with string 'txt'.")
+        self.assertRegex(tools_path, ".*txt$", "Path does not end with string 'txt'.")
+        self.assertRegex(notools_path, ".*txt$", "Path does not end with string 'txt'.")
+        self.assertRegex(toolpattern_path, ".*txt$", "Path does not end with string 'txt'.")
+
 
 if __name__ == '__main__':
     unittest.main()
