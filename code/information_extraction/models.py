@@ -5,13 +5,13 @@ class Token:
     """Describes the attributes of a single token.
         A token contains the string representation (token), lemma and pos tag.
         Also, whether it is a known entity, a known bug, or a modifier."""
-    token = str
-    pos_tag = str
-    lemma = str
+    token = str()
+    pos_tag = str()
+    lemma = str()
 
-    modifier_token = bool
-    ie_token = bool
-    no_token = bool
+    modifier_token = bool()
+    ie_token = bool()
+    no_token = bool()
 
     # init-function to set values, works as constructor
     def __init__(self, token, lemma, pos_tag):
@@ -38,15 +38,43 @@ class Pattern:
     several PatternTokens and a Pointer to the Token(s) which has to be extracted in case of a match. """
     pattern_token = list()
     extraction_pointer = list()
-    description = str
-    id = int
-    conf = float
+    description = str()
+    id = int()
+    conf = float()
+
+    def __init__(self, pattern_token, extraction_pointer, description, id):
+        self.pattern_token = pattern_token
+        self.extraction_pointer = extraction_pointer
+        self.description = description
+        self.id = id
+
+    # compute confidence of an extraction pattern
+    def set_conf(self, fp, tp) -> float:
+        if tp == 0 and fp == 0:
+            self.conf = 0.0
+        else:
+            self.conf = tp / (tp + fp)
+        return self.conf
+
+    # string representation of a Token object
+    def string_representation(self) -> str:
+        full_expression = "ID:\t" + str(self.id) + "\n" + "NAME:\t" + self.description + "\n"
+        for token in self.pattern_token:
+            full_expression += "TOKEN:\t" + token.token + "\t" + token.lemma + "\t" + token.pos_tag + "\t" \
+                               + token.ie_token + "\t"
+        full_expression += "EXTRACT:\t"
+        for i in self.extraction_pointer:
+            full_expression += str(i) + ","
+        full_expression = full_expression[0:len(full_expression) - 1]
+        full_expression += "\nCONF:\t" + self.conf + "\n\n"
+        return full_expression
 
 
 class PatternToken(Token):
     """Represents a single Token as part of an Extraction-Pattern. The attributes string, lemma and posTag can be
     null, if values are not specified in the pattern.
     Extends class Token."""
+
     # init-function to set values, works as constructor
     def __init__(self, token, lemma, pos_tag, ie_token):
         super(PatternToken, self).__init__(token, lemma, pos_tag)
@@ -61,11 +89,11 @@ class PatternToken(Token):
 
     #  string representation of a PatternToken object
     def string_representation(self) -> str:
-        full_expression = super(PatternToken, self).token + r"\t" + super(PatternToken, self).lemma + r"\t" \
-                          + super(PatternToken, self).pos_tag + r"\t"
+        full_expression = super(PatternToken, self).token + "\t" + super(PatternToken, self).lemma + "\t" \
+                          + super(PatternToken, self).pos_tag + "\t"
         if super(PatternToken, self).ie_token:
-            full_expression += "isInformationEntity" + r"\t"
+            full_expression += "isInformationEntity" + "\t"
         if super(PatternToken, self).modifier_token:
-            full_expression += "is (start of) modifier" + r"\t"
+            full_expression += "is (start of) modifier" + "\t"
 
         return full_expression

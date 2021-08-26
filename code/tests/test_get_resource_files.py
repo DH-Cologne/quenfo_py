@@ -1,26 +1,9 @@
 import unittest
-from pathlib import Path
 
-import yaml
-
-from information_extraction.prepare_resources.connection_resources import get_entities_from_file
-
-with open(Path('config.yaml'), 'r') as yamlfile:
-    cfg = yaml.load(yamlfile, Loader=yaml.FullLoader)
+from information_extraction.prepare_resources.connection_resources import get_entities_from_file, read_pattern_from_file
 
 
 class TestGetResourceFile(unittest.TestCase):
-    # get path from config
-    # competences
-    competence_path = cfg['resources']['competences_path']
-    no_competence_path = cfg['resources']['nocompetences_path']
-    modifier_path = cfg['resources']['modifier_path']
-    comppattern_path = cfg['resources']['comppattern_path']
-
-    # tools
-    tools_path = cfg['resources']['tools_path']
-    no_tools_path = cfg['resources']['notools_path']
-    toolpattern_path = cfg['resources']['toolpattern_path']
 
     def test_get_entities_from_file(self):
         self.assertIsNotNone(get_entities_from_file("competences"))
@@ -34,3 +17,14 @@ class TestGetResourceFile(unittest.TestCase):
         self.assertIsInstance(get_entities_from_file("tools"), list)
         self.assertIsInstance(get_entities_from_file("no_tools"), list)
         self.assertIsInstance(get_entities_from_file("modifier"), list)
+
+    def test_get_pattern_from_file(self):
+        self.assertIsNotNone(read_pattern_from_file("comp_pattern"))
+        self.assertIsNotNone(read_pattern_from_file("tool_pattern"))
+
+        self.assertIsInstance(read_pattern_from_file("comp_pattern"), list)
+        self.assertIsInstance(read_pattern_from_file("tool_pattern"), list)
+
+
+if __name__ == '__main__':
+    unittest.main()

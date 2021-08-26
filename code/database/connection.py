@@ -8,7 +8,7 @@ import yaml
 from pathlib import Path
 
 # ## Open Configuration-file and set paths to models (trained and retrained)
-with open(Path(r'C:\Users\Christine\Documents\Qualifikationsentwicklungsforschung\quenfo\quenfo_py\code\config.yaml'), 'r') as yamlfile:
+with open(Path(r'C:\Users\krist\Documents\Qualifikationsentwicklungsforschung\quenfo_py\code\config.yaml'), 'r') as yamlfile:
     cfg = yaml.load(yamlfile, Loader=yaml.FullLoader)
 
 # ## Input-Paths

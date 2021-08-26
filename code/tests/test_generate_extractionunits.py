@@ -61,3 +61,7 @@ class TestGenerateExtractionUnits(unittest.TestCase):
         self.assertEqual(convert_entities.normalize_entities_from_file(case5), output4)
         self.assertEqual(convert_entities.normalize_entities_from_file(case6), output4)
         self.assertEqual(convert_entities.normalize_entities_from_file(case7), output4)"""
+
+
+if __name__ == '__main__':
+    unittest.main()
