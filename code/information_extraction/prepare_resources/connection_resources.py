@@ -10,7 +10,7 @@ from information_extraction.models import Pattern, PatternToken
 from information_extraction.prepare_resources import convert_entities
 
 # ## Open Configuration-file and set paths to models (trained and retrained)
-with open(Path(r'C:\Users\krist\Documents\Qualifikationsentwicklungsforschung\quenfo_py\code\config.yaml'),
+with open(Path(r'C:\Users\Christine\Documents\Qualifikationsentwicklungsforschung\quenfo\quenfo_py\code\config.yaml'),
           'r') as yamlfile:
     cfg = yaml.load(yamlfile, Loader=yaml.FullLoader)
 

@@ -20,6 +20,7 @@ query_limit = Configurations.get_query_limit()
 # mode: append data or overwrite it
 mode = Configurations.get_mode()
 
+
 # ## Functions
 
 # Function to query the data from the db table
@@ -52,7 +53,7 @@ def get_jobads() -> list:
         ClassifyUnits.__table__.create(engine)
 
     pass_output(session)
-    
+
     return job_ads
 
 
@@ -71,7 +72,7 @@ def get_traindata() -> list:
 
     # load the TrainingData
     traindata = session2.query(TrainingData).all()
-    
+
     try:
         ClassifyUnits_Train.__table__.create(engine2)
     except sqlalchemy.exc.OperationalError:
@@ -82,6 +83,7 @@ def get_traindata() -> list:
 
     # return Trainindata objects as list
     return traindata
+
 
 def handle_td_changes(model: Model) -> None:
     """ Manages the traindata changes.
@@ -105,12 +107,15 @@ def handle_td_changes(model: Model) -> None:
         # reset modification date from traindata database to the same saved in model
         __reset_td_info(model)
     except sqlalchemy.exc.OperationalError as err:
-        print(f'{err}: No need to delete traindata-filler because traindata didnt get processed (model was already there)')
+        print(
+            f'{err}: No need to delete traindata-filler because traindata didnt get processed (model was already there)')
+
 
 def __delete_filler():
     # remove all unwanted and in memory stored objects and drop the traindata table
     session2.rollback()
     ClassifyUnits_Train.__table__.drop(engine2)
+
 
 def __reset_td_info(model: Model):
     """ 
@@ -129,7 +134,7 @@ def __reset_td_info(model: Model):
     ------
     IndexError
         If model is not filled or no date could be set, IndexError is raised """
- 
+
     try:
         # Get traindata_path --> to reset last mod. date
         traindata_path = Path(Configurations.get_traindata_path())
@@ -142,12 +147,13 @@ def __reset_td_info(model: Model):
 
         # Set it as datetime object
         date = datetime.datetime(year=int(year), month=int(month), day=int(day), \
-            hour=int(hour), minute=int(minute), second=int(second), microsecond=0)
+                                 hour=int(hour), minute=int(minute), second=int(second), microsecond=0)
         modTime = time.mktime(date.timetuple())
         # Set acutal time as last modification date for traindata-file
         os.utime(traindata_path, (modTime, modTime))
     except IndexError:
         pass
+
 
 def pass_output(session: Session):
     """ The session.commit() statement commits all adds to the current session.
@@ -159,6 +165,7 @@ def pass_output(session: Session):
 
     session.commit()
 
+
 def close_session(session: Session):
     """ The session.close() statement closes the current session.
 
@@ -168,6 +175,7 @@ def close_session(session: Session):
         Session object, generated in module database. Contains the database path. """
 
     session.close()
+
 
 # Function to manage session adding
 def create_output(session: Session, output: object):
@@ -180,13 +188,13 @@ def create_output(session: Session, output: object):
         Session object, generated in module database. Contains the database path. 
     output: object
         output object --> contains the jobad """
-    
+
     if mode == "overwrite":
         __check_once()
         session.add(output)
     else:
         session.add(output)
-    
+
 
 # Private function to check if needed table already exists, else drop it and create a new empty table
 def __check_once():

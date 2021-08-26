@@ -4,10 +4,10 @@
 import spacy
 import re
 
+from classification.prepare_classifyunits.classify_units import convert_classifyunits
 from information_extraction.models import Token
 from information_extraction.prepare_resources import competences, no_competences, modifier, tools, no_tools
 from information_extraction.prepare_resources.convert_entities import normalize_entities
-from prepare_classifyunits.classify_units import convert_classifyunits
 
 # load nlp-model for sentence detection, pos tagger and lemmatizer
 nlp = spacy.load("de_core_news_sm")

@@ -41,18 +41,18 @@ def generate_classifyunits(jobad: object, model: Model) -> None:
         fus = feature_units.convert_featureunits.replace(para)
 
         # Check if fus is an empty list or if child does not exists
-        if not(any(para == v.paragraph for v in jobad.children)) and fus != []:
+        if not (any(para == v.paragraph for v in jobad.children)) and fus != []:
             # Add cleaned paragraph, default classID, featureunits and featurevectors to classify unit
             cu = ClassifyUnits(classID=0, paragraph=para, featureunits=list(), featurevector=list())
             # set the list of token without non-alphanumerical characters as prototype-fus
             cu.set_featureunits(fus)
             # Connect the cu (classifyunit) as a child to its parent (jobad)
             jobad.children.append(cu)
-        #if paragraph is already processed in a classifyunit --> store it again at the same place (to avoid duplicates)
+        # if paragraph is already processed in a classifyunit --> store it again at the same place (to avoid duplicates)
         else:
             if fus != []:
                 for child in jobad.children:
-                    if child.paragraph == para :
+                    if child.paragraph == para:
                         child.set_featureunits(fus)
 
     # Iterate over each jobad and make featureunits and featurevectors vor each cu
@@ -61,6 +61,7 @@ def generate_classifyunits(jobad: object, model: Model) -> None:
         feature_units.get_featureunits(cu)
         # Generate featurevectors
         feature_vectors.get_featurevectors(cu, model)
+
 
 # Generate ClassifyUnits_Train (and fus) for Trainingdata JobAds
 def generate_train_cus(train_obj: object) -> None:
@@ -74,7 +75,7 @@ def generate_train_cus(train_obj: object) -> None:
 
     # Set paragraph variable
     para = train_obj.content
-    
+
     """ Remove all non-alphanumerical characters from para and return fus. 
         A lot of fus will be empty lists afterwards, so only ClassifyUnits_Train for filled
         fus are instantiated."""

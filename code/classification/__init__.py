@@ -13,9 +13,10 @@ import logging
 from pathlib import Path
 from classification import predict_classes
 import datetime
-import os 
+import os
 import time
 from orm_handling.models import Model
+
 
 # ## Function
 def classify(model: Model) -> None:
@@ -29,7 +30,7 @@ def classify(model: Model) -> None:
     model: Model
         Class Model consists of tfidf_vectorizer, knn_model (further information about class in orm_handling/models.py) 
         and traindata-information """
-    
+
     # STEP 1: Load the Input data: JobAds in JobAds Class.
     jobads = orm.get_jobads()
 
@@ -39,7 +40,7 @@ def classify(model: Model) -> None:
         generate_classifyunits(jobad, model)
         # add obj to current session --> to be written in db
         orm.create_output(session, jobad)
-    
+
     # STEP 3: Predict Classes for CUs in JobAds.
     for jobad in jobads:
         predict_classes.start_prediction(jobad, model)
