@@ -1,10 +1,10 @@
 """Script to build data and to create data"""
 
 # ## Imports
-from database.connection import Session2
 from sqlalchemy.orm import Session
 from configuration.config_model import Configurations
-from .models import ClassifyUnits, ClassifyUnits_Train, Model, TrainingData, JobAds
+from .models import ClassifyUnits, ClassifyUnits_Train, TrainingData, JobAds
+from training.train_models import Model
 import sqlalchemy
 from database import engine, engine2, session2, session
 from pathlib import Path

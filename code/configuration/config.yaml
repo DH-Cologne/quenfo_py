@@ -46,7 +46,7 @@ models:
 tfidf_config: 
   lowercase: False
   max_df: 1.0 
-  min_df: 1
+  min_df: 2
   sublinear_tf: False
   use_idf: True
 

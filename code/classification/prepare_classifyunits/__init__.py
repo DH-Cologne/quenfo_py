@@ -1,7 +1,8 @@
 """Script to split jobads into paragraphs and generate classifyunits for each paragraphs."""
 
 # ## Imports
-from orm_handling.models import ClassifyUnits, ClassifyUnits_Train, Model
+from orm_handling.models import ClassifyUnits, ClassifyUnits_Train
+from training.train_models import Model
 from . import classify_units
 from . import feature_units
 from . import feature_vectors

@@ -7,10 +7,9 @@
 from classification.prepare_classifyunits import generate_classifyunits
 from database import session
 from orm_handling import orm
-from orm_handling.models import Model
+from training.train_models import Model
 import logging
 from classification import predict_classes
-from orm_handling.models import Model
 
 # ## Function
 def classify(model: Model) -> None:

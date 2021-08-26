@@ -4,13 +4,12 @@
 from training.tfidfvectorizer import start_tfidf
 from training.knnclassifier import start_knn
 from classification import prepare_classifyunits
-from database import session, session2
-from orm_handling import models, orm
+from orm_handling import orm
 import logging
 import sklearn
 import dill as pickle
 from pathlib import Path
-from orm_handling.models import Model, TraindataInfo, SaveModel
+from training.train_models import Model, SaveModel, TraindataInfo
 from configuration.config_model import Configurations
 from typing import Union
 import inspect
@@ -27,7 +26,7 @@ model = None
 # ## Functions
 def initialize_model() -> Model:
     """ Function to start the training/loading process of the Model. 
-    a. try to load the models tfidf and knn
+    a. try to load the models tfidf and knn (returns list of models in pickle file)
     b. check if models are already trained under same conditions and if the same traindata is used as before
     c. train again if loading fails or new configurations are set or new traindata is given
         
@@ -43,7 +42,8 @@ def initialize_model() -> Model:
     global traindata_name
     global traindata_date
     global model
-
+    
+    """ STEP 1: TRY TO LOAD MODELS """    
     # Load tfidf-vectorizer and knn-model --> extract additional information about used traindata
     all_models_tfidf = load_model('model_tfidf')
     all_models_knn = load_model('model_knn')
@@ -51,33 +51,37 @@ def initialize_model() -> Model:
     # Extract traindata name and last modification
     traindata_name, traindata_date = __get_traindata_information()
 
-    # model already there? use it
+    """ STEP 2:  CHECK IF MODEL(S) WERE ALREADY TRAINED (separatly for tfidf and knn) """
     if all_models_tfidf is not None and all_models_knn is not None:
-        # CHECK IF NEW TRAINING IS NEEDED
-        # Check if a. models are not None, b. same traindata was used (same file-name and same last modification date) and c. settings are the same
+        # iterate over each model in pickle-file and check if one matches criteria
         for model_tfidf_obj, model_knn_obj in zip(all_models_tfidf, all_models_knn):
+    
+            # try to extract one specific model and the related traindata information from the model_obj
             try:
-                model_tfidf = (model_tfidf_obj)[0].name
-                model_tfidf_td_info = (model_tfidf_obj)[1]
-                model_knn = (model_knn_obj)[0].name
-                model_knn_td_info = (model_knn_obj)[1]
+                model_tfidf = (model_tfidf_obj)[0].name     # vectorizer
+                model_tfidf_td_info = (model_tfidf_obj)[1]  # traindata information for traindata used while fitting of vectorizer
+                model_knn = (model_knn_obj)[0].name         # knn
+                model_knn_td_info = (model_knn_obj)[1]      # traindata information for traindata used while fitting of knn
             except:
+                # if errors occur, set all vars to None
                 model_tfidf = model_knn = model_tfidf_td_info = model_knn_td_info = None
+
+
+            # check if the current model matches all criteria (not None, same traindata input (name, date), same configurations, is fitted)
             if model_tfidf is not None and model_knn is not None \
                 and model_tfidf_td_info.name == traindata_name  and model_knn_td_info.name == traindata_name \
                 and model_tfidf_td_info.date == traindata_date and model_knn_td_info.date == traindata_date\
                 and __check_configvalues(Configurations.get_tfidf_config(), model_tfidf) == True \
                 and __check_configvalues(Configurations.get_knn_config(), model_knn) == True \
-                and __check_model(model_tfidf, 'model_tfidf') and __check_model(model_knn, 'model_knn'):
+                and __check_fitted(model_tfidf, 'model_tfidf') and __check_fitted(model_knn, 'model_knn'):
                 # Instantiate an object of class Model and store the tfidf-vectorizer, knn-classifier and the used traindata-information
                 model = Model(model_knn, model_tfidf, traindata_name, traindata_date)
-                break
+                break 
 
-    # trainagain
-    # if model is still None == es wurde kein passendes gefunden oder es war schon None
+    """ STEP 3: TRAIN AGAIN IF MODEL IS STILL NOT FILLED (NO MATCHING MODEL FOUND OR PROBLEMS WHILE LOADING)"""
     if model == None:
    
-        print('one of the models tfidf or knn was not filled. Both need to be redone')
+        print('Model criteria didnt match. Both need to be redone')
         
         # PREPARATION
         # prepare data for training --> process data to fus
@@ -91,8 +95,11 @@ def initialize_model() -> Model:
         # Use traindata matrix (tfidf_train) and list of depending classes to train a KNN-Classifier --> Returns KNN-Classifier
         model_knn = start_knn(tfidf_train, all_classes)
 
+        # STORING
         # Instantiate an object of class Model and store the tfidf-vectorizer, knn-classifier and the used traindata-information
         model = Model(model_knn, model_tfidf, traindata_name, traindata_date)
+
+    # return obj of class Model
     return model
 
 
@@ -158,33 +165,32 @@ def save_model(model: Union[sklearn.feature_extraction.text.TfidfVectorizer or s
         print(f'Path for {model} could not be resolved. No model was saved. Check config for path adjustment.')
         pass
 
-    def __dumper(model_path: Path):
+    def __dumper(model_path: Path, models_to_dump: list):
         with open(Path(model_path), 'wb') as fw:
             # Pack Model and Traindata Information in Objects to pickle dump them
             # Specific Filler-Classes are used (in models.py) just du store both informations in one pickle file.
-            pickle.dump([[SaveModel(model),TraindataInfo(traindata_name, traindata_date)]], fw)
+            pickle.dump(models_to_dump, fw)
     
-    # Check if Path already exists and overwrite old model
+    # Check if Path already exists and append or overwrite old model
     if Path(model_path).exists():
         try:
-            print(f'Model {model_path} does already exist, will be appended.')
-            with open(Path(model_path),'rb') as rfp: 
-                scores = pickle.load(rfp)
-                rfp.close()
-            with open(Path(model_path), 'wb') as fw:
-                pickle.dump(scores + [[SaveModel(model),TraindataInfo(traindata_name, traindata_date)]], fw)
-                fw.close()
-        except pickle.UnpicklingError:
-            __dumper(model_path)    
+            print(f'Model {model_path} does already exist, new model will be appended.')
+            # load all already stored models from file
+            old_models = __extract_models(model_path)
+            # append stored models and new model --> dump them together in pickle file
+            __dumper(model_path, old_models + [[SaveModel(model),TraindataInfo(traindata_name, traindata_date)]])
+        except:
+            print(f'Problems while appending, model file will be overwritten with new model.')
+            __dumper(model_path, [[SaveModel(model),TraindataInfo(traindata_name, traindata_date)]])    
     else:
-        __dumper(model_path)
+        __dumper(model_path, [[SaveModel(model),TraindataInfo(traindata_name, traindata_date)]])
 
 # Methods to load the tfidf-models (are used by sanity, analysis inside and outside)
 def load_model(name: str) -> Union[sklearn.feature_extraction.text.TfidfVectorizer or sklearn.neighbors.KNeighborsClassifier]: 
     """ Method loads a model depending on chosen name. Path for model is set in config.yaml
         1. __loader: loads the model 
             --> split loaded pickle obj into the model and the additonally stored trainingdata-information (extract_model)
-        2. __check_model: checks the received model 
+        2. __check_fitted: checks the received model 
 
     Parameters
     ----------
@@ -198,15 +204,13 @@ def load_model(name: str) -> Union[sklearn.feature_extraction.text.TfidfVectoriz
     
     Returns
     -------
-    model: sklearn.feature_extraction.text.TfidfVectorizer or sklearn.neighbors.KNeighborsClassifier
-        The saved model. Type: TfidfVectorizer or KNeighborsClassifier"""
+    all_models: list
+        list contains all models for TfidfVectorizer or KNeighborsClassifier and traindata information"""
 
-    # Set model and traindata_information to None
+    # Set all_models to None
     all_models = None
-    # Load the Model and return it + the given traindata-information
+    # Load all models from the pickle file as list
     all_models = __loader(all_models, name)
-    # Check if the model is already fitted. If it contains not fitting related information, set model to None
-    #model = __check_model(model, name)
     return all_models
 
 def __loader(all_models: None, name: str):
@@ -218,16 +222,16 @@ def __loader(all_models: None, name: str):
         all_models = None
     return all_models
 
-def __extract_models(model_path):
+def __extract_models(model_path: str) -> Union[list or None]:
     try:
         # load information stored in pickle file
         all_models = pickle.load(open(Path(model_path), 'rb')) 
-        return all_models
     except (AttributeError, pickle.UnpicklingError, FileNotFoundError):
         all_models = None
+    return all_models
     
 
-def __check_model(model: Union[sklearn.feature_extraction.text.TfidfVectorizer, sklearn.neighbors.KNeighborsClassifier], name):
+def __check_fitted(model: Union[sklearn.feature_extraction.text.TfidfVectorizer, sklearn.neighbors.KNeighborsClassifier], name):
     try:
         # check if model is already fitted (example from https://www.py4u.net/discuss/230863)
         if (0 < len( [k for k,v in inspect.getmembers(model) if k.endswith('_') and not k.startswith('__')])) and model is not None:

@@ -1,5 +1,5 @@
 # ## Imports
-from orm_handling.models import Model
+from training.train_models import Model
 from . import convert_featurevectors
 
 # ## Function
