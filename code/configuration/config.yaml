@@ -12,7 +12,7 @@ fus_config:
 
 # --- General Parameters ---
 # Number of JobAds to query
-query_limit: 50
+query_limit: 5
 # Check if JobAds are already in Output-Database and decide to append or overwrite new data
 mode : overwrite
 # or mode : append
@@ -25,6 +25,16 @@ resources:
   traindata_path: '..\..\traindata_sql.db'
   # Path for file with stopwords
   stopwords_path: '..\..\quenfo_data\resources\classification\stopwords.txt'
+
+  # Paths for information extraction
+  competences_path: '..\..\quenfo_data\resources\information_extraction\competences\competences.txt'
+  nocompetences_path: '..\..\quenfo_data\resources\information_extraction\competences\noCompetences.txt'
+  modifier_path: '..\..\quenfo_data\resources\information_extraction\competences\modifier.txt'
+  comppattern_path: '..\..\quenfo_data\resources\information_extraction\competences\competenceContexts.txt'
+
+  tools_path: '..\..\quenfo_data\resources\information_extraction\tools\tools.txt'
+  notools_path: '..\..\quenfo_data\resources\information_extraction\tools\noTools.txt'
+  toolpattern_path: '..\..\quenfo_data\resources\information_extraction\tools\toolContexts.txt'
 
 models:
   # Path to Tfidf Model and Knn Model (if not already trained, leave path to store new model)
@@ -48,11 +58,3 @@ knn_config:
   algorithm: 'auto'
   leaf_size: 30
 
-competences_path: '..\..\quenfo_data\resources\information_extraction\competences\competences.txt'
-nocompetences_path: '..\..\quenfo_data\resources\information_extraction\competences\noCompetences.txt'
-modifier_path: '..\..\quenfo_data\resources\information_extraction\competences\modifier.txt'
-comppattern_path: '..\..\quenfo_data\resources\information_extraction\competences\competenceContexts.txt'
-
-tools_path: '..\..\quenfo_data\resources\information_extraction\tools\tools.txt'
-notools_path: '..\..\quenfo_data\resources\information_extraction\tools\noTools.txt'
-toolpattern_path: '..\..\quenfo_data\resources\information_extraction\tools\toolContexts.txt'

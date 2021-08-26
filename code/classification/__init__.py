@@ -4,17 +4,12 @@
     * Step 3: Predict Classes for CUs """
 
 # ## Imports
-import sqlalchemy
 from classification.prepare_classifyunits import generate_classifyunits
-from database import session, session2
+from database import session
 from orm_handling import orm
-from orm_handling.models import Configurations, Model
+from orm_handling.models import Model
 import logging
-from pathlib import Path
 from classification import predict_classes
-import datetime
-import os 
-import time
 from orm_handling.models import Model
 
 # ## Function

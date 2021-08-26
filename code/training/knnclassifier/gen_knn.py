@@ -1,6 +1,6 @@
 # ## Imports
 from scipy.sparse.csr import csr_matrix
-from orm_handling.models import Configurations
+from configuration.config_model import Configurations
 from sklearn.neighbors import KNeighborsClassifier 
 import training 
 

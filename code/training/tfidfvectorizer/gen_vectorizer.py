@@ -1,5 +1,5 @@
 # ## Imports
-from orm_handling.models import Configurations
+from configuration.config_model import Configurations
 from sklearn.feature_extraction.text import TfidfVectorizer
 import training
 from typing import Union

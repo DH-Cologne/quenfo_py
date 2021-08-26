@@ -3,7 +3,8 @@
 # ## Imports
 from database.connection import Session2
 from sqlalchemy.orm import Session
-from .models import ClassifyUnits, ClassifyUnits_Train, Configurations, Model, TrainingData, JobAds
+from configuration.config_model import Configurations
+from .models import ClassifyUnits, ClassifyUnits_Train, Model, TrainingData, JobAds
 import sqlalchemy
 from database import engine, engine2, session2, session
 from pathlib import Path

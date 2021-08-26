@@ -1,7 +1,7 @@
 """ Script to create a connection to sqlite dbs depending on input path. """
 
 # ## Imports
-from orm_handling.models import Configurations
+from configuration.config_model import Configurations
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 

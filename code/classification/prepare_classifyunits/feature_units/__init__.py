@@ -1,5 +1,5 @@
 # ## Imports
-from orm_handling.models import Configurations
+from configuration.config_model import Configurations
 from . import convert_featureunits
 from pathlib import Path
 
