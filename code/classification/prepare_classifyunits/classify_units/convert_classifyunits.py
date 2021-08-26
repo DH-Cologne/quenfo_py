@@ -16,12 +16,12 @@ def split_at_empty_line(jobad_content: str) -> list:
     Parameters
     ----------
     jobad_content: str
-        Receives a jobad object of class JobAds
+        Receives a jobad string
     
     Returns
     -------
     list
-        list of paragraphs from the jobad.content text """
+        list of paragraphs from the jobad_content text """
 
     # Returns list of paragraphs per object
     return jobad_content.split("\n\n")
