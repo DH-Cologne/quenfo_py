@@ -21,6 +21,7 @@ class Configurations():
         traindata_path = resources['traindata_path']
         input_path = resources['input_path']
         stopwords_path = resources['stopwords_path']
+        regex_path = resources['regex_path']
 
     # Getter
     def get_traindata_path(): 
@@ -38,6 +39,9 @@ class Configurations():
     def get_stopwords_path(): 
         stopwords_path = Configurations.stopwords_path
         return Configurations.__check_path(stopwords_path)
+    def get_regex_path(): 
+        regex_path = Configurations.regex_path
+        return Configurations.__check_path(regex_path)
     def get_query_limit():
         query_limit = Configurations.query_limit
         print(type(query_limit))
@@ -45,6 +49,7 @@ class Configurations():
     def get_mode():
         mode = Configurations.mode
         return Configurations.__check_strings(mode, 'overwrite', ('append', 'overwrite'))
+        
     def get_tfidf_config():
         tfidf_config = Configurations.tfidf_config
         if tfidf_config == None:
@@ -58,6 +63,7 @@ class Configurations():
         tfidf_config = Configurations.__check_type_for_dict(tfidf_config, 'sublinear_tf', False, bool)
         tfidf_config = Configurations.__check_type_for_dict(tfidf_config, 'use_idf', True, bool)
         return tfidf_config
+
     def get_fus_config():
         fus_config = Configurations.fus_config
         if fus_config == None:
@@ -69,6 +75,7 @@ class Configurations():
         fus_config = Configurations.__check_type_for_dict(fus_config, 'nGrams', {3,4}, dict)
         fus_config = Configurations.__check_type_for_dict(fus_config, 'continuousNGrams', False, bool)
         return fus_config
+
     def get_knn_config():
         knn_config = Configurations.knn_config
         if knn_config == None:

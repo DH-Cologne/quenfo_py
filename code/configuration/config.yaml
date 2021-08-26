@@ -25,6 +25,8 @@ resources:
   traindata_path: '..\..\traindata_sql.db'
   # Path for file with stopwords
   stopwords_path: '..\..\quenfo_data\resources\classification\stopwords.txt'
+  # Path for regex file
+  regex_path: '..\..\quenfo_data\resources\classification\regex.txt'
 
   # Paths for information extraction
   competences_path: '..\..\quenfo_data\resources\information_extraction\competences\competences.txt'

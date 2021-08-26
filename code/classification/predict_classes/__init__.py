@@ -1,6 +1,8 @@
 # ## Imports
+from configuration.config_model import Configurations
 from training.train_models import Model
 from . import knn_predictor
+from . import regex_predictor
 
 # ## Functions
 def start_prediction(jobad: object, model: Model) -> None:
@@ -21,11 +23,18 @@ def start_prediction(jobad: object, model: Model) -> None:
     for cu in jobad.children:
 
         # a. KNN PREDICTION: predict classes with knn
-        predicted = knn_predictor.gen_classes(cu.featurevector, model.model_knn)
+        knn_predicted = knn_predictor.gen_classes(cu.featurevector, model.model_knn)
 
         # b. REGEX PREDICTION: predict classes with regex
         # hier dann auch den regex predictor reinmachen und dann direkt vergleichen!
+        # paragraph vllt nochmal normalisieren? also lower case und non alpha raus?
+        # hier übergeben wir am besten direkt die klasse RegexClassifier.get_pattern() irgendwie sowas
+        # der resource path muss auch noch dafür in der config hinzugefügt und gecheckt werden
+        regex_path = Configurations.get_regex_path()
+        reg_predicted = regex_predictor.gen_classes(cu.paragraph)
+
+
         
         # Set class
-        cu.set_classID(predicted)
-        print(cu, predicted)
+        cu.set_classID(knn_predicted)
+        print(cu, knn_predicted)
