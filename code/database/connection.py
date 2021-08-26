@@ -5,6 +5,7 @@ from orm_handling.models import Configurations
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
+
 # ## Input-Paths (Testdata and Traindata)
 input_path = Configurations.get_input_path()
 traindata_path = Configurations.get_traindata_path()
