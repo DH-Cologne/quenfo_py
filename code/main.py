@@ -19,6 +19,7 @@ model = initialize_model()
 classify(model)
 
 # STEP 3a: Information Extraction
+# TODO Parameter as option tool or competences
 extract()
 # STEP 3b: Matching 
 

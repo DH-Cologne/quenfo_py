@@ -1,30 +1,8 @@
 # ## Open Configuration-file and set paths to txt files with lists, pattern etc.
 import codecs
 
-# load config file
-from pathlib import Path
-
-import yaml
-
-from information_extraction.models import Pattern, PatternToken
+from information_extraction.models import Pattern, PatternToken, Configuration
 from information_extraction.prepare_resources import convert_entities
-
-# ## Open Configuration-file and set paths to models (trained and retrained)
-with open(Path(r'C:\Users\Christine\Documents\Qualifikationsentwicklungsforschung\quenfo\quenfo_py\code\config.yaml'),
-          'r') as yamlfile:
-    cfg = yaml.load(yamlfile, Loader=yaml.FullLoader)
-
-# get path from config
-# competences
-competence_path = cfg['resources']['competences_path']
-no_competence_path = cfg['resources']['nocompetences_path']
-modifier_path = cfg['resources']['modifier_path']
-comppattern_path = cfg['resources']['comppattern_path']
-
-# tools
-tools_path = cfg['resources']['tools_path']
-no_tools_path = cfg['resources']['notools_path']
-toolpattern_path = cfg['resources']['toolpattern_path']
 
 
 def get_entities_from_file(type: str) -> list:
@@ -41,11 +19,11 @@ def get_entities_from_file(type: str) -> list:
                 list with content from file"""
     entities = list()
     switch = {
-        "competences": competence_path,
-        "no_competences": no_competence_path,
-        "modifier": modifier_path,
-        "tools": tools_path,
-        "no_tools": no_tools_path,
+        "competences": Configuration.competence_path,
+        "no_competences": Configuration.no_competence_path,
+        "modifier": Configuration.modifier_path,
+        "tools": Configuration.tools_path,
+        "no_tools": Configuration.no_tools_path,
     }
 
     path = switch.get(type)
@@ -90,8 +68,8 @@ def get_entities_from_file(type: str) -> list:
 def read_pattern_from_file(type: str) -> list:
     pattern_list = list()
     switch = {
-        "comp_pattern": comppattern_path,
-        "tool_pattern": toolpattern_path,
+        "comp_pattern": Configuration.comppattern_path,
+        "tool_pattern": Configuration.toolpattern_path,
     }
 
     path = switch.get(type)

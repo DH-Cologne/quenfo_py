@@ -22,15 +22,15 @@ print(process.memory_info().rss)  # in bytes
 
 input_path = os.path.join('..', 'traindata_sql.db')
 
-
 Base = declarative_base()
+
 
 class TrainingData(Base):
     __tablename__ = 'traindata'
     index = Column(Integer, Sequence('index'), primary_key=True)
     postingId = Column('postingId')
     zeilennr = Column('zeilennr')
-    classID = Column ('classID')
+    classID = Column('classID')
     content = Column('content')
 
     def __init__(self, postingId, zeilennr, classID, content):
@@ -56,15 +56,14 @@ data = session.query(TrainingData).all()
 """ The SQLAlchemy ORM will return an instance of a class by default (erste print) """
 for class_instance in data:
     """ The SQLAlchemy ORM will return an instance of a class by default (erste print) """
-    #print(class_instance)
+    # print(class_instance)
     # kann sich die objekte als vars ausgeben lassen
-    #print(vars(class_instance))
+    # print(vars(class_instance))
     # einzelne features der objekte printen
-    #print(class_instance.zeilennr)
-    #print(class_instance.content)
+    # print(class_instance.zeilennr)
+    # print(class_instance.content)
     # objekte als dicts printen == If you're looking to get dictionaries instead, use the built-in __dict__ method:
-    #print(class_instance.__dict__)
-
+    # print(class_instance.__dict__)
 
     # oder als eigenes Objekt (etwas gedoppelt dadurch) und deserialisiert!
     dataObject = {
@@ -77,7 +76,8 @@ for class_instance in data:
 
 session.close()
 
-#meta = MetaData()
+
+# meta = MetaData()
 
 # Class OutputData
 class OutputData(Base):
@@ -85,7 +85,7 @@ class OutputData(Base):
     index = Column(Integer, Sequence('index'), primary_key=True)
     postingId = Column(String(225))
     zeilennr = Column(Integer)
-    classID = Column (Integer)
+    classID = Column(Integer)
     content = Column(String(225))
 
     def __init__(self, postingId, zeilennr, classID, content):
@@ -94,18 +94,19 @@ class OutputData(Base):
         self.classID = classID
         self.content = content
 
+
 engine = create_engine('sqlite:///' + input_path, echo=True)
-#Base.metadata.tables['outputdata'].create(engine)
+# Base.metadata.tables['outputdata'].create(engine)
 try:
     OutputData.__table__.create(engine)
 except sqlalchemy.exc.OperationalError:
     print("table does already exist")
     pass
 
-#Base.metadata.create_all(engine)
-#engine = create_engine('sqlite:///' + input_path, echo=True)
-#outdata = session.query(OutputData).all()
-#meta.create_all(engine)
+    # Base.metadata.create_all(engine)
+    # engine = create_engine('sqlite:///' + input_path, echo=True)
+    # outdata = session.query(OutputData).all()
+    # meta.create_all(engine)
     Session = sessionmaker(bind=engine)
     session = Session()
 
@@ -118,11 +119,10 @@ for class_instance in data:
         content=class_instance.content
     )
 
-    #Base.metadata.tables["outputdata"].create(bind = engine)
-    #print('######################')
+    # Base.metadata.tables["outputdata"].create(bind = engine)
+    # print('######################')
     session.add(output)
 session.commit()
-
 
 # wie viel memory wird belegt?
 process = psutil.Process(os.getpid())
@@ -135,13 +135,13 @@ print(process.memory_info().rss)  # in bytes
 # Schemata genauer ansehen 
 
 
-
-
 ##################################################################################
 """!!!!!!!!!!!!!!! Vergleich mit Einlesen der Daten in df und dict bestehend aus df --> Vergleich des memory-usage"""
+
+
 def conn_testing():
     database = input_path
-    #database = os.path.join('temp', 'final_testset.db')
+    # database = os.path.join('temp', 'final_testset.db')
     print(database)
     # create a database connection
     try:
@@ -151,8 +151,8 @@ def conn_testing():
 
     return conn_temp
 
-def get_df_id(conn):
 
+def get_df_id(conn):
     print("id section")
     ### try dataframe
     res = conn.execute("SELECT name FROM sqlite_master WHERE type='table';")
@@ -163,31 +163,31 @@ def get_df_id(conn):
             df_temp = pd.DataFrame()
             print(name[0])
             chunk_size = 2500
-            df_store = pd.read_sql(("SELECT * FROM {}".format(name[0])), conn, chunksize = chunk_size)
-            #print(len(df_store))
-            #for row in df_store.iteritems(): 
-            for chunk in df_store: 
-                counter+=chunk_size
+            df_store = pd.read_sql(("SELECT * FROM {}".format(name[0])), conn, chunksize=chunk_size)
+            # print(len(df_store))
+            # for row in df_store.iteritems():
+            for chunk in df_store:
+                counter += chunk_size
                 print(counter)
                 if counter == 2500 or len(chunk) < chunk_size:
                     df_temp = df_temp.append(chunk)
                     df_temp = df_temp.reset_index(drop=True)
                     df_temp['index'] = df_temp.index
                     frames[name[0]] = df_temp
-                    counter=0
+                    counter = 0
                     break
-                else: 
+                else:
                     df_temp = df_temp.append(chunk)
                     pass
         else:
             continue
-    df = frames 
+    df = frames
 
-    #print(df)
+    # print(df)
 
 
 """ conn=conn_testing()
 get_df_id(conn) """
 
 process = psutil.Process(os.getpid())
-print(process.memory_info().rss)  # in bytes 
+print(process.memory_info().rss)  # in bytes

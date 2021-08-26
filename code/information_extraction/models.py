@@ -1,4 +1,7 @@
 """Models using for information extraction."""
+from pathlib import Path
+
+import yaml
 
 
 class Token:
@@ -97,3 +100,27 @@ class PatternToken(Token):
             full_expression += "is (start of) modifier" + "\t"
 
         return full_expression
+
+
+class Configuration:
+    """ Class to get the parameters set in config.yaml and check if they are valid.
+            --> If not, set default values. """
+
+    # ## Open Configuration-file and set variables + paths
+    with open(Path('config.yaml'), 'r') as yamlfile:
+        cfg = yaml.load(yamlfile, Loader=yaml.FullLoader)
+
+        # get path from config
+        resources = cfg['resources']
+        input_path = resources['input_path']
+
+        # competences
+        competence_path = resources['competences_path']
+        no_competence_path = resources['nocompetences_path']
+        modifier_path = resources['modifier_path']
+        comppattern_path = resources['comppattern_path']
+
+        # tools
+        tools_path = resources['tools_path']
+        no_tools_path = resources['notools_path']
+        toolpattern_path = resources['toolpattern_path']

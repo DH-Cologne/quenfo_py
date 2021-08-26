@@ -279,7 +279,7 @@ class SaveModel:
 
 
 # Configuration Class
-class Configurations:
+class Configurations():
     """ Class to get the parameters set in config.yaml and check if they are valid. 
         --> If not, set default values. """
 
@@ -300,35 +300,35 @@ class Configurations:
         stopwords_path = resources['stopwords_path']
 
     # Getter
-    def get_traindata_path(self):
+    def get_traindata_path():
         traindata_path = Configurations.traindata_path
         return Configurations.__check_path(traindata_path)
 
-    def get_tfidf_path(self):
+    def get_tfidf_path():
         tfidf_path = Configurations.tfidf_path
         return Configurations.__check_path(tfidf_path)
 
-    def get_knn_path(self):
+    def get_knn_path():
         knn_path = Configurations.knn_path
         return Configurations.__check_path(knn_path)
 
-    def get_input_path(self):
+    def get_input_path():
         input_path = Configurations.input_path
         return Configurations.__check_path(input_path)
 
-    def get_stopwords_path(self):
+    def get_stopwords_path():
         stopwords_path = Configurations.stopwords_path
         return Configurations.__check_path(stopwords_path)
 
-    def get_query_limit(self):
+    def get_query_limit():
         query_limit = Configurations.query_limit
         return Configurations.__check_type(query_limit, 50, int)
 
-    def get_mode(self):
+    def get_mode():
         mode = Configurations.mode
         return Configurations.__check_strings(mode, 'overwrite', ('append', 'overwrite'))
 
-    def get_tfidf_config(self):
+    def get_tfidf_config():
         tfidf_config = Configurations.tfidf_config
         if tfidf_config == None:
             tfidf_config = dict()
@@ -341,7 +341,7 @@ class Configurations:
         tfidf_config = Configurations.__check_type_for_dict(tfidf_config, 'use_idf', True, bool)
         return tfidf_config
 
-    def get_fus_config(self):
+    def get_fus_config():
         fus_config = Configurations.fus_config
         if fus_config is None:
             fus_config = dict()
@@ -353,7 +353,7 @@ class Configurations:
         fus_config = Configurations.__check_type_for_dict(fus_config, 'continuousNGrams', False, bool)
         return fus_config
 
-    def get_knn_config(self):
+    def get_knn_config():
         knn_config = Configurations.knn_config
         if knn_config == None:
             knn_config = dict()
@@ -367,7 +367,7 @@ class Configurations:
         return knn_config
 
     # Checker + Default Setter
-    def __check_path(self, path):
+    def __check_path(path):
         try:
             Path(path).exists()
             path = path
@@ -375,7 +375,7 @@ class Configurations:
             path = None
         return path
 
-    def __check_type_for_dict(self, current_dict, key, default_val, type):
+    def __check_type_for_dict(current_dict, key, default_val, type):
         try:
             if type(current_dict[key]) != type:
                 raise KeyError
@@ -386,7 +386,7 @@ class Configurations:
                 current_dict.update({key: default_val})
         return current_dict
 
-    def __check_type(self, val_to_check, default_val, type):
+    def __check_type(val_to_check, default_val, type):
         try:
             if type(val_to_check) != type:
                 raise KeyError
@@ -394,7 +394,7 @@ class Configurations:
             val_to_check = default_val
         return val_to_check
 
-    def __check_strings(self, str_to_check, default_str, choices):
+    def __check_strings(str_to_check, default_str, choices):
         try:
             if [s for s in choices if str(str_to_check) in s] == []:
                 raise KeyError
@@ -402,7 +402,7 @@ class Configurations:
             str_to_check = default_str
         return str_to_check
 
-    def __check_strings_for_dict(self, current_dict, key, default_str, choices):
+    def __check_strings_for_dict(current_dict, key, default_str, choices):
         str_to_check = current_dict[key]
         try:
             if [s for s in choices if str(str_to_check) in s] == []:
