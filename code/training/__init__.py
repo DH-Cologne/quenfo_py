@@ -51,6 +51,7 @@ def initialize_model() -> Model:
     # Extract traindata name and last modification
     traindata_name, traindata_date = __get_traindata_information()
 
+    # model already there? use it
     if all_models_tfidf is not None and all_models_knn is not None:
         # CHECK IF NEW TRAINING IS NEEDED
         # Check if a. models are not None, b. same traindata was used (same file-name and same last modification date) and c. settings are the same
@@ -72,6 +73,7 @@ def initialize_model() -> Model:
                 model = Model(model_knn, model_tfidf, traindata_name, traindata_date)
                 break
 
+    # trainagain
     # if model is still None == es wurde kein passendes gefunden oder es war schon None
     if model == None:
    
@@ -92,6 +94,8 @@ def initialize_model() -> Model:
         # Instantiate an object of class Model and store the tfidf-vectorizer, knn-classifier and the used traindata-information
         model = Model(model_knn, model_tfidf, traindata_name, traindata_date)
     return model
+
+
 
 # ## (Private) Helper Functions
 
