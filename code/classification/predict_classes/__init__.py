@@ -3,6 +3,7 @@ from configuration.config_model import Configurations
 from training.train_models import Model
 from . import knn_predictor
 from . import regex_predictor
+from . import result_merger
 
 # ## Functions
 def start_prediction(jobad: object, model: Model) -> None:
@@ -26,15 +27,16 @@ def start_prediction(jobad: object, model: Model) -> None:
         knn_predicted = knn_predictor.gen_classes(cu.featurevector, model.model_knn)
 
         # b. REGEX PREDICTION: predict classes with regex
-        # hier dann auch den regex predictor reinmachen und dann direkt vergleichen!
-        # paragraph vllt nochmal normalisieren? also lower case und non alpha raus?
-        # hier übergeben wir am besten direkt die klasse RegexClassifier.get_pattern() irgendwie sowas
-        # der resource path muss auch noch dafür in der config hinzugefügt und gecheckt werden
-        regex_path = Configurations.get_regex_path()
-        reg_predicted = regex_predictor.gen_classes(cu.paragraph)
+        reg_predicted = regex_predictor.gen_classes(cu.paragraph, model.get_regex_clf())
 
+        # c. MERGE: compare the prediction from knn and regex
+        if reg_predicted != []:
+            # compare knn and regex results
+            predicted = result_merger.merge(reg_predicted, knn_predicted)
+        else:
+            predicted = knn_predicted
 
         
         # Set class
-        cu.set_classID(knn_predicted)
-        print(cu, knn_predicted)
+        cu.set_classID(predicted)
+        print(cu, predicted)

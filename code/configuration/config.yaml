@@ -12,7 +12,7 @@ fus_config:
 
 # --- General Parameters ---
 # Number of JobAds to query
-query_limit: 5
+query_limit: 500
 # Check if JobAds are already in Output-Database and decide to append or overwrite new data
 mode : overwrite
 # or mode : append

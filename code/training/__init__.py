@@ -1,6 +1,7 @@
 """ Script manages the training-process. The Class Model is filled with the knn classifier and the tfidf vectorizer."""
 
 # ## Imports
+from training import regexclassifier
 from training.tfidfvectorizer import start_tfidf
 from training.knnclassifier import start_knn
 from classification import prepare_classifyunits
@@ -98,6 +99,10 @@ def initialize_model() -> Model:
         # STORING
         # Instantiate an object of class Model and store the tfidf-vectorizer, knn-classifier and the used traindata-information
         model = Model(model_knn, model_tfidf, traindata_name, traindata_date)
+
+    # set regex classifier
+    regex_clf = regexclassifier.call_regex_clf()
+    model.set_regex_clf(regex_clf)
 
     # return obj of class Model
     return model
