@@ -1,4 +1,4 @@
-""" Script manages the training-process. The Class Model is filled with the knn classifier and the tfidf vectorizer."""
+""" Script manages the training-process. The Class Model is filled with the knn classifier, the tfidf vectorizer and regex classifier."""
 
 # ## Imports
 from training import regexclassifier
@@ -30,12 +30,13 @@ def initialize_model() -> Model:
     a. try to load the models tfidf and knn (returns list of models in pickle file)
     b. check if models are already trained under same conditions and if the same traindata is used as before
     c. train again if loading fails or new configurations are set or new traindata is given
+    d. load and set regex classifier
         
     Returns
     -------
     model: Model
-        Class Model consists of tfidf_vectorizer, knn_model (further information about class in orm_handling/models.py) 
-        and traindata-information """
+        Class Model consists of tfidf_vectorizer, knn_model (further information about class in orm_handling/models.py), 
+        traindata-information and regex_classifier """
     
     # Set globals
     global all_features
@@ -100,6 +101,7 @@ def initialize_model() -> Model:
         # Instantiate an object of class Model and store the tfidf-vectorizer, knn-classifier and the used traindata-information
         model = Model(model_knn, model_tfidf, traindata_name, traindata_date)
 
+    """ STEP 4: LOAD AND SET REGEX CLASSIFIER """
     # set regex classifier
     regex_clf = regexclassifier.call_regex_clf()
     model.set_regex_clf(regex_clf)

@@ -1,5 +1,6 @@
 def merge(reg, knn):
 
+    # SET REGEX from list of matches to one unique predicted class_nr
     # prepare regex prediction (eigene funktion)
     ids = list()
     for i in reg:
@@ -30,9 +31,10 @@ def merge(reg, knn):
             predicted = 6
         elif (reg == 5 and knn ==1) or (reg == 5 and knn == 3) or (reg == 1 and knn ==5) or (reg == 3 and knn == 5):
             predicted = 5
-        elif (reg == 6 and knn ==2) or (reg == 6 and knn == 3) or (reg == 2 and knn ==6) or (reg == 3 and knn == 56):
+        elif (reg == 6 and knn ==2) or (reg == 6 and knn == 3) or (reg == 2 and knn ==6) or (reg == 3 and knn == 6):
             predicted = 6
         else:
+            # zum evaluieren lassen und ausprobieren
             predicted = reg
             #predicted = knn
     return predicted

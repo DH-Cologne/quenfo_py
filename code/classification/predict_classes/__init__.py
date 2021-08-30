@@ -34,6 +34,7 @@ def start_prediction(jobad: object, model: Model) -> None:
             # compare knn and regex results
             predicted = result_merger.merge(reg_predicted, knn_predicted)
         else:
+            # no regex class was predicted, use knn
             predicted = knn_predicted
 
         

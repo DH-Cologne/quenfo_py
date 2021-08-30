@@ -12,7 +12,7 @@ fus_config:
 
 # --- General Parameters ---
 # Number of JobAds to query
-query_limit: 500
+query_limit: 50
 # Check if JobAds are already in Output-Database and decide to append or overwrite new data
 mode : overwrite
 # or mode : append
@@ -48,7 +48,7 @@ models:
 tfidf_config: 
   lowercase: False
   max_df: 1.0 
-  min_df: 2
+  min_df: 1
   sublinear_tf: False
   use_idf: True
 
