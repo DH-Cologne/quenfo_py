@@ -6,7 +6,7 @@ import re
 
 from classification.prepare_classifyunits.classify_units import convert_classifyunits
 from information_extraction.models import Token
-from information_extraction.prepare_resources import competences, no_competences, modifier, tools, no_tools
+from information_extraction.prepare_resources import competences, tools, no_competences, no_tools, modifier
 from information_extraction.prepare_resources.convert_entities import normalize_entities
 
 # load nlp-model for sentence detection, pos tagger and lemmatizer
@@ -14,7 +14,7 @@ nlp = spacy.load("de_core_news_sm")
 
 
 # ##Functions
-
+# TODO split Item List etc. does not work
 
 # Split into Sentences
 def split_into_sentences(content: str) -> list:
@@ -201,9 +201,9 @@ def annotate_token(token: list) -> list[Token]:
         lemma = normalize_entities(t.lemma)
         if competences.__contains__(lemma) or tools.__contains__(lemma):
             t.set_ie_token(True)
-        if no_competences.__contains__(lemma) or no_tools.__contains__(lemma):
+        elif no_competences.__contains__(lemma) or no_tools.__contains__(lemma):
             t.set_no_token(True)
-        if modifier.__contains__(lemma):
+        elif modifier.__contains__(lemma):
             t.set_modifier_token(True)
         annotate_list.append(t)
 

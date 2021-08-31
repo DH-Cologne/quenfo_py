@@ -108,8 +108,6 @@ class ExtractionUnits(Base):
 
     # Columns to query
     id = Column(Integer, primary_key=True)
-    # TODO not possible to use different class as column type
-    # paragraph should be ClassifyUnit-type not string
     paragraph = Column('paragraph', String(225))
     position_index = Column('position_index', Integer)
     sentence = Column('sentence', String(225))
@@ -142,28 +140,35 @@ class InformationEntity(Base):
 
     # Tablename for matching with db table
     # TODO: declare in config
-    __tablename__ = 'extractions'
+    __tablename__ = 'extracted_entities'
 
     # Columns to query
     id = Column(Integer, primary_key=True)
-    # TODO not possible to use different class as column type
-    # sentence should be ExtractionUnit-type
-    # try pickle?
-    sentence = Column('paragraph', MutableList.as_mutable(PickleType), default=[])
-    type = Column("IEType", String(225))
+    # extraction_unit with found entity
+    sentence = Column('extraction_unit', String(225))
+    # matched pattern description
+    pattern = Column('pattern_string', String(225))
+    # type
+    ie_type = Column("ie_type", String(225))
+    # start_lemma: first string
     start_lemma = Column("start_lemma", String(225))
-    is_single_word = Column("is_single_word", String(225))
+    # single word entity?
+    is_single_word = Column("is_single_word", Boolean)
+    # multi word entity -> full expression as string
     full_expression = Column("full_expression", String(225))
     # save as BLOB -> pickle?
+    # multi word entity -> full expression as array
     lemma_array = Column("lemma_array", MutableList.as_mutable(PickleType), default=[])
+    # used modifier
     modifier = Column("modifier", String(225))
 
     first_index = int
 
-    def __init__(self, sentence, type, start_lemma, is_single_word, full_expression, lemma_array, modifier,
+    def __init__(self, sentence, pattern, ie_type, start_lemma, is_single_word, full_expression, lemma_array, modifier,
                  first_index):
         self.sentence = sentence
-        self.type = type
+        self.pattern = pattern
+        self.ie_type = ie_type
         self.start_lemma = start_lemma
         self.is_single_word = is_single_word
         self.full_expression = full_expression

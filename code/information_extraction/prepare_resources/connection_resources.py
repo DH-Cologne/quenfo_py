@@ -5,7 +5,7 @@ from information_extraction.models import Pattern, PatternToken, Configuration
 from information_extraction.prepare_resources import convert_entities
 
 
-def get_entities_from_file(type: str) -> list:
+def get_entities_from_file(extraction_type: str) -> list:
     """Creates a connection to the requested file and reads its contents.
 
         Parameters:
@@ -26,7 +26,7 @@ def get_entities_from_file(type: str) -> list:
         "no_tools": Configuration.no_tools_path,
     }
 
-    path = switch.get(type)
+    path = switch.get(extraction_type)
 
     # get file object
     f = codecs.open(path, "r", encoding="utf-8")

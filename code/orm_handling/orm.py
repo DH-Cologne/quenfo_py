@@ -3,7 +3,10 @@
 # ## Imports
 from database.connection import Session2
 from sqlalchemy.orm import Session
-from .models import ClassifyUnits, ClassifyUnits_Train, Configurations, Model, TrainingData, JobAds
+
+from information_extraction.helpers import get_search_type
+from .models import ClassifyUnits, ClassifyUnits_Train, Configurations, Model, TrainingData, JobAds, ExtractionUnits, \
+    InformationEntity
 import sqlalchemy
 from database import engine, engine2, session2, session
 from pathlib import Path
@@ -210,3 +213,45 @@ def __check_once():
         is_created = 'checked'
     else:
         pass
+
+
+def get_classify_units() -> list:
+    # load classify_units
+    # TODO use query_limit for ie
+    all_classify_units = session.query(ClassifyUnits).limit(query_limit).all()
+    classify_units = list()
+    search_type = get_search_type()
+
+    for cu in all_classify_units:
+        if cu.classID == search_type:
+            classify_units.append(cu)
+
+    try:
+        # delete the handles from classify_units to extractions_units or create new table
+        if mode == 'overwrite':
+            session.query(ExtractionUnits).delete()
+        # load all related extraction units for appending
+        else:
+            session.query(ExtractionUnits).filter(ExtractionUnits.parent_id == ClassifyUnits.id).all()
+
+    except sqlalchemy.exc.OperationalError:
+        print("table extraction_units not existing --> create new one")
+        ExtractionUnits.__table__.create(engine)
+
+    pass_output(session)
+
+    try:
+        # delete the handles from extractions_units to information_entity or create new table
+        if mode == 'overwrite':
+            session.query(InformationEntity).delete()
+        # load all related information entity for appending
+        else:
+            session.query(InformationEntity).filter(InformationEntity.parent_id == ExtractionUnits.id).all()
+
+    except sqlalchemy.exc.OperationalError:
+        print("table information_entity not existing --> create new one")
+        InformationEntity.__table__.create(engine)
+
+    pass_output(session)
+
+    return classify_units

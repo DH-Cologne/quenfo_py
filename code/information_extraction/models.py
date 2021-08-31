@@ -1,4 +1,5 @@
 """Models using for information extraction."""
+from enum import Enum
 from pathlib import Path
 
 import yaml
@@ -102,7 +103,7 @@ class PatternToken(Token):
         return full_expression
 
 
-class Configuration:
+class Configuration():
     """ Class to get the parameters set in config.yaml and check if they are valid.
             --> If not, set default values. """
 
@@ -124,3 +125,10 @@ class Configuration:
         tools_path = resources['tools_path']
         no_tools_path = resources['notools_path']
         toolpattern_path = resources['toolpattern_path']
+
+        db_mode = cfg["mode"]
+        query_limit = cfg["query_limit"]
+
+        ie_config = cfg['ie_config']
+        ie_type = ie_config['type']
+        search = ie_config['search']
