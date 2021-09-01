@@ -35,7 +35,7 @@ def initialize_vectorizer(all_features: list) -> Union[TfidfVectorizer, csr_matr
     tfidf_train = vectorizer.transform(all_features)
 
     # Save the model
-    training.save_model(vectorizer)
+    training.helper.save_model(vectorizer)
 
     # Return vectorizer and matrix
     return vectorizer, tfidf_train

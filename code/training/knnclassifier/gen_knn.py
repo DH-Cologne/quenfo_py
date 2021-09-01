@@ -33,7 +33,7 @@ def initialize_knn(vectorized_train: csr_matrix, all_classes: list) -> KNeighbor
      clf = knn.fit(vectorized_train, all_classes)
 
      # save the model
-     training.save_model(clf)
+     training.helper.save_model(clf)
 
      # return classifier
      return clf

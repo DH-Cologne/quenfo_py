@@ -1,3 +1,4 @@
+# ## Imports
 import yaml
 from pathlib import Path
 
@@ -24,39 +25,36 @@ class Configurations():
         regex_path = resources['regex_path']
 
     # Getter
-    def get_traindata_path(): 
+    def get_traindata_path() -> str: 
         traindata_path = Configurations.traindata_path
         return Configurations.__check_path(traindata_path)
-    def get_tfidf_path(): 
+    def get_tfidf_path() -> str: 
         tfidf_path = Configurations.tfidf_path
         return Configurations.__check_path(tfidf_path)
-    def get_knn_path(): 
+    def get_knn_path() -> str: 
         knn_path = Configurations.knn_path
         return Configurations.__check_path(knn_path)
-    def get_input_path(): 
+    def get_input_path() -> str: 
         input_path = Configurations.input_path
         return Configurations.__check_path(input_path)
-    def get_stopwords_path(): 
+    def get_stopwords_path() -> str: 
         stopwords_path = Configurations.stopwords_path
         return Configurations.__check_path(stopwords_path)
-    def get_regex_path(): 
+    def get_regex_path() -> str: 
         regex_path = Configurations.regex_path
         return Configurations.__check_path(regex_path)
-    def get_query_limit():
+    def get_query_limit() -> int:
         query_limit = Configurations.query_limit
-        print(type(query_limit))
         return Configurations.__check_type(query_limit, 50, int)
-    def get_mode():
+    def get_mode() -> str:
         mode = Configurations.mode
         return Configurations.__check_strings(mode, 'overwrite', ('append', 'overwrite'))
         
-    def get_tfidf_config():
+    def get_tfidf_config() -> dict:
         tfidf_config = Configurations.tfidf_config
         if tfidf_config == None:
             tfidf_config = dict()
-        # with these Exceptions, missing and wrong input is fixed and also if all knn data is missing
-        # give dictionary, key to check, defaultvalue if given value is wrong and type to check
-        # logging info: default wurde genutzt weil input falscher typ etc.
+        # Check-functions to avoid error raises because of missing or wrong inputs
         tfidf_config = Configurations.__check_type_for_dict(tfidf_config, 'lowercase', False, bool)
         tfidf_config = Configurations.__check_type_for_dict(tfidf_config, 'max_df', 1.0, float)
         tfidf_config = Configurations.__check_type_for_dict(tfidf_config, 'min_df', 1, int)
@@ -64,11 +62,11 @@ class Configurations():
         tfidf_config = Configurations.__check_type_for_dict(tfidf_config, 'use_idf', True, bool)
         return tfidf_config
 
-    def get_fus_config():
+    def get_fus_config() -> dict:
         fus_config = Configurations.fus_config
         if fus_config == None:
             fus_config = dict()
-        # with these Exceptions, missing and wrong input is fixed and also if all knn data is missing
+        # Check-functions to avoid error raises because of missing or wrong inputs
         fus_config = Configurations.__check_type_for_dict(fus_config, 'normalize', True, bool)
         fus_config = Configurations.__check_type_for_dict(fus_config, 'stem', True, bool)
         fus_config = Configurations.__check_type_for_dict(fus_config, 'filterSW', True, bool)
@@ -76,12 +74,11 @@ class Configurations():
         fus_config = Configurations.__check_type_for_dict(fus_config, 'continuousNGrams', False, bool)
         return fus_config
 
-    def get_knn_config():
+    def get_knn_config() -> dict:
         knn_config = Configurations.knn_config
         if knn_config == None:
             knn_config = dict()
-        # with these Exceptions, missing and wrong input is fixed and also if all knn data is missing
-        # give dictionary, key to check, defaultvalue if given value is wrong and type to check
+        # Check-functions to avoid error raises because of missing or wrong inputs
         knn_config = Configurations.__check_type_for_dict(knn_config, 'n_neighbors', 5, int)
         knn_config = Configurations.__check_strings_for_dict(knn_config, 'weights', 'uniform', ('uniform', 'distance'))
         knn_config = Configurations.__check_strings_for_dict(knn_config, 'algorithm', 'auto', ('auto', 'ball_tree', 'kd_tree', 'brute'))
