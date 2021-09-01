@@ -14,17 +14,19 @@ import os
 
 # ## Set Variables
 is_created = None
+drop_once = None
 
 # Get Configuration Settings from config.yaml file 
-# query_limit: Number of JobAds to process
-query_limit = Configurations.get_query_limit()
+# Number of JobAds to fetch in one query
+fetch_size = Configurations.get_fetch_size()
+
 # mode: append data or overwrite it
 mode = Configurations.get_mode()
 
 # ## Functions
 
 # Function to query the data from the db table
-def get_jobads() -> list:
+def get_jobads(query_start) -> list:
     """ Function manages the data query and instantiates the Schema for the class JobAds in models.py
 
     Returns
@@ -37,13 +39,21 @@ def get_jobads() -> list:
     sqlalchemy.exc.OperationalError
         If changes in db are not possible, OperationalError is raised to continue with creation of table """
 
-    # load the jobads
-    job_ads = session.query(JobAds).limit(query_limit).all()
+    # Set global
+    global drop_once
 
+    # load the jobads
+    #job_ads = session.query(JobAds).limit(query_limit).all()
+    job_ads = session.query(JobAds).offset(query_start).limit(fetch_size).all()
+    
     try:
         # delete the handles from jobads to classifunits or create new table
         if mode == 'overwrite':
-            session.query(ClassifyUnits).delete()
+            if drop_once is None:
+                session.query(ClassifyUnits).delete()
+                drop_once = 'filled'
+            else:
+                pass
         # load all related classify units for appending
         else:
             session.query(ClassifyUnits).filter(ClassifyUnits.parent_id == JobAds.id).all()
@@ -157,8 +167,9 @@ def pass_output(session: Session):
     ----------
     session: Session
         Session object, generated in module database. Contains the database path. """
-
     session.commit()
+
+
 
 def close_session(session: Session):
     """ The session.close() statement closes the current session.

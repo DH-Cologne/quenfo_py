@@ -13,6 +13,8 @@ class Configurations():
         models = cfg['models']
         fus_config = cfg['fus_config']
         query_limit = cfg['query_limit']
+        fetch_size = cfg['fetch_size']
+        start_pos = cfg['start_pos']
         mode = cfg['mode']
         tfidf_path = models['tfidf_path']
         knn_path = models['knn_path']
@@ -46,6 +48,15 @@ class Configurations():
     def get_query_limit() -> int:
         query_limit = Configurations.query_limit
         return Configurations.__check_type(query_limit, 50, int)
+    
+    # TODO: Test hier einbauen
+    def get_fetch_size() -> int:
+        fetch_size = Configurations.fetch_size
+        return fetch_size
+    def get_start_pos() -> int:
+        start_pos = Configurations.start_pos
+        return start_pos
+
     def get_mode() -> str:
         mode = Configurations.mode
         return Configurations.__check_strings(mode, 'overwrite', ('append', 'overwrite'))
