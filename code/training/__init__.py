@@ -28,7 +28,7 @@ def initialize_model() -> Model:
     # Set globals
     global model
     
-    """ STEP 1: TRY TO LOAD MODELS """    
+    """ STEP 1: TRY TO LOAD MODELS AND TRAINDATA INFORMATION """  
     # Load tfidf-vectorizer and knn-model --> extract additional information about used traindata
     all_models_tfidf = helper.load_model('model_tfidf')
     all_models_knn = helper.load_model('model_knn')
@@ -36,7 +36,7 @@ def initialize_model() -> Model:
     # Extract traindata name and last modification
     traindata_name, traindata_date = helper.get_traindata_information()
 
-    """ STEP 2:  CHECK IF MODEL(S) WERE ALREADY TRAINED (separatly for tfidf and knn) """
+    """ STEP 2:  CHECK IF MODELS ARE ALREADY TRAINED (separatly for tfidf and knn) """
     if all_models_tfidf is not None and all_models_knn is not None:
         # iterate over each model in pickle-file and check if one matches criteria
         for model_tfidf_obj, model_knn_obj in zip(all_models_tfidf, all_models_knn):
@@ -51,7 +51,6 @@ def initialize_model() -> Model:
                 # if errors occur, set all vars to None
                 model_tfidf = model_knn = model_tfidf_td_info = model_knn_td_info = None
 
-
             # check if the current model matches all criteria (not None, same traindata input (name, date), same configurations, is fitted)
             if model_tfidf is not None and model_knn is not None \
                 and model_tfidf_td_info.name == traindata_name  and model_knn_td_info.name == traindata_name \
@@ -59,6 +58,7 @@ def initialize_model() -> Model:
                 and helper.check_configvalues(Configurations.get_tfidf_config(), model_tfidf) == True \
                 and helper.check_configvalues(Configurations.get_knn_config(), model_knn) == True \
                 and helper.__check_fitted(model_tfidf, 'model_tfidf') and helper.__check_fitted(model_knn, 'model_knn'):
+
                 # Instantiate an object of class Model and store the tfidf-vectorizer, knn-classifier and the used traindata-information
                 model = Model(model_knn, model_tfidf, traindata_name, traindata_date)
                 break 
