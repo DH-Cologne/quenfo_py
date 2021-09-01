@@ -37,6 +37,7 @@ def classify(model: Model) -> None:
     # STEP 3: Predict Classes for CUs in JobAds.
     for jobad in jobads:
         predict_classes.start_prediction(jobad, model)
+        # add obj to current session --> to be written in db
         orm.create_output(session, jobad)
 
     # Commit generated classify units with paragraphs and classes to table

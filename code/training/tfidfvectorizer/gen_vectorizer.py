@@ -1,3 +1,5 @@
+""" Script to train the tfidf-vectorizer. """
+
 # ## Imports
 from configuration.config_model import Configurations
 from sklearn.feature_extraction.text import TfidfVectorizer

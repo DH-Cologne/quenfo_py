@@ -1,5 +1,6 @@
+""" Script manages the prediction of classes via knn- and reg-classifier and comparing/merging of results. In the end a final class is set for cu. """
+
 # ## Imports
-from configuration.config_model import Configurations
 from training.train_models import Model
 from . import knn_predictor
 from . import regex_predictor
@@ -17,7 +18,7 @@ def start_prediction(jobad: object, model: Model) -> None:
     jobad: object
         jobad is an object of the class JobAds and contains all given variables 
     model: Model
-        Class Model consists of tfidf_vectorizer, knn_model (further information about class in orm_handling/models.py) 
+        Class Model consists of tfidf_vectorizer, knn_clf, regex_clf (further information about class in orm_handling/models.py) 
         and traindata-information """
 
     # Iterate over each classifyunit
@@ -37,7 +38,5 @@ def start_prediction(jobad: object, model: Model) -> None:
             # no regex class was predicted, use knn
             predicted = knn_predicted
 
-        
         # Set class
         cu.set_classID(predicted)
-        print(cu, predicted)

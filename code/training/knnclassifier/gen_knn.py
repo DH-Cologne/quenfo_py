@@ -1,3 +1,4 @@
+""" Script contains the training of the knn_classifier. """
 # ## Imports
 from scipy.sparse.csr import csr_matrix
 from configuration.config_model import Configurations

@@ -49,7 +49,7 @@ def get_jobads() -> list:
             session.query(ClassifyUnits).filter(ClassifyUnits.parent_id == JobAds.id).all()
 
     except sqlalchemy.exc.OperationalError:
-        print("table classify_unit not existing --> create new one")
+        print("table classify_unit does not exist --> create new one")
         ClassifyUnits.__table__.create(engine)
 
     pass_output(session)

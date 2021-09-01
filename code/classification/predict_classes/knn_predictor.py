@@ -1,3 +1,5 @@
+""" Script contains the prediction of classes via knn_classifier. """
+
 # ## Imports
 from scipy.sparse.csr import csr_matrix
 from sklearn.neighbors import KNeighborsClassifier 

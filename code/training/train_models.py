@@ -4,7 +4,7 @@
 import sklearn
 import pandas as pd
 
-# class Model which contains the knnclassifier and the tfidfvectorizer
+# class Model which contains the knnclassifier, tfidfvectorizer and regexclassifier
 class Model():
     # Set knn
     model_knn = sklearn.neighbors.KNeighborsClassifier()

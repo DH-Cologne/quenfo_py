@@ -1,7 +1,27 @@
+""" Script contains the prediction of classes via regex_classifier. """
+# ## Imports
 import re
+import pandas as pd
 
-def gen_classes(para, regex_clf):
-    result = list()
+# ## Functions
+def gen_classes(para: str, regex_clf: pd.DataFrame()) -> list:
+    """ Function to predict the class for a cu via regex_classifier
+    
+    Parameters
+    ----------
+    para: str
+        The content of a ClassifyUnit only slightly preprocessed.
+
+    regex_clf: pd.DataFrame()
+        The regex pattern + classes stored in DataFrame.
+        
+    Returns
+    -------
+    predicted: list
+        The predicted class(es). """
+
+    # Initiate predicted list again for each paragraph
+    predicted = list()
 
     def __compare_matches(class_nr, pattern):
         # check if pattern is in para
@@ -11,19 +31,17 @@ def gen_classes(para, regex_clf):
             match_result.captures(1)
         except AttributeError:
             pass
-        #print(match_result)
+        # return None or int(class_nr)
         if match_result == None:
             return None
         else:
             return int(class_nr)
 
-    result = [__compare_matches(class_nr, pattern) for class_nr, pattern in zip(regex_clf['class_nr'], regex_clf['pattern'])]
+    # check if pattern from regex_clf are in para and return class(es)
+    predicted = [__compare_matches(class_nr, pattern) for class_nr, pattern in zip(regex_clf['class_nr'], regex_clf['pattern'])]
     # remove None from list
-    result = list(filter(None, result))
+    predicted = list(filter(None, predicted))
     # remove duplicates from list
-    result = list(dict.fromkeys(result))
-
-    # return list of matches with associated classes
-    return result
-
-
+    predicted = list(dict.fromkeys(predicted))
+    # return list predicted classes for current paragraph
+    return predicted
