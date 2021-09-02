@@ -40,4 +40,4 @@ def start_prediction(jobad: object, model: Model) -> None:
 
         # Set class
         cu.set_classID(predicted)
-    print(cu, predicted)
+    #print(cu, predicted)

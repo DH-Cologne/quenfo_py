@@ -12,15 +12,15 @@ fus_config:
 
 # --- General Parameters ---
 # Number of JobAds to query
-query_limit: 50
+query_limit: 2000
 # Number of JobAds per chunk
-fetch_size: 10
+fetch_size: 100
 # Index Number of row where query starts
-start_pos: 0
+start_pos: 1
 
 # Check if JobAds are already in Output-Database and decide to append or overwrite new data
-#mode : overwrite
-mode : append
+mode : overwrite
+#mode : append
 
 # --- Paths ---
 resources:

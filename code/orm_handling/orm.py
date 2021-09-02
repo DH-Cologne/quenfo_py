@@ -19,6 +19,7 @@ drop_once = None
 # Get Configuration Settings from config.yaml file 
 # Number of JobAds to fetch in one query
 fetch_size = Configurations.get_fetch_size()
+query_limit = Configurations.get_query_limit()
 
 # mode: append data or overwrite it
 mode = Configurations.get_mode()
@@ -43,11 +44,11 @@ def get_jobads(query_start) -> list:
     global drop_once
 
     # load the jobads
-    #job_ads = session.query(JobAds).limit(query_limit).all()
     job_ads = session.query(JobAds).offset(query_start).limit(fetch_size).all()
-    
+    #job_ads = session.query(JobAds).where(query_start<(query_start+fetch_size)).limit(fetch_size).all()
+
     try:
-        # delete the handles from jobads to classifunits or create new table
+        # delete the handles from jobads to classifyunits or create new table
         if mode == 'overwrite':
             if drop_once is None:
                 session.query(ClassifyUnits).delete()

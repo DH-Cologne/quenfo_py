@@ -4,6 +4,7 @@
     * Step 3: Predict Classes for CUs """
 
 # ## Imports
+from sqlalchemy.orm import query
 from classification.prepare_classifyunits import generate_classifyunits
 from database import session
 from orm_handling import orm
@@ -35,7 +36,7 @@ def classify(model: Model) -> None:
     query_start = start_pos
     # set jobad counter
     counter = 0
-
+        
     while counter < query_limit:
 
         # STEP 1: Load the Input data: JobAds in JobAds Class.
@@ -55,10 +56,13 @@ def classify(model: Model) -> None:
 
         # Commit generated classify units with paragraphs and classes to table
         orm.pass_output(session)
+
         counter += len(jobads)
         query_start += len(jobads)
 
+    
     # Reset traindata changes (used as filler)
     orm.handle_td_changes(model)
     # Close session
     orm.close_session(session)
+    
