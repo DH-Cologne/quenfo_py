@@ -5,6 +5,7 @@ from training.train_models import Model
 from . import knn_predictor
 from . import regex_predictor
 from . import result_merger
+import logging
 
 # ## Functions
 def start_prediction(jobad: object, model: Model) -> None:
@@ -23,7 +24,7 @@ def start_prediction(jobad: object, model: Model) -> None:
 
     # Iterate over each classifyunit
     for cu in jobad.children:
-
+    
         # a. KNN PREDICTION: predict classes with knn
         knn_predicted = knn_predictor.gen_classes(cu.featurevector, model.model_knn)
 
@@ -40,4 +41,8 @@ def start_prediction(jobad: object, model: Model) -> None:
 
         # Set class
         cu.set_classID(predicted)
-    #print(cu, predicted)
+        try:
+            logging.info(f'show {cu} and class {predicted}')
+            logging.info(f'content of cu {cu.id}, {cu.classID}, {cu.paragraph}, {cu.featureunits}')
+        except:
+            logging.info(f"some error with cu {cu} occured")

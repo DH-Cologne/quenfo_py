@@ -2,8 +2,8 @@
 
 # ## Imports
 import re
-from sys import prefix
 from typing import Union
+import logging
 
 
 # ## Functions
@@ -70,6 +70,7 @@ def identify_listitems(list_paragraphs: list) -> list:
     cleaned_merged: list
         returns list with new paragraphs (partially merged) """
 
+    logging.info(f'{list_paragraphs}')
     # ## Set variables
     # List to store cleaned paragraphs
     cleaned_merged = list()
@@ -80,20 +81,23 @@ def identify_listitems(list_paragraphs: list) -> list:
     list_paragraphs.append('')
     # set memory variable
     previous_to_remember = str()
+    logging.info(f'hereeee {list_paragraphs}')
 
     while i < len(list_paragraphs):
         # set variables to compare
         para = list_paragraphs[i]
         previous = list_paragraphs[i - 1]
-
+        logging.info(f'{i}')
         # Merge Listitems together
         para, previous_to_remember = __merge_listitems(previous, para, previous_to_remember)
 
         # append merged or old paragraph to output list
         cleaned_merged.append(para)
         i += 1
+    logging.info(f'afterwhile')
     # remove empty strings
     cleaned_merged = list(filter(None, cleaned_merged))
+    logging.info(f'cleaned merged{cleaned_merged}')
     return cleaned_merged
 
 
@@ -105,6 +109,7 @@ def __merge_listitems(previous: str, para: str, previous_to_remember: str) -> Un
         return previous, previous_to_remember
     # Check if two paragraphs contain the required list characters and join them if true.
     else:
+        logging.info(f"IMHERENOW")
         previous, previous_to_remember = __isListItem(previous, para, previous_to_remember)
         return previous, previous_to_remember
 
@@ -118,7 +123,7 @@ def __isListItem(previous, para, previous_to_remember):
     regex_para = re.compile(r"(^((\s)*(-\*|\+|-|\*|\d(\.|\\)|\.\\)(.*))+$)")
 
     # Compare a paragraph and the previous paragraph, if they match --> join them
-    if regex_previous.search(previous) and regex_para.search(para):
+    if regex_previous.match(re.escape(previous)) and regex_para.match(re.escape(para)):
         previous = "\n".join([previous, para])
         # Set joined paragraphs as previous_to_remember => approach to eliminate overwriting
         previous_to_remember = previous
@@ -127,6 +132,7 @@ def __isListItem(previous, para, previous_to_remember):
     else:
         # return unchanged previous to write in output
         return previous, previous_to_remember
+
 
 
 # Merge WhatBelongsTogether
@@ -204,4 +210,4 @@ def __BelongsItem(previous, para, previous_to_remember):
 def __looksLikeJobTitle(para):
     # Regex to match strings as jobtitles (e.g. Bewerber:innen, Bewerber(w/m), Bewerber*innen...)
     regex_jobtitle = re.compile(r"^(.*)[\(.*\)|/|\*|:|/-].*$")
-    return regex_jobtitle.match(para)
+    return regex_jobtitle.match(re.escape(para))

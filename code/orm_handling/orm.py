@@ -27,7 +27,7 @@ mode = Configurations.get_mode()
 # ## Functions
 
 # Function to query the data from the db table
-def get_jobads(query_start) -> list:
+def get_jobads(current_pos) -> list:
     """ Function manages the data query and instantiates the Schema for the class JobAds in models.py
 
     Returns
@@ -44,8 +44,9 @@ def get_jobads(query_start) -> list:
     global drop_once
 
     # load the jobads
-    job_ads = session.query(JobAds).offset(query_start).limit(fetch_size).all()
-    #job_ads = session.query(JobAds).where(query_start<(query_start+fetch_size)).limit(fetch_size).all()
+    #job_ads = session.query(JobAds).slice(current_pos, (current_pos+fetch_size)).all()                     # 0:02:26.691769 bei 2500 JobAds 
+    #job_ads = session.query(JobAds).offset(current_pos).limit(fetch_size).all()                            # 0:02:25.670638 bei 2500 JobAds
+    job_ads = session.query(JobAds).where(current_pos<(current_pos+fetch_size)).limit(query_limit).all()    # 0:02:21.205672 bei 2500 JobAds
 
     try:
         # delete the handles from jobads to classifyunits or create new table

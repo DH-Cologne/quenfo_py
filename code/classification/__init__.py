@@ -33,36 +33,41 @@ def classify(model: Model) -> None:
     # start_pos: Row Number where to start query
     start_pos = Configurations.get_start_pos()
     # set row number for query
-    query_start = start_pos
+    current_pos = start_pos
     # set jobad counter
     counter = 0
         
-    while counter < query_limit:
+    while True:
 
         # STEP 1: Load the Input data: JobAds in JobAds Class.
-        jobads = orm.get_jobads(query_start)
-
+        jobads = orm.get_jobads(current_pos)
+        
+        if len(jobads) == 0:
+            break
+        elif counter >= query_limit:
+            break
+ 
         # iterate over each jobad
         for jobad in jobads:
-
+            logging.info(f"before preprocessing in jobad {jobad}")   
             # STEP 2: Generate classify_units, feature_units and feautre_vectors for each JobAd.
             generate_classifyunits(jobad, model)
-                    
+
+            logging.info(f"before prediction in jobad {jobad}")        
             # STEP 3: Predict Classes for CUs in JobAds. 
             predict_classes.start_prediction(jobad, model)
 
             # add obj to current session --> to be written in db
             orm.create_output(session, jobad)
-
+        
         # Commit generated classify units with paragraphs and classes to table
         orm.pass_output(session)
-
+        logging.info(f'session is cleaned and every obj is flushed: {session._is_clean()}')
         counter += len(jobads)
-        query_start += len(jobads)
+        current_pos += len(jobads)
 
     
     # Reset traindata changes (used as filler)
     orm.handle_td_changes(model)
     # Close session
     orm.close_session(session)
-    

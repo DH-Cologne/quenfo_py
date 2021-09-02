@@ -6,6 +6,7 @@ from training.train_models import Model
 from . import classify_units
 from . import feature_units
 from . import feature_vectors
+import logging
 
 
 # ### Main-Function for ClassifyUnit generation (+ featureunits and featurevectors)
@@ -26,10 +27,12 @@ def generate_classifyunits(jobad: object, model: Model) -> None:
     model: Model
         Class Model consists of tfidf_vectorizer, knn_model (further information about class in orm_handling/models.py) 
         and traindata-information """
-
+        
+    logging.info(f'before split in paragraphs')
     # Split the jobad texts (content) and receive a list of paragraphs for each jobad + remove whitespaces
     list_paragraphs = classify_units.get_paragraphs(jobad)
 
+    logging.info(f'before clean parargrapsh')
     # Clean each paragraph and merge ListItems and WhatBelongsTogether
     list_paragraphs = classify_units.clean_paragraphs(list_paragraphs)
 
