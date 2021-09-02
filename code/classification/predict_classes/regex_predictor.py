@@ -25,7 +25,7 @@ def gen_classes(para: str, regex_clf: pd.DataFrame()) -> list:
 
     def __compare_matches(class_nr, pattern):
         # check if pattern is in para
-        match_result = re.match(pattern, para.lower())
+        match_result = re.match(pattern, re.escape(para.lower()))
         # captures() saves multiple matches if more than one is found
         try:
             match_result.captures(1)
