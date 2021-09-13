@@ -75,17 +75,14 @@ def get_application_parser() -> argparse.ArgumentParser:
     Returns
     ----------
     application_parser : parser
-        Parser contains the subparsers: id_handling, modeling, analysis and all_in_one """
+        Parser contains 
+            a. the three tool parts as options: classification, extraction, matching
+            b. input_path argument (use string format!)
+            c. db_mode (options: overwrite or append) """
         
     # ## create parser
     application_parser = argparse.ArgumentParser(description='classify jobads and extract/match information')
-
-    # ## create subparsers
-    """ subparsers = application_parser.add_subparsers()
-    subparsers.required = True """
-
  
-    # 2. subparser 'quenfo_py'
     application_parser.add_argument('--classification', action="store_true")
     application_parser.add_argument('--extraction', action="store_true")
     application_parser.add_argument('--matching', action="store_true")
