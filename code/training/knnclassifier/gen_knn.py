@@ -4,6 +4,7 @@ from scipy.sparse.csr import csr_matrix
 from configuration.config_model import Configurations
 from sklearn.neighbors import KNeighborsClassifier 
 import training 
+import configuration
 
 # ## Function
 def initialize_knn(vectorized_train: csr_matrix, all_classes: list) -> KNeighborsClassifier:
@@ -23,7 +24,7 @@ def initialize_knn(vectorized_train: csr_matrix, all_classes: list) -> KNeighbor
         The saved model. Type: KNeighborsClassifier """
 
      # Get Configuration Settings for KNN-Classifier
-     config = Configurations.get_knn_config()
+     config = configuration.config_obj.get_knn_config()
 
      # Instantiate KNNClassifier obj with defined Configuration-Settings
      knn = KNeighborsClassifier(n_neighbors=config['n_neighbors'], weights=config['weights'], \

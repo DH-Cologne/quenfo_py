@@ -4,7 +4,7 @@
 import pandas as pd
 from pathlib import Path
 from typing import Union
-from configuration.config_model import Configurations
+import configuration
 
 # Set Variables
 regex_clf = pd.DataFrame()
@@ -21,7 +21,7 @@ def start() -> pd.DataFrame():
         Dataframe with the columns class_nr and pattern. Contains the values for regex_classifier. """
 
     # Get regex.txt file from config
-    regex_path = Configurations.get_regex_path()
+    regex_path = configuration.config_obj.get_regex_path()
     # Open and read regex-file. Returns the regex_classifier classes and pattern. 
     class_list, pattern_list = __read_file(regex_path)
     # Store both lists in DataFrame regex_clf

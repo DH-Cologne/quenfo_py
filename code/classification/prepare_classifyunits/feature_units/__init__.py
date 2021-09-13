@@ -1,13 +1,14 @@
 # ## Imports
-from configuration.config_model import Configurations
 from . import convert_featureunits
 from pathlib import Path
+import configuration
 
-fus_config = Configurations.get_fus_config()
+
 
 
 # FEATUREUNIT-MANAGER
 def get_featureunits(cu: object) -> None:
+    
     """ Function to manage preprocessing steps as tokenization, normalization, stopwords removal, stemming and ngrams.
     Each step receives the current featureunits of a classifyunit-object and processes them. 
     Afterwards the new fus are set as featureunits for the cu (overwriting).
@@ -17,6 +18,7 @@ def get_featureunits(cu: object) -> None:
     cu: object
         classifyunit-object which contains the instantiated featureunits --> consisting of cu-paragraphs without non-alphanumerical characters """
 
+    fus_config = configuration.config_obj.get_fus_config()
     # Tokenization
     fus = convert_featureunits.tokenize(cu.featureunits)
     cu.set_featureunits(fus)
@@ -24,7 +26,7 @@ def get_featureunits(cu: object) -> None:
     fus = convert_featureunits.normalize(cu.featureunits, fus_config['normalize'])
     cu.set_featureunits(fus)
     # Stopwords Removal
-    fus = convert_featureunits.filterSW(cu.featureunits, fus_config['filterSW'], Path(Configurations.get_stopwords_path()))
+    fus = convert_featureunits.filterSW(cu.featureunits, fus_config['filterSW'], Path(configuration.config_obj.get_stopwords_path()))
     cu.set_featureunits(fus)
     # Stemming
     fus = convert_featureunits.stem(cu.featureunits, fus_config['stem'])

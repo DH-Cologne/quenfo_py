@@ -4,15 +4,15 @@
 # ## Imports
 from typing import Union
 import sklearn
-from configuration.config_model import Configurations
 import dill as pickle
 from pathlib import Path
 from training.train_models import Model, SaveModel, TraindataInfo
 import inspect
 import os
 import datetime
-from classification import prepare_classifyunits
+import classification
 from orm_handling import orm
+import configuration 
 
 # ## Set variables
 all_features = list()
@@ -42,8 +42,8 @@ def get_traindata_information() -> Union[str, str]:
     global traindata_name
     global traindata_date
     try:
-        traindata_name = str(Path(Configurations.get_traindata_path()).name)
-        traindata_date = str(datetime.datetime.fromtimestamp(os.path.getmtime(str(Configurations.get_traindata_path()))).replace(microsecond=0))
+        traindata_name = str(Path(configuration.config_obj.get_traindata_path()).name)
+        traindata_date = str(datetime.datetime.fromtimestamp(os.path.getmtime(str(configuration.config_obj.get_traindata_path()))).replace(microsecond=0))
     except OSError:
         print("Key Information for Traindata could not be extracted. Model will be saved without Traindata Information.")
         traindata_name = traindata_date = str()
@@ -88,7 +88,7 @@ def prepare_traindata() -> list:
     traindata = orm.get_traindata()
     # fill classify_units and generate feature_units for Traindata
     for train_obj in traindata:
-        prepare_classifyunits.generate_train_cus(train_obj)  
+        classification.prepare_classifyunits.generate_train_cus(train_obj)  
     return traindata
 
 # Help function to generate a list with all features and a list with all classes
@@ -130,9 +130,9 @@ def save_model(model: Union[sklearn.feature_extraction.text.TfidfVectorizer or s
 
     # Set right path (from config.yaml) depending on type of model
     if type(model) == sklearn.feature_extraction.text.TfidfVectorizer:
-        model_path = Configurations.get_tfidf_path()
+        model_path = configuration.config_obj.get_tfidf_path()
     elif type(model) == sklearn.neighbors.KNeighborsClassifier:
-        model_path = Configurations.get_knn_path()
+        model_path = configuration.config_obj.get_knn_path()
     else:
         print(f'Path for {model} could not be resolved. No model was saved. Check config for path adjustment.')
         pass
@@ -162,7 +162,6 @@ def load_model(name: str) -> Union[sklearn.feature_extraction.text.TfidfVectoriz
     """ Method loads a model depending on chosen name. Path for model is set in config.yaml
         1. __loader: loads the model 
             --> split loaded pickle obj into the model and the additonally stored trainingdata-information (extract_model)
-        2. __check_fitted: checks the received model 
 
     Parameters
     ----------
@@ -187,9 +186,9 @@ def load_model(name: str) -> Union[sklearn.feature_extraction.text.TfidfVectoriz
 
 def __loader(all_models: None, name: str):
     if name == 'model_tfidf':
-        all_models = __extract_models(Configurations.get_tfidf_path())
+        all_models = __extract_models(configuration.config_obj.get_tfidf_path())
     elif name == 'model_knn':
-        all_models = __extract_models(Configurations.get_knn_path())
+        all_models = __extract_models(configuration.config_obj.get_knn_path())
     else:
         all_models = None
     return all_models
@@ -203,7 +202,7 @@ def __extract_models(model_path: str) -> Union[list or None]:
     return all_models
     
 
-def __check_fitted(model: Union[sklearn.feature_extraction.text.TfidfVectorizer, sklearn.neighbors.KNeighborsClassifier], name):
+def check_fitted(model: Union[sklearn.feature_extraction.text.TfidfVectorizer, sklearn.neighbors.KNeighborsClassifier], name):
     try:
         # check if model is already fitted (example from https://www.py4u.net/discuss/230863)
         if (0 < len( [k for k,v in inspect.getmembers(model) if k.endswith('_') and not k.startswith('__')])) and model is not None:

@@ -1,4 +1,4 @@
-import unittest
+""" import unittest
 
 import orm_handling.orm
 from database import connection
@@ -24,4 +24,4 @@ class TestGetJobAds(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    unittest.main() """

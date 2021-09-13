@@ -5,8 +5,9 @@ from training import regexclassifier
 from training.tfidfvectorizer import start_tfidf
 from training.knnclassifier import start_knn
 from training.train_models import Model
-from configuration.config_model import Configurations
 from training import helper
+import configuration
+import logging
 
 # ## Set variables
 model = None
@@ -55,9 +56,9 @@ def initialize_model() -> Model:
             if model_tfidf is not None and model_knn is not None \
                 and model_tfidf_td_info.name == traindata_name  and model_knn_td_info.name == traindata_name \
                 and model_tfidf_td_info.date == traindata_date and model_knn_td_info.date == traindata_date\
-                and helper.check_configvalues(Configurations.get_tfidf_config(), model_tfidf) == True \
-                and helper.check_configvalues(Configurations.get_knn_config(), model_knn) == True \
-                and helper.__check_fitted(model_tfidf, 'model_tfidf') and helper.__check_fitted(model_knn, 'model_knn'):
+                and helper.check_configvalues(configuration.config_obj.get_tfidf_config(), model_tfidf) == True \
+                and helper.check_configvalues(configuration.config_obj.get_knn_config(), model_knn) == True \
+                and helper.check_fitted(model_tfidf, 'model_tfidf') and helper.check_fitted(model_knn, 'model_knn'):
 
                 # Instantiate an object of class Model and store the tfidf-vectorizer, knn-classifier and the used traindata-information
                 model = Model(model_knn, model_tfidf, traindata_name, traindata_date)
@@ -67,6 +68,7 @@ def initialize_model() -> Model:
     if model == None:
    
         print('Model criteria didnt match. Both need to be redone')
+        logging.info('Model criteria didnt match. Both need to be redone')
         
         # PREPARATION
         # prepare data for training --> process data to fus

@@ -2,13 +2,11 @@
 
 # ## Imports
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import create_engine, String, Integer, Float, Boolean, Column, Sequence, ForeignKey
+from sqlalchemy import String, Integer, Column, Sequence, ForeignKey
 from sqlalchemy.orm import backref, relationship
 import itertools
 import sklearn.neighbors
 import sklearn.feature_extraction
-import yaml
-from pathlib import Path
 
 # get Base connection
 Base = declarative_base()

@@ -1,10 +1,19 @@
 # ## Imports
 from . import connection
 
-# Get instantiated session object and engine for Input_data
-session = connection.session
-engine = connection.engine
+session = None
+session2 = None
+engine = None
+engine2 = None
 
-# Get instantiated session2 object and engine2 for Traindata_data
-session2 = connection.session2
-engine2 = connection.engine2
+
+def get_input_conn():
+    global session, engine
+    # Get instantiated session object and engine for Input_data
+    session, engine = connection.set_testdata()
+    
+
+def get_train_conn():
+    global session2, engine2
+    # Get instantiated session2 object and engine2 for Traindata_data
+    session2, engine2 = connection.set_traindata()

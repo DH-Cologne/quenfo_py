@@ -4,15 +4,13 @@
     * Step 3: Predict Classes for CUs """
 
 # ## Imports
-from sqlalchemy.orm import query
-from classification.prepare_classifyunits import generate_classifyunits
-from database import session
+from . import prepare_classifyunits
+from . import predict_classes
+import database
 from orm_handling import orm
 from training.train_models import Model
 import logging
-from classification import predict_classes
-from configuration.config_model import Configurations
-import gc
+import configuration
 
 # ## Function
 def classify(model: Model) -> None:
@@ -29,9 +27,9 @@ def classify(model: Model) -> None:
 
     # ## Set Variables
     # query_limit: Number of JobAds to process
-    query_limit = Configurations.get_query_limit()
+    query_limit = configuration.config_obj.get_query_limit()
     # start_pos: Row Number where to start query
-    start_pos = Configurations.get_start_pos()
+    start_pos = configuration.config_obj.get_start_pos()
     # set row number for query
     current_pos = start_pos
     # set jobad counter
@@ -51,18 +49,18 @@ def classify(model: Model) -> None:
         for jobad in jobads:
             logging.info(f"before preprocessing in jobad {jobad}")   
             # STEP 2: Generate classify_units, feature_units and feautre_vectors for each JobAd.
-            generate_classifyunits(jobad, model)
+            prepare_classifyunits.generate_classifyunits(jobad, model)
 
             logging.info(f"before prediction in jobad {jobad}")        
             # STEP 3: Predict Classes for CUs in JobAds. 
             predict_classes.start_prediction(jobad, model)
 
             # add obj to current session --> to be written in db
-            orm.create_output(session, jobad)
+            orm.create_output(database.session, jobad)
         
         # Commit generated classify units with paragraphs and classes to table
-        orm.pass_output(session)
-        logging.info(f'session is cleaned and every obj is flushed: {session._is_clean()}')
+        orm.pass_output(database.session)
+        logging.info(f'session is cleaned and every obj is flushed: {database.session._is_clean()}')
         counter += len(jobads)
         current_pos += len(jobads)
 
@@ -70,4 +68,4 @@ def classify(model: Model) -> None:
     # Reset traindata changes (used as filler)
     orm.handle_td_changes(model)
     # Close session
-    orm.close_session(session)
+    orm.close_session(database.session)
