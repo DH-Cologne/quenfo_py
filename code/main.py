@@ -39,9 +39,12 @@ def start_matching():
 
 def manage_app(args):
     method_args = vars(args)
-    configuration.set_config(method_args)
-    database.get_train_conn()
-    database.get_input_conn()
+    def __set_all():
+        """ Set globals: configuration values and database connections. """
+        configuration.set_config(method_args)
+        database.set_train_conn()
+        database.set_input_conn()
+    __set_all()
 
     def __call_parts():
         # Call each part of the application (depending on given argparse arguments)

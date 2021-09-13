@@ -1,5 +1,6 @@
 # ## Imports
 from . import connection
+import configuration
 
 session = None
 session2 = None
@@ -7,13 +8,15 @@ engine = None
 engine2 = None
 
 
-def get_input_conn():
+def set_input_conn():
     global session, engine
+    input_path = configuration.config_obj.get_input_path()
     # Get instantiated session object and engine for Input_data
-    session, engine = connection.set_testdata()
+    session, engine = connection.create_connection(input_path)
     
 
-def get_train_conn():
+def set_train_conn():
     global session2, engine2
+    traindata_path = configuration.config_obj.get_traindata_path()
     # Get instantiated session2 object and engine2 for Traindata_data
-    session2, engine2 = connection.set_traindata()
+    session2, engine2 = connection.create_connection(traindata_path)
