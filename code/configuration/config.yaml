@@ -14,7 +14,7 @@ fus_config:
 # Number of JobAds to query
 query_limit: 50
 # Number of JobAds per chunk
-fetch_size: 50
+fetch_size: 10
 # Index Number of row where query starts
 start_pos: 0
 
