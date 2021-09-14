@@ -24,6 +24,7 @@ class Configurations:
             traindata_path = resources['traindata_path']
             stopwords_path = resources['stopwords_path']
             regex_path = resources['regex_path']
+        # Set default values
         self.fus_config = fus_config
         self.query_limit = query_limit
         self.fetch_size = fetch_size
@@ -134,7 +135,7 @@ class Configurations:
     def get_knn_config(self) -> dict:
         return self.knn_config
     
-    # Checker + Default Setter
+    # Checker
     def __check_path(path):
         try:
             Path(path).exists()
