@@ -1,18 +1,22 @@
-""" Main Script of the application. Manages the main components of the tool. Further information for execution can be found in the file readme.md.
+""" MAIN SCRIPT of the application. Manages the main components of the tool. Further information for execution can be found in the file readme.md.
 
-PURPOSE: 
+*****************
+*** QUENFO_PY ***
+*****************
+
+* PURPOSE: 
     Split JobAds into paragraphs and classify them. Extract/match competences and tools.
 
-INPUT:
+* INPUT:
         - SQL-Databases containing job-ads (One as Trainingdata and one as Testdata)
-OUTPUT:
+* OUTPUT:
         - New Table "classify_units" in Testdata with classified paragraphs, list of competences, list of tools.
-STRUCTURE:
+* STRUCTURE:
         Program consists of three major parts:
             a. Textclassification
             b. Information Extraction
             c. Matching
-TASKS: 
+* TASKS: 
     a. Textclassification: Split JobAds into paragraphs and classify them:
     Possible classes: 
         1. Selbstvorstellung des ausschreibenden Unternehmens
@@ -27,11 +31,14 @@ TASKS:
     c. Matching:
         c.1 Competences
         c.2 Tools
-PATHS   --> All paths can be adjusted in the config.yaml, except the input_path (needs to be entered via CLI).
 
-WORKING-DIR: /code
+* PATHS: All paths can be adjusted in the config.yaml, except the input_path (needs to be entered via CLI).
 
-CALLS:
+* WORKING-DIR: /code
+
+* TESTS: in Module code/tests
+
+* CALLS:
     (ArgumentParser to process CLI-Commands)
 
     usage: main.py [-h] [--classification] [--extraction] [--matching]
@@ -47,11 +54,10 @@ CALLS:
     --input_path INPUT_PATH
     --db_mode {overwrite,append}
 
-Example: python main.py --classification --input_path '..\..\quenfo_data\sqlite\orm\text_kernel_orm_2018_03.db' --db_mode overwrite """
+CLI-example: python main.py --classification --input_path '..\..\quenfo_data\sqlite\orm\text_kernel_orm_2018_03.db' --db_mode overwrite """
 
 # ## Imports
 import configuration
-import logging
 from timeit import default_timer as timer
 from datetime import timedelta
 import argparse
@@ -61,114 +67,164 @@ import training
 import classification
 import database
 import logger
+import logging
 
 # ## Initiate Logging-Module
-logger.main()
-logger.log_main.info("HEllo")
+""" 
+Set four different logging-files: 
+    a. log_main.log --> for all main related processes and raises.
+    b. log_clf.log  --> for all classification related processes and raises.
+    c. log_ie.log   --> for all information extraction related processes and raises.
+    d. log_match.log--> for all matching related processes and raises."""
 
-def start_classification():
-    
+logger.main()
+
+# ## Functions
+
+# *** PART 1: Textclassification ***
+def start_classification() -> None:
+    """ Function to manage the classification step. 
+        a. Train or Load model 
+        b. Classify JobAd-paragraphs with model """
+
     # STEP 1: Train or Load Vectorizer, KNN and Regex_clf as Class-object model
     model = training.initialize_model()
 
     # STEP 2: Start Classification
     classification.classify(model)
 
-def start_extraction():
-    # STEP 3a: Information Extraction 
+# *** PART 2: Information Extraction ***
+def start_extraction() -> None:
     pass
 
-def start_matching():
-    # STEP 3b: Matching 
+# *** PART 3: Matching ***
+def start_matching() -> None: 
     pass
 
 
+# Manage the different parts and set configurations/connections
 def manage_app(args: dict) -> None:
-
+    """ Function to 
+            a. set configurations with vars from argparser and config.yaml-file. 
+            b. establish the database-connections to the traindata-file (config.yaml) and input_path (argparser). 
+    
+    Parameters
+    ----------
+    args: dict
+        dictionary with the arguments received by argparser. """
+    
+    # Get items from dict
     method_args = vars(args)
+
+    # First: set configurations and database-connections
     def __set_all():
         """ Set globals: configuration values and database connections. """
-        configuration.set_config(method_args)
-        database.set_train_conn()
-        database.set_input_conn()
+        try:
+            configuration.set_config(method_args)
+            database.set_train_conn()
+            database.set_input_conn()
+            logger.log_main.info(f'Configurations set: {configuration.config_obj} and database connections created: \n \
+                input_data: {database.session} traindata: {database.session2}')
+        except Exception as e:
+            logger.log_main.info(f'Error {e} occurred. Checkout configurations, argparser and connections to databases.')
+            print(f'Error {e} occurred. Checkout configurations, argparser and connections to databases.')
+            sys.exit()
     __set_all()
 
+    # Second: Call each part of the application (depending on given argparse arguments)
     def __call_parts():
-        # Call each part of the application (depending on given argparse arguments)
+        # Textclassification
+        def __call_clf():
+            logger.set_infos(logger.log_clf,'Classification', 'start')
+            start_classification()
+            logger.set_infos(logger.log_clf,'Classification', 'finish')
+        # Information Extraction
+        def __call_ie():
+            logger.set_infos(logger.log_ie,'Information Extraction', 'start')
+            start_extraction()
+            logger.set_infos(logger.log_ie,'Information Extraction', 'finish')
+        # Matching
+        def __call_match():
+            logger.set_infos(logger.log_match,'Matching', 'start')
+            start_matching()
+            logger.set_infos(logger.log_match,'Matching', 'finish')
+
+        # Call part or all depending on argparser
         if method_args['classification']:
-            print(f'Classification started.')
-            start_classification()
+            __call_clf()
         if method_args['extraction']:
-            print(f'Information Extraction started.')
-            start_extraction()
+            __call_ie()
         if method_args['matching']:
-            print(f'Matching started.')
-            start_matching()
+            __call_match()
         if  not(method_args['classification']) and not(method_args['extraction']) and not(method_args['matching']):
-            print('All in one')
-            print(f'Classification started.')
-            start_classification()
-            print(f'Information Extraction started.')
-            start_extraction()
-            print(f'Matching started.')
-            start_matching()
+            __call_clf()
+            __call_ie()
+            __call_match()
     __call_parts()
 
 
-# ArgumentParser für step modeling + classify, information extraction, matching
+# ## ArgumentParser
 
 def get_application_parser() -> argparse.ArgumentParser:
     """ Function to generate an ArgumentParser and return given arguments from CLI
+
     Returns
     ----------
     application_parser : parser
-        Parser contains 
-            a. the three tool parts as options: classification, extraction, matching
+        Parser contains:
+            a. the three tool parts as options: classification, extraction, matching (if non is given, call all parts)
             b. input_path argument (use string format!)
             c. db_mode (options: overwrite or append) """
         
     # ## create parser
     application_parser = argparse.ArgumentParser(description='classify jobads and extract/match information')
- 
+    # ## add arguments
     application_parser.add_argument('--classification', action="store_true")
     application_parser.add_argument('--extraction', action="store_true")
     application_parser.add_argument('--matching', action="store_true")
     application_parser.add_argument('--input_path', type = __file_path)
     application_parser.add_argument('--db_mode', choices=['overwrite', 'append'],
                                    default='overwrite')
-    
+    # ## set default function
     application_parser.set_defaults(func=manage_app)
-
-
     return application_parser
 
-def __file_path(path):
+def __file_path(path: str) -> str:
     if os.path.isfile(path):
         return path
     else:
-        raise argparse.ArgumentTypeError(f"readable_file:{path} is not a valid file")
-
+        raise argparse.ArgumentTypeError(f"Readable_file:{path} is not a valid file")
 
 
 # ########## START & FINISH PROGRAM ##########
 
 if __name__ == '__main__':
+    # start timer
     start = timer()
-    logging.info('\nThe Program started. More information about the process can be found in the file "logger.log".')
-    logging.info('\n\n******************************** The program started. ********************************\n')
+    # set first logging/printing
+    logger.log_main.info('\nThe Program started. More information about the process can be found in the logger-files.')
+    logger.log_main.info('\n\n******************************** The program started. ********************************\n')
     print('\n\n******************************** The program started. ********************************\n')
-    try:
-        parser = get_application_parser()
-        arguments = parser.parse_args()
-        logging.info(f'The arguments {arguments} are given.')
-        arguments.func(arguments)
-        logging.info(f'The function {vars(arguments)["func"]} is called.')
-    except TypeError as e:
-        print(f'Error {e} occurred while parsing for arguments. Use -h flag to get further informations.')
-        sys.exit()
-    print('Processing done. For further information see logger-file.')
+
+    # Check if CLI is used correctly
+    def __get_arguments():
+        try:
+            parser = get_application_parser()
+            arguments = parser.parse_args()
+            logger.log_main.info(f'The arguments {arguments} are given.')
+            logger.log_main.info(f'The function {vars(arguments)["func"]} is called.')
+            arguments.func(arguments)
+            pass
+        except (TypeError, AttributeError) as e:
+            print(f'Error {e} occurred while parsing for arguments. Use -h flag to get further informations.')
+            sys.exit()
+    __get_arguments()
+
+    # set final logging/printing
+    logger.log_main.info('\n\n******************************** The program finished. ********************************\n')
+    print('Processing done. For further information see logger-files.')
     print('\n\n******************************** The program finished. ********************************\n')
-    logging.info('\n\n******************************** The program finished. ********************************\n')
+    # finish timer
     end = timer()
-    print(timedelta(seconds=end-start))
-    sys.exit(1)
+    print(f'Runtime of program was {timedelta(seconds=end-start)} seconds.')
+    sys.exit()

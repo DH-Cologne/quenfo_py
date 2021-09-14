@@ -10,6 +10,8 @@ log_main = None
 
 def setup_logger(logger_name, log_file, level=logging.DEBUG):
     l = logging.getLogger(logger_name)
+    # no stdout from logging
+    l.propagate = False
     formatter = logging.Formatter('%(asctime)s : %(threadName)s : %(levelname)s : %(message)s')
     
     fileHandler = logging.FileHandler(log_file, mode='w+')
@@ -34,6 +36,15 @@ def main():
     log_match = logging.getLogger('log_match')
     log_ie = logging.getLogger('log_ie')
     log_main = logging.getLogger('log_main')
+
+
+def set_infos(spec_logger, step, mode):
+    try:
+        log_main.info(f'{step} about to {mode}. Further information in {spec_logger}.')
+        spec_logger.info(f'\n\n******************************** {step} {mode}ed. ********************************\n')
+        print(f'{step} {mode}ed.')
+    except Exception as e:
+        log_main.warning(f'Error {e} is raised. Continue with program and ignore logging/printing error.')
 
 if '__main__' == __name__:
     main()
