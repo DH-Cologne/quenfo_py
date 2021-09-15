@@ -227,8 +227,7 @@ def gen_ngrams(fus: list, ngram_numbers: dict, cngrams: bool) -> list:
             fus = ngrams_complete
         else:
             # continuous == True --> across token borders
-            # join token to one string and keep whitespaces
-            onestring = " ".join(fus)
+            onestring = " ".join(fus)       # join token to one string and keep whitespaces
             ngrams_store = list()
             # e.g. first 3-grams and then 4-grams are generated ({3,4})
             for ngram_nr in ngram_numbers:

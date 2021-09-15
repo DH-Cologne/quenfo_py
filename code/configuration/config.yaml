@@ -1,5 +1,5 @@
 # +++++ Configuration ++++++
-Classification:
+classification:
   # --- FeatureUnitConfiguration---
   # Define processing steps for featureunits.
   fus_config:
@@ -7,18 +7,18 @@ Classification:
     stem: true
     filterSW: true
     # Generates sets of 3-Grams and 4-Grams joined in one list --> other valid options: {3} or {2,3,6} ...
-    nGrams: {3: null, 4: null}
+    nGrams: {3,4}
     continuousNGrams: false
 
-  # --- General Parameters ---
-
+  # --- Data-Handling Parameters ---
   # Number of JobAds to query --> set -1 if all JobAds need to be processed
-  query_limit: -1
+  query_limit: 500
   # Number of JobAds per chunk
-  fetch_size: 500
+  fetch_size: 100
   # Index Number of row where query starts
   start_pos: 0
 
+  # --- Model Paths ---
   models:
     # Path to Tfidf Model and Knn Model (if not already trained, leave path to store new model)
     tfidf_path: ..\..\quenfo_data\resources\model_tfidf
@@ -44,8 +44,6 @@ Classification:
 
 # --- Paths ---
 resources:
-  # Path for Input data to be classified
-  #input_path: ..\..\quenfo_data\sqlite\orm\text_kernel_orm_2018_03.db
   # Path for Train data to be used for training process
   traindata_path: ..\..\traindata_sql.db
   # Path for file with stopwords
@@ -62,4 +60,3 @@ resources:
   tools_path: ..\..\quenfo_data\resources\information_extraction\tools\tools.txt
   notools_path: ..\..\quenfo_data\resources\information_extraction\tools\noTools.txt
   toolpattern_path: ..\..\quenfo_data\resources\information_extraction\tools\toolContexts.txt
-

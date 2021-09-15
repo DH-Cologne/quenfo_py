@@ -52,8 +52,8 @@ def get_jobads(current_pos: int) -> list:
 
     # load the jobads
     #job_ads = database.session.query(JobAds).slice(current_pos, (current_pos+fetch_size)).all()                    # 0:02:26.691769 bei 2500 JobAds and 0:16:07.362719 bei 9593
-    #job_ads = database.session.query(JobAds).offset(current_pos).limit(fetch_size).all()                           # 0:02:25.670638 bei 2500 JobAds and 0:14:19.315887 bei 9593
-    job_ads = database.session.query(JobAds).where(current_pos<(current_pos+fetch_size)).all()                      # 0:02:21.205672 bei 2500 JobAds and 0:13:37.800832 bei 9593
+    job_ads = database.session.query(JobAds).offset(current_pos).limit(fetch_size).all()                           # 0:02:25.670638 bei 2500 JobAds and 0:14:19.315887 bei 9593
+    #job_ads = database.session.query(JobAds).where(current_pos<(current_pos+fetch_size)).all()                      # 0:02:21.205672 bei 2500 JobAds and 0:13:37.800832 bei 9593
 
     try:
         # delete the handles from jobads to classifyunits or create new table
