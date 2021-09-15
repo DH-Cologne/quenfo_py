@@ -1,25 +1,45 @@
 # +++++ Configuration ++++++
+Classification:
+  # --- FeatureUnitConfiguration---
+  # Define processing steps for featureunits.
+  fus_config:
+    normalize: true
+    stem: true
+    filterSW: true
+    # Generates sets of 3-Grams and 4-Grams joined in one list --> other valid options: {3} or {2,3,6} ...
+    nGrams: {3: null, 4: null}
+    continuousNGrams: false
 
-# --- FeatureUnitConfiguration---
-# Define processing steps for featureunits.
-fus_config:
-  normalize: true
-  stem: true
-  filterSW: true
-  # Generates sets of 3-Grams and 4-Grams joined in one list --> other valid options: {3} or {2,3,6} ...
-  nGrams: {3: null, 4: null}
-  continuousNGrams: false
+  # --- General Parameters ---
 
-# --- General Parameters ---
-# Number of JobAds to query
-query_limit: 50
-# Number of JobAds per chunk
-fetch_size: 10
-# Index Number of row where query starts
-start_pos: 0
+  # Number of JobAds to query --> set -1 if all JobAds need to be processed
+  query_limit: -1
+  # Number of JobAds per chunk
+  fetch_size: 500
+  # Index Number of row where query starts
+  start_pos: 0
 
-# Check if JobAds are already in Output-Database and decide to append or overwrite new data
-#db_mode: append
+  models:
+    # Path to Tfidf Model and Knn Model (if not already trained, leave path to store new model)
+    tfidf_path: ..\..\quenfo_data\resources\model_tfidf
+    knn_path: ..\..\quenfo_data\resources\model_knn
+
+  # --- Tfidf Configuration ---
+  # Define Parameter used to train Tfidf Vectorizer
+  tfidf_config:
+    lowercase: false
+    max_df: 1.0
+    min_df: 1
+    sublinear_tf: false
+    use_idf: true
+
+  # --- KNN Configuration ---
+  # Define Parameter used to train KNN Classifier
+  knn_config:
+    n_neighbors: 5
+    weights: uniform
+    algorithm: auto
+    leaf_size: 30
 
 
 # --- Paths ---
@@ -43,24 +63,3 @@ resources:
   notools_path: ..\..\quenfo_data\resources\information_extraction\tools\noTools.txt
   toolpattern_path: ..\..\quenfo_data\resources\information_extraction\tools\toolContexts.txt
 
-models:
-  # Path to Tfidf Model and Knn Model (if not already trained, leave path to store new model)
-  tfidf_path: ..\..\quenfo_data\resources\model_tfidf
-  knn_path: ..\..\quenfo_data\resources\model_knn
-
-# --- Tfidf Configuration ---
-# Define Parameter used to train Tfidf Vectorizer
-tfidf_config:
-  lowercase: false
-  max_df: 1.0
-  min_df: 1
-  sublinear_tf: false
-  use_idf: true
-
-# --- KNN Configuration ---
-# Define Parameter used to train KNN Classifier
-knn_config:
-  n_neighbors: 5
-  weights: uniform
-  algorithm: auto
-  leaf_size: 30

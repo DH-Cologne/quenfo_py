@@ -11,6 +11,8 @@ import time
 import os
 import configuration
 from sqlalchemy.orm import Session
+from sqlalchemy import func
+
 
 # ## Set Variables
 is_created = None
@@ -44,16 +46,14 @@ def get_jobads(current_pos: int) -> list:
     # Get Configuration Settings from config.yaml file 
     # Number of JobAds to fetch in one query
     fetch_size = configuration.config_obj.get_fetch_size()
-    query_limit = configuration.config_obj.get_query_limit()
-
     # db_mode: append data or overwrite it
     db_mode = configuration.config_obj.get_mode()
 
 
     # load the jobads
-    #job_ads = session.query(JobAds).slice(current_pos, (current_pos+fetch_size)).all()                             # 0:02:26.691769 bei 2500 JobAds 
-    #job_ads = session.query(JobAds).offset(current_pos).limit(fetch_size).all()                                    # 0:02:25.670638 bei 2500 JobAds
-    job_ads = database.session.query(JobAds).where(current_pos<(current_pos+fetch_size)).limit(query_limit).all()   # 0:02:21.205672 bei 2500 JobAds
+    #job_ads = database.session.query(JobAds).slice(current_pos, (current_pos+fetch_size)).all()                    # 0:02:26.691769 bei 2500 JobAds and 0:16:07.362719 bei 9593
+    #job_ads = database.session.query(JobAds).offset(current_pos).limit(fetch_size).all()                           # 0:02:25.670638 bei 2500 JobAds and 0:14:19.315887 bei 9593
+    job_ads = database.session.query(JobAds).where(current_pos<(current_pos+fetch_size)).all()                      # 0:02:21.205672 bei 2500 JobAds and 0:13:37.800832 bei 9593
 
     try:
         # delete the handles from jobads to classifyunits or create new table
@@ -168,6 +168,16 @@ def __reset_td_info(model: Model):
         os.utime(traindata_path, (modTime, modTime))
     except IndexError:
         pass
+
+def get_length() -> int:
+    """ The function gets the number of JobAds in the database table.
+
+    Returns
+    -------
+    row_nrs: int
+        Integer with the count of all JobAds in table. """
+    row_nrs = database.session.query(func.count(JobAds.id)).scalar()
+    return row_nrs
 
 def pass_output(session: Session):
     """ The session.commit() statement commits all adds to the current session.

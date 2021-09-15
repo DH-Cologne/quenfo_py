@@ -11,19 +11,17 @@ class Configurations:
         with open(Path('configuration/config.yaml'), 'r') as yamlfile:
             yaml = ruamel.yaml.YAML(typ='safe')
             cfg = yaml.load(yamlfile)
-            models = cfg['models']
-            fus_config = cfg['fus_config']
-            query_limit = cfg['query_limit']
-            fetch_size = cfg['fetch_size']
-            start_pos = cfg['start_pos']
-            tfidf_path = models['tfidf_path']
-            knn_path = models['knn_path']
-            tfidf_config = cfg['tfidf_config']
-            knn_config = cfg['knn_config']
-            resources = cfg['resources']
-            traindata_path = resources['traindata_path']
-            stopwords_path = resources['stopwords_path']
-            regex_path = resources['regex_path']
+            fus_config = cfg['Classification']['fus_config']
+            query_limit = cfg['Classification']['query_limit']
+            fetch_size = cfg['Classification']['fetch_size']
+            start_pos = cfg['Classification']['start_pos']
+            tfidf_path = cfg['Classification']['models']['tfidf_path']
+            knn_path = cfg['Classification']['models']['knn_path']
+            tfidf_config = cfg['Classification']['tfidf_config']
+            knn_config = cfg['Classification']['knn_config']
+            traindata_path = cfg['resources']['traindata_path']
+            stopwords_path = cfg['resources']['stopwords_path']
+            regex_path = cfg['resources']['regex_path']
         # Set default values
         self.fus_config = fus_config
         self.query_limit = query_limit
@@ -38,7 +36,6 @@ class Configurations:
         self.regex_path = regex_path
         self.db_mode = arg_db_mode
         self.input_path = arg_input_path
-
 
     # Setter
     def set_traindata_path(self):

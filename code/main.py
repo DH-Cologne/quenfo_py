@@ -226,5 +226,5 @@ if __name__ == '__main__':
     print('\n\n******************************** The program finished. ********************************\n')
     # finish timer
     end = timer()
-    print(f'Runtime of program was {timedelta(seconds=end-start)} seconds.')
+    print(f'Runtime of program: {timedelta(seconds=end-start)}.')
     sys.exit()
