@@ -1,6 +1,6 @@
 # ## Imports
 from . import convert_classifyunits
-
+import logging
 
 # ## Functions
 
@@ -53,9 +53,11 @@ def clean_paragraphs(list_paragraphs: list) -> list:
     list_paragraphs: list
         list with better cleaned paragraphs for one jobad item """
 
+    logging.info(f'before identifylistitems')
     # ## Step 3: to merge ListItems Together
     list_paragraphs = convert_classifyunits.identify_listitems(list_paragraphs)
 
+    logging.info(f'before whatbelongstogehter')
     # ## Step 4: to merge What Belongs Together
     list_paragraphs = convert_classifyunits.identify_whatbelongstogether(list_paragraphs)
 

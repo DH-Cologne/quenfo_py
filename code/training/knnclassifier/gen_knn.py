@@ -1,8 +1,10 @@
+""" Script contains the training of the knn_classifier. """
 # ## Imports
 from scipy.sparse.csr import csr_matrix
-from orm_handling.models import Configurations
+from configuration.config_model import Configurations
 from sklearn.neighbors import KNeighborsClassifier 
 import training 
+import configuration
 
 # ## Function
 def initialize_knn(vectorized_train: csr_matrix, all_classes: list) -> KNeighborsClassifier:
@@ -22,7 +24,7 @@ def initialize_knn(vectorized_train: csr_matrix, all_classes: list) -> KNeighbor
         The saved model. Type: KNeighborsClassifier """
 
      # Get Configuration Settings for KNN-Classifier
-     config = Configurations.get_knn_config()
+     config = configuration.config_obj.get_knn_config()
 
      # Instantiate KNNClassifier obj with defined Configuration-Settings
      knn = KNeighborsClassifier(n_neighbors=config['n_neighbors'], weights=config['weights'], \
@@ -32,7 +34,7 @@ def initialize_knn(vectorized_train: csr_matrix, all_classes: list) -> KNeighbor
      clf = knn.fit(vectorized_train, all_classes)
 
      # save the model
-     training.save_model(clf)
+     training.helper.save_model(clf)
 
      # return classifier
      return clf

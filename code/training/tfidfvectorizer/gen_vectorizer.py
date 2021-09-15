@@ -1,9 +1,11 @@
+""" Script to train the tfidf-vectorizer. """
+
 # ## Imports
-from orm_handling.models import Configurations
 from sklearn.feature_extraction.text import TfidfVectorizer
 import training
 from typing import Union
 from scipy.sparse import csr_matrix
+import configuration
 
 # ## Function
 def initialize_vectorizer(all_features: list) -> Union[TfidfVectorizer, csr_matrix]:
@@ -23,7 +25,7 @@ def initialize_vectorizer(all_features: list) -> Union[TfidfVectorizer, csr_matr
         The transformed traindata. """
 
     # Get Configuration Settings for Tfidf-Vectorizer
-    config = Configurations.get_tfidf_config()
+    config = configuration.config_obj.get_tfidf_config()
 
     # Instantiate TfidfVectorizer obj with defined Configuration-Settings and fit all given features (as fus) from traindata
     vectorizer = TfidfVectorizer(lowercase=config['lowercase'], max_df=config['max_df'], \
@@ -33,7 +35,7 @@ def initialize_vectorizer(all_features: list) -> Union[TfidfVectorizer, csr_matr
     tfidf_train = vectorizer.transform(all_features)
 
     # Save the model
-    training.save_model(vectorizer)
+    training.helper.save_model(vectorizer)
 
     # Return vectorizer and matrix
     return vectorizer, tfidf_train

@@ -1,6 +1,11 @@
+""" Script manages the prediction of classes via knn- and reg-classifier and comparing/merging of results. In the end a final class is set for cu. """
+
 # ## Imports
-from orm_handling.models import Model
+from training.train_models import Model
 from . import knn_predictor
+from . import regex_predictor
+from . import result_merger
+import logging
 
 # ## Functions
 def start_prediction(jobad: object, model: Model) -> None:
@@ -14,18 +19,30 @@ def start_prediction(jobad: object, model: Model) -> None:
     jobad: object
         jobad is an object of the class JobAds and contains all given variables 
     model: Model
-        Class Model consists of tfidf_vectorizer, knn_model (further information about class in orm_handling/models.py) 
+        Class Model consists of tfidf_vectorizer, knn_clf, regex_clf (further information about class in orm_handling/models.py) 
         and traindata-information """
 
     # Iterate over each classifyunit
     for cu in jobad.children:
-
+    
         # a. KNN PREDICTION: predict classes with knn
-        predicted = knn_predictor.gen_classes(cu.featurevector, model.model_knn)
+        knn_predicted = knn_predictor.gen_classes(cu.featurevector, model.model_knn)
 
         # b. REGEX PREDICTION: predict classes with regex
-        # hier dann auch den regex predictor reinmachen und dann direkt vergleichen!
-        
+        reg_predicted = regex_predictor.gen_classes(cu.paragraph, model.get_regex_clf())
+
+        # c. MERGE: compare the prediction from knn and regex
+        if reg_predicted != []:
+            # compare knn and regex results
+            predicted = result_merger.merge(reg_predicted, knn_predicted)
+        else:
+            # no regex class was predicted, use knn
+            predicted = knn_predicted
+
         # Set class
         cu.set_classID(predicted)
-        # print(cu, predicted)
+        try:
+            logging.info(f'show {cu} and class {predicted}')
+            logging.info(f'content of cu {cu.id}, {cu.classID}, {cu.paragraph}, {cu.featureunits}')
+        except:
+            logging.info(f"some error with cu {cu} occured")
