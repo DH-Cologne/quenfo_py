@@ -1,32 +1,25 @@
 # +++++ Configuration ++++++
 classification:
   # --- FeatureUnitConfiguration---
-  # Define processing steps for featureunits.
-  fus_config:
+  fus_config:                   # Define processing steps for featureunits.
     normalize: true
     stem: true
     filterSW: true
-    # Generates sets of 3-Grams and 4-Grams joined in one list --> other valid options: {3} or {2,3,6} ...
-    nGrams: {3,4}
+    nGrams: {3,4}               # Generates sets of 3-Grams and 4-Grams joined in one list --> other valid options: {3} or {2,3,6} ...
     continuousNGrams: false
 
   # --- Data-Handling Parameters ---
-  # Number of JobAds to query --> set -1 if all JobAds need to be processed
-  query_limit: 500
-  # Number of JobAds per chunk
-  fetch_size: 100
-  # Index Number of row where query starts
-  start_pos: 0
+  query_limit: 500              # Number of JobAds to query --> set -1 if all JobAds need to be processed
+  fetch_size: 100               # Number of JobAds per chunk
+  start_pos: 0                  # Index Number of row where query starts
 
   # --- Model Paths ---
-  models:
-    # Path to Tfidf Model and Knn Model (if not already trained, leave path to store new model)
-    tfidf_path: ..\..\quenfo_data\resources\model_tfidf
-    knn_path: ..\..\quenfo_data\resources\model_knn
+  models:                       #Paths to Tfidf Model and Knn Model
+    tfidf_path: ..\..\quenfo_data\resources\model_tfidf 
+    knn_path: ..\..\quenfo_data\resources\model_knn 
 
   # --- Tfidf Configuration ---
-  # Define Parameter used to train Tfidf Vectorizer
-  tfidf_config:
+  tfidf_config:                 # Define Parameter used to train Tfidf Vectorizer
     lowercase: false
     max_df: 1.0
     min_df: 1
@@ -34,22 +27,17 @@ classification:
     use_idf: true
 
   # --- KNN Configuration ---
-  # Define Parameter used to train KNN Classifier
-  knn_config:
+  knn_config:                   # Define Parameter used to train KNN Classifier
     n_neighbors: 5
     weights: uniform
     algorithm: auto
     leaf_size: 30
 
-
 # --- Paths ---
 resources:
-  # Path for Train data to be used for training process
-  traindata_path: ..\..\traindata_sql.db
-  # Path for file with stopwords
-  stopwords_path: ..\..\quenfo_data\resources\classification\stopwords.txt
-  # Path for regex file
-  regex_path: ..\..\quenfo_data\resources\classification\regex.txt
+  traindata_path: ..\..\traindata_sql.db                                    # Path for Train data to be used for training process
+  stopwords_path: ..\..\quenfo_data\resources\classification\stopwords.txt  # Path for file with stopwords
+  regex_path: ..\..\quenfo_data\resources\classification\regex.txt          # Path for regex file
 
   # Paths for information extraction
   competences_path: ..\..\quenfo_data\resources\information_extraction\competences\competences.txt
