@@ -2,7 +2,8 @@
 
 # ## Imports
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import String, Integer, Column, Sequence, ForeignKey
+from sqlalchemy import String, Integer, Column, Sequence, ForeignKey, PickleType, Boolean
+from sqlalchemy.ext.mutable import MutableList
 from sqlalchemy.orm import backref, relationship
 import itertools
 import sklearn.neighbors
@@ -83,24 +84,26 @@ class ClassifyUnits(Base):
         self.classID = value
 
 
-""" class ExtractionUnits(Base):
-    #Checks and sets all ExtractionUnits values. Defines tablename, columnnames and makes values reachable.
-
-    # Tablename for matching with db table
-    # TODO: declare in config
-    __tablename__ = 'extraction_units'
-    # Columns to query
-    id = Column(Integer, primary_key=True)
-    paragraph = Column('paragraph', ClassifyUnits)
-    position_index = Column('position_index', int)
-    sentence = Column('sentence', String(225))
-    # TODO type for token_array, in java: Texttoken
-    token_array = Column("token_array")
-
+class ExtractionUnits(Base):
+    """ Checks and sets all ExtractionUnits values. Defines tablename, columnnames and makes values reachable. """
     # ExtractionUnits have a parent-child relationship as a child with ClassifyUnits.
     # ForeignKey to connect both Classes
     parent_id = Column(Integer, ForeignKey('classify_units.id'))
     parent = relationship('ClassifyUnits', back_populates="children")
+    children = relationship("InformationEntity", back_populates="parent")
+
+    # Tablename for matching with db table
+    # TODO: declare in config
+    __tablename__ = 'extraction_units'
+
+    # Columns to query
+    id = Column(Integer, primary_key=True)
+    paragraph = Column('paragraph', String(225))
+    position_index = Column('position_index', Integer)
+    sentence = Column('sentence', String(225))
+    # TODO type for token_array, in java: Texttoken
+    # try pickle? token_array = list[Token]
+    token_array = Column("token_array", MutableList.as_mutable(PickleType), default=[])
 
     # Set lexical data
     token = list()
@@ -117,12 +120,51 @@ class ClassifyUnits(Base):
         self.lemmata = lemmata
         self.pos_tags = pos_tags
 
-    def set_lexicaldata(self, token, lemmata, pos_tags):
-        self.token = token
-        self.lemmata = lemmata
-        self.pos_tags = pos_tags """
 
+class InformationEntity(Base):
+    """ Checks and sets all InformationEntity values. Defines tablename, columnnames and makes values reachable. """
+    # InformationEntity have a parent-child relationship as a child with ExtractionUnits.
+    # ForeignKey to connect both Classes
+    parent_id = Column(Integer, ForeignKey('extraction_units.id'))
+    parent = relationship('ExtractionUnits', back_populates="children")
 
+    # Tablename for matching with db table
+    # TODO: declare in config
+    __tablename__ = 'extracted_entities'
+
+    # Columns to query
+    id = Column(Integer, primary_key=True)
+    # extraction_unit with found entity
+    sentence = Column('extraction_unit', String(225))
+    # matched pattern description
+    pattern = Column('pattern_string', String(225))
+    # type
+    ie_type = Column("ie_type", String(225))
+    # start_lemma: first string
+    start_lemma = Column("start_lemma", String(225))
+    # single word entity?
+    is_single_word = Column("is_single_word", Boolean)
+    # multi word entity -> full expression as string
+    full_expression = Column("full_expression", String(225))
+    # save as BLOB -> pickle?
+    # multi word entity -> full expression as array
+    lemma_array = Column("lemma_array", MutableList.as_mutable(PickleType), default=[])
+    # used modifier
+    modifier = Column("modifier", String(225))
+
+    first_index = int
+
+    def __init__(self, sentence, pattern, ie_type, start_lemma, is_single_word, full_expression, lemma_array, modifier,
+                 first_index):
+        self.sentence = sentence
+        self.pattern = pattern
+        self.ie_type = ie_type
+        self.start_lemma = start_lemma
+        self.is_single_word = is_single_word
+        self.full_expression = full_expression
+        self.lemma_array = lemma_array
+        self.modifier = modifier
+        self.first_index = first_index
 # -------------------------------------------------------------------------------
 # Class TrainingData
 class TrainingData(Base):

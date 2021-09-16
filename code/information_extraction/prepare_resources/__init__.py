@@ -1,4 +1,3 @@
-from information_extraction.models import Configuration
 from information_extraction.prepare_resources import connection_resources
 
 competences = connection_resources.get_entities_from_file('competences')

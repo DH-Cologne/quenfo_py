@@ -1,7 +1,8 @@
 """Script to build data and to create data"""
 
 # ## Imports
-from .models import ClassifyUnits, ClassifyUnits_Train, TrainingData, JobAds
+from information_extraction.helpers import get_search_type
+from .models import ClassifyUnits, ClassifyUnits_Train, TrainingData, JobAds, ExtractionUnits, InformationEntity
 from training.train_models import Model
 import sqlalchemy
 import database
@@ -49,11 +50,11 @@ def get_jobads(current_pos: int) -> list:
     # db_mode: append data or overwrite it
     db_mode = configuration.config_obj.get_mode()
 
-
     # load the jobads
-    #job_ads = session.query(JobAds).slice(current_pos, (current_pos+fetch_size)).all()                             # 0:02:26.691769 bei 2500 JobAds 
-    #job_ads = session.query(JobAds).offset(current_pos).limit(fetch_size).all()                                    # 0:02:25.670638 bei 2500 JobAds
-    job_ads = database.session.query(JobAds).where(current_pos<(current_pos+fetch_size)).limit(query_limit).all()   # 0:02:21.205672 bei 2500 JobAds
+    # job_ads = session.query(JobAds).slice(current_pos, (current_pos+fetch_size)).all()                             # 0:02:26.691769 bei 2500 JobAds
+    # job_ads = session.query(JobAds).offset(current_pos).limit(fetch_size).all()                                    # 0:02:25.670638 bei 2500 JobAds
+    job_ads = database.session.query(JobAds).where(current_pos < (current_pos + fetch_size)).limit(
+        query_limit).all()  # 0:02:21.205672 bei 2500 JobAds
 
     try:
         # delete the handles from jobads to classifyunits or create new table
@@ -72,7 +73,7 @@ def get_jobads(current_pos: int) -> list:
         ClassifyUnits.__table__.create(database.engine)
 
     pass_output(database.session)
-    
+
     return job_ads
 
 
@@ -91,7 +92,7 @@ def get_traindata() -> list:
 
     # load the TrainingData
     traindata = database.session2.query(TrainingData).all()
-    
+
     try:
         ClassifyUnits_Train.__table__.create(database.engine2)
     except sqlalchemy.exc.OperationalError:
@@ -102,6 +103,52 @@ def get_traindata() -> list:
 
     # return Trainindata objects as list
     return traindata
+
+
+def get_classify_units() -> list:
+    # load classify_units
+    # TODO use query_limit for ie
+    query_limit = configuration.config_obj.get_query_limit()
+    db_mode = configuration.config_obj.get_mode()
+
+    all_classify_units = database.session.query(ClassifyUnits).limit(query_limit).all()
+    classify_units = list()
+    search_type = get_search_type()
+
+    for cu in all_classify_units:
+        if cu.classID == search_type:
+            classify_units.append(cu)
+
+    try:
+        # delete the handles from classify_units to extractions_units or create new table
+        if db_mode == 'overwrite':
+            database.session.query(ExtractionUnits).delete()
+        # load all related extraction units for appending
+        else:
+            database.session.query(ExtractionUnits).filter(ExtractionUnits.parent_id == ClassifyUnits.id).all()
+
+    except sqlalchemy.exc.OperationalError:
+        print("table extraction_units not existing --> create new one")
+        ExtractionUnits.__table__.create(database.engine)
+
+    pass_output(database.session)
+
+    try:
+        # delete the handles from extractions_units to information_entity or create new table
+        if db_mode == 'overwrite':
+            database.session.query(InformationEntity).delete()
+        # load all related information entity for appending
+        else:
+            database.session.query(InformationEntity).filter(InformationEntity.parent_id == ExtractionUnits.id).all()
+
+    except sqlalchemy.exc.OperationalError:
+        print("table information_entity not existing --> create new one")
+        InformationEntity.__table__.create(database.engine)
+
+    pass_output(database.session)
+
+    return classify_units
+
 
 def handle_td_changes(model: Model) -> None:
     """ Manages the traindata changes.
@@ -125,12 +172,15 @@ def handle_td_changes(model: Model) -> None:
         # reset modification date from traindata database to the same saved in model
         __reset_td_info(model)
     except sqlalchemy.exc.OperationalError as err:
-        print(f'{err}: No need to delete traindata-filler because traindata didnt get processed (model was already there)')
+        print(
+            f'{err}: No need to delete traindata-filler because traindata didnt get processed (model was already there)')
+
 
 def __delete_filler():
     # remove all unwanted and in memory stored objects and drop the traindata table
     database.session2.rollback()
     ClassifyUnits_Train.__table__.drop(database.engine2)
+
 
 def __reset_td_info(model: Model):
     """ 
@@ -149,7 +199,7 @@ def __reset_td_info(model: Model):
     ------
     IndexError
         If model is not filled or no date could be set, IndexError is raised """
- 
+
     try:
         # Get traindata_path --> to reset last mod. date
         traindata_path = Path(configuration.config_obj.get_traindata_path())
@@ -162,12 +212,13 @@ def __reset_td_info(model: Model):
 
         # Set it as datetime object
         date = datetime.datetime(year=int(year), month=int(month), day=int(day), \
-            hour=int(hour), minute=int(minute), second=int(second), microsecond=0)
+                                 hour=int(hour), minute=int(minute), second=int(second), microsecond=0)
         modTime = time.mktime(date.timetuple())
         # Set acutal time as last modification date for traindata-file
         os.utime(traindata_path, (modTime, modTime))
     except IndexError:
         pass
+
 
 def pass_output(session: Session):
     """ The session.commit() statement commits all adds to the current session.
@@ -177,7 +228,6 @@ def pass_output(session: Session):
     session: Session
         Session object, generated in module database. Contains the database path. """
     session.commit()
-
 
 
 def close_session(session: Session):
@@ -190,6 +240,7 @@ def close_session(session: Session):
 
     session.close()
 
+
 # Function to manage session adding
 def create_output(session: Session, output: object):
     """ Function checks if table to store output in already exists. Else the table is dropped and created again.
@@ -201,7 +252,7 @@ def create_output(session: Session, output: object):
         Session object, generated in module database. Contains the database path. 
     output: object
         output object --> contains the jobad """
-    
+
     # db_mode: append data or overwrite it
     db_mode = configuration.config_obj.get_mode()
     if db_mode == "overwrite":
@@ -209,7 +260,7 @@ def create_output(session: Session, output: object):
         session.add(output)
     else:
         session.add(output)
-    
+
 
 # Private function to check if needed table already exists, else drop it and create a new empty table
 def __check_once():

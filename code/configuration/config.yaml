@@ -64,3 +64,15 @@ knn_config:
   weights: uniform
   algorithm: auto
   leaf_size: 30
+
+
+# --- IE Configuration --- #
+ie_config:
+  type:
+    competences: True
+    tools: False
+  # mode: append | overwrite
+  # query_limit: 500 (default: -1)
+  # fetch_size: 200
+  # expand_coordiantes: True
+  search: 3
