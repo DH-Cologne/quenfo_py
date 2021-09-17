@@ -12,12 +12,11 @@ import os
 import configuration
 from sqlalchemy.orm import Session
 from sqlalchemy import func
-
+import logger
 
 # ## Set Variables
 is_created = None
 drop_once = None
-
 
 # ## Functions
 
@@ -68,7 +67,7 @@ def get_jobads(current_pos: int) -> list:
             database.session.query(ClassifyUnits).filter(ClassifyUnits.parent_id == JobAds.id).all()
 
     except sqlalchemy.exc.OperationalError:
-        print("table classify_unit does not exist --> create new one")
+        logger.log_clf.info(f'table classify_unit does not exist --> create new one')
         ClassifyUnits.__table__.create(database.engine)
 
     pass_output(database.session)
@@ -95,7 +94,7 @@ def get_traindata() -> list:
     try:
         ClassifyUnits_Train.__table__.create(database.engine2)
     except sqlalchemy.exc.OperationalError:
-        print("table does already exist")
+        logger.log_clf.info(f'ClassifyUnits_Train table already there, drop it.')
         ClassifyUnits_Train.__table__.drop(database.engine2)
         ClassifyUnits_Train.__table__.create(database.engine2)
         pass
@@ -124,15 +123,22 @@ def handle_td_changes(model: Model) -> None:
         __delete_filler()
         # reset modification date from traindata database to the same saved in model
         __reset_td_info(model)
+        logger.log_clf.info(f'Reset added traindata-obj in current session and reset modification date from traindata. \
+            Because: Traindata was used to train new model, but while loading and using traindata the modification date changed. \
+                But the last modification date was stored in model for later checkup. If date is not reset, traindata and model never match.')
     except sqlalchemy.exc.OperationalError as err:
-        print(f'{err}: No need to delete traindata-filler because traindata didnt get processed (model was already there)')
+        logger.log_clf.info(f'{err}: No need to delete traindata-filler because traindata \
+            didnt get processed because model was already there. Error message can be ignored.')
 
-def __delete_filler():
-    # remove all unwanted and in memory stored objects and drop the traindata table
+def __delete_filler() -> None:
+    """ Remove all unwanted and in memory stored Traindata-objects and drop the traindata table. Nothing is modified in those tables."""
+
+    # rollback
     database.session2.rollback()
+    # drop the table
     ClassifyUnits_Train.__table__.drop(database.engine2)
 
-def __reset_td_info(model: Model):
+def __reset_td_info(model: Model) -> None:
     """ 
     If a new model was trained, the passed object is filled and it contains the actual_timestamp.
         --> The actual_timestamp is set as last modification date for traindata-file
@@ -164,7 +170,7 @@ def __reset_td_info(model: Model):
         date = datetime.datetime(year=int(year), month=int(month), day=int(day), \
             hour=int(hour), minute=int(minute), second=int(second), microsecond=0)
         modTime = time.mktime(date.timetuple())
-        # Set acutal time as last modification date for traindata-file
+        # Set actual time as last modification date for traindata-file
         os.utime(traindata_path, (modTime, modTime))
     except IndexError:
         pass
@@ -187,8 +193,6 @@ def pass_output(session: Session):
     session: Session
         Session object, generated in module database. Contains the database path. """
     session.commit()
-
-
 
 def close_session(session: Session):
     """ The session.close() statement closes the current session.
@@ -228,7 +232,7 @@ def __check_once():
         try:
             ClassifyUnits.__table__.create(database.engine)
         except sqlalchemy.exc.OperationalError:
-            print("table does already exist")
+            logger.log_clf.info(f'Table ClassifyUnits does already exist. Will be dropped, because of overwrite mode.')
             ClassifyUnits.__table__.drop(database.engine)
             ClassifyUnits.__table__.create(database.engine)
             pass
