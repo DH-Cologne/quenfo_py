@@ -1,10 +1,9 @@
-"""Script contains several functions modify featureunits."""
+"""Script contains several functions to modify featureunits."""
 
 # ## Imports
-from os import error
+import logger
 from pathlib import Path
 import re
-# import py_stringmatching as sm
 from contextlib import suppress
 from nltk.stem.snowball import GermanStemmer
 from nltk import ngrams
@@ -29,11 +28,10 @@ def replace(para: str) -> str:
     -------
     para: str
         returns para variable without non-alphanumerical characters"""
-
     # Regex to replace all non-alphanumerical chars with whitespaces
     para = re.sub('\W+', ' ', para)
     #para = re.sub('\W+|[_]+', ' ', para)
-
+    
     return para
 
 
@@ -50,14 +48,16 @@ def tokenize(fus: str) -> list:
     -------
     fus: list
         returns fus as list with token """
-
-    # Regex to tokenize the given string
-    WORD = re.compile(r'\w+')
-    fus = WORD.findall(fus)
-
-    # different approach 
-    # fus = fus.split()
-
+    try:
+        # Regex to tokenize the given string
+        WORD = re.compile(r'\w+')
+        fus = WORD.findall(fus)
+    except Exception:
+        try:
+            # different approach 
+            fus = fus.split()
+        except Exception:
+            fus = []
     return fus
 
 
@@ -84,19 +84,23 @@ def normalize(fus: list, normalize: bool) -> list:
     norm_fus = list()
     # Check if normalize is set to true and use the following normalization step
     if normalize:
-        # for token in token_list
-        for fu in fus:
-            # Lower Case
-            fu = fu.lower()
-            # if token starts and ends with a digit-character --> set token to NUM because it won't be processable
-            if fu[0].isdigit() and fu[-1].isdigit():
-                fu = 'NUM'
-            # filter 
-            if len(fu) > 1:
-                norm_fus.append(fu)
-        return norm_fus
+        try:
+            # for token in token_list
+            for fu in fus:
+                # Lower Case
+                fu = fu.lower()
+                # if token starts and ends with a digit-character --> set token to NUM because it won't be processable
+                if fu[0].isdigit() and fu[-1].isdigit():
+                    fu = 'NUM'
+                # filter 
+                if len(fu) > 1:
+                    norm_fus.append(fu)
+            return norm_fus
+        except Exception as e:
+            logger.log_clf.warning(f'While Normalization error {e} raised. Continue without normalization step for current paragraph.')
     else:
         return fus
+    
 
 
 # Stopwords Removal
@@ -121,17 +125,20 @@ def filterSW(fus: list, filterSW: bool, sw_path: Path) -> list:
     __check_once(sw_path)
     # remove all stopwords from fus
     if filterSW:
-        for sw in sw_list:
-            if sw != "ERROR":
-                # Normally if the stopword sw is found in fus it skips to the next sw. But it is possible that a sw
-                # occurs multiple times in fus: with suppress(ValueError) is another way of handling try and except
-                # statements.
-                with suppress(ValueError):
-                    # remove also duplicated sw in fus --> while True
-                    while True:
-                        fus.remove(sw.lower())
-            else:
-                pass
+        try:
+            for sw in sw_list:
+                if sw != "ERROR":
+                    # Normally if the stopword sw is found in fus it skips to the next sw. But it is possible that a sw
+                    # occurs multiple times in fus: with suppress(ValueError) is another way of handling try and except
+                    # statements.
+                    with suppress(ValueError):
+                        # remove also duplicated sw in fus --> while True
+                        while True:
+                            fus.remove(sw.lower())
+                else:
+                    pass
+        except Exception as e:
+            logger.log_clf.warning(f'While Stopword-removal error {e} raised. Continue without sw-removal step for current paragraph.')
     return fus
 
 
@@ -142,7 +149,7 @@ def __check_once(sw_path):
             with open(sw_path, 'r') as sw_file:
                 sw_list = [sw.strip() for sw in sw_file.readlines()]
         except (FileNotFoundError, ReaderError) as error:
-            # logging.warning(error)
+            logger.log_clf.warning(f'Error {error} is raised. Continue without stopwords removal.')
             sw_list = "ERROR"
     else:
         pass
@@ -169,21 +176,24 @@ def stem(fus: list, stem: bool) -> list:
     stemmed_fus = list()
     # Check config-setting
     if stem:
-        # Snowball Stemmer from NLTK
-        stemmer = GermanStemmer()
-        # Stem each token
-        for token in fus:
-            stemmed_fus.append(stemmer.stem(token))
+        try:
+            # Snowball Stemmer from NLTK
+            stemmer = GermanStemmer()
+            # Stem each token
+            for token in fus:
+                stemmed_fus.append(stemmer.stem(token))
 
-        """ # NLTK Cistem Stemmer --> other possibility for stemming --> test in classification
-        stemmer = Cistem()
-        for token in fus:
-            stemmed_fus.append(stemmer.segment(token)[0]) """
+            """ # NLTK Cistem Stemmer --> other possibility for stemming --> test in classification
+            stemmer = Cistem()
+            for token in fus:
+                stemmed_fus.append(stemmer.segment(token)[0]) """
 
-        # remove empty strings and strings <= 1
-        stemmed_fus = list(filter(lambda n: 1 <= len(n), stemmed_fus))
+            # remove empty strings and strings <= 1
+            stemmed_fus = list(filter(lambda n: 1 <= len(n), stemmed_fus))
 
-        return stemmed_fus
+            return stemmed_fus
+        except Exception as e:
+            logger.log_clf.warning(f'While Stemming error {e} raised. Continue without stemming step for current paragraph.')
     else:
         return fus
 
@@ -215,23 +225,29 @@ def gen_ngrams(fus: list, ngram_numbers: dict, cngrams: bool) -> list:
     if all(isinstance(x, int) for x in ngram_numbers):
         # False == Non-Continuous: Ngrams are generated for each token isolated
         if not cngrams:
-            ngrams_complete = list()
-            # e.g. first 3-grams and then 4-grams are generated ({3,4})
-            for ngram_nr in ngram_numbers:
-                for fu in fus:
-                    ngrams_store = list()
-                    for s in ngrams(fu, n=ngram_nr):
-                        ngrams_store.append("".join(s))
-                    # add 3-grams to list (extend) and then add 4-grams to list
-                    ngrams_complete.extend(ngrams_store)
-            fus = ngrams_complete
+            try: 
+                ngrams_complete = list()
+                # e.g. first 3-grams and then 4-grams are generated ({3,4})
+                for ngram_nr in ngram_numbers:
+                    for fu in fus:
+                        ngrams_store = list()
+                        for s in ngrams(fu, n=ngram_nr):
+                            ngrams_store.append("".join(s))
+                        # add 3-grams to list (extend) and then add 4-grams to list
+                        ngrams_complete.extend(ngrams_store)
+                fus = ngrams_complete
+            except Exception as e:
+                logger.log_clf.warning(f'While ngram-generation error {e} raised. Continue without ngrams step for current paragraph.')
         else:
-            # continuous == True --> across token borders
-            onestring = " ".join(fus)       # join token to one string and keep whitespaces
-            ngrams_store = list()
-            # e.g. first 3-grams and then 4-grams are generated ({3,4})
-            for ngram_nr in ngram_numbers:
-                for s in ngrams(onestring, n=ngram_nr):
-                    ngrams_store.append("".join(s))
-            fus = ngrams_store
+            try:
+                # continuous == True --> across token borders
+                onestring = " ".join(fus)       # join token to one string and keep whitespaces
+                ngrams_store = list()
+                # e.g. first 3-grams and then 4-grams are generated ({3,4})
+                for ngram_nr in ngram_numbers:
+                    for s in ngrams(onestring, n=ngram_nr):
+                        ngrams_store.append("".join(s))
+                fus = ngrams_store
+            except Exception as e:
+                logger.log_clf.warning(f'While cngram-generation error {e} raised. Continue without cngrams step for current paragraph.')
     return fus

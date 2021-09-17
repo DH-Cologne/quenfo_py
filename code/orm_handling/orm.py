@@ -1,4 +1,5 @@
-"""Script to build data and to create data"""
+""" Script is the intermediary between the database and the data-handling. 
+    --> The data loading and handling takes place here and the modified data to be saved in the database is handled here too."""
 
 # ## Imports
 from .models import ClassifyUnits, ClassifyUnits_Train, TrainingData, JobAds
@@ -13,6 +14,7 @@ import configuration
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 import logger
+from sqlalchemy import inspect
 
 # ## Set Variables
 is_created = None
@@ -43,29 +45,32 @@ def get_jobads(current_pos: int) -> list:
     global drop_once
 
     # Get Configuration Settings from config.yaml file 
-    # Number of JobAds to fetch in one query
-    fetch_size = configuration.config_obj.get_fetch_size()
-    # db_mode: append data or overwrite it
-    db_mode = configuration.config_obj.get_mode()
+    fetch_size = configuration.config_obj.get_fetch_size()                                                  # Number of JobAds to fetch in one query
+    db_mode = configuration.config_obj.get_mode()                                                           # db_mode: append data or overwrite it
 
 
     # load the jobads
-    #job_ads = database.session.query(JobAds).slice(current_pos, (current_pos+fetch_size)).all()                    # 0:02:26.691769 bei 2500 JobAds and 0:16:07.362719 bei 9593
-    job_ads = database.session.query(JobAds).offset(current_pos).limit(fetch_size).all()                           # 0:02:25.670638 bei 2500 JobAds and 0:14:19.315887 bei 9593
-    #job_ads = database.session.query(JobAds).where(current_pos<(current_pos+fetch_size)).all()                      # 0:02:21.205672 bei 2500 JobAds and 0:13:37.800832 bei 9593
+    #job_ads = database.session.query(JobAds).slice(current_pos, (current_pos+fetch_size)).all()            # 0:02:26.691769 bei 2500 JobAds and 0:16:07.362719 bei 9593
+    job_ads = database.session.query(JobAds).offset(current_pos).limit(fetch_size).all()                    # 0:02:25.670638 bei 2500 JobAds and 0:14:19.315887 bei 9593
+    #job_ads = database.session.query(JobAds).where(current_pos<(current_pos+fetch_size)).all()             # 0:02:21.205672 bei 2500 JobAds and 0:13:37.800832 bei 9593
 
     try:
         # delete the handles from jobads to classifyunits or create new table
         if db_mode == 'overwrite':
             if drop_once is None:
-                database.session.query(ClassifyUnits).delete()
+                try:
+                    ClassifyUnits.__table__.create(database.engine)
+                except sqlalchemy.exc.OperationalError as err:  
+                    database.session.query(ClassifyUnits).delete()
                 drop_once = 'filled'
             else:
                 pass
         # load all related classify units for appending
         else:
-            database.session.query(ClassifyUnits).filter(ClassifyUnits.parent_id == JobAds.id).all()
-
+            if inspect(database.engine).has_table(ClassifyUnits.__tablename__):                             # if table does exist, get related units
+                database.session.query(ClassifyUnits).filter(ClassifyUnits.parent_id == JobAds.id).all()
+            else:                                                                                           # else: create classifyunits table
+                ClassifyUnits.__table__.create(database.engine)
     except sqlalchemy.exc.OperationalError:
         logger.log_clf.info(f'table classify_unit does not exist --> create new one')
         ClassifyUnits.__table__.create(database.engine)
@@ -201,7 +206,6 @@ def close_session(session: Session):
     ----------
     session: Session
         Session object, generated in module database. Contains the database path. """
-
     session.close()
 
 # Function to manage session adding

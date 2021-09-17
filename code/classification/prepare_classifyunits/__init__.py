@@ -1,4 +1,4 @@
-"""Script to split jobads into paragraphs and generate classifyunits for each paragraphs."""
+""" Script to split jobads into paragraphs (or use traindata paragraphs) and generate classifyunits (fus, fvs) for each paragraphs."""
 
 # ## Imports
 from orm_handling.models import ClassifyUnits, ClassifyUnits_Train
@@ -6,9 +6,8 @@ from training.train_models import Model
 from . import classify_units
 from . import feature_units
 from . import feature_vectors
-import logging
 
-
+# ## Functions
 # ### Main-Function for ClassifyUnit generation (+ featureunits and featurevectors)
 def generate_classifyunits(jobad: object, model: Model) -> None:
     """ Function manages the preparation for the textclassification. Therefore classifyunits are needed and will be
@@ -28,11 +27,9 @@ def generate_classifyunits(jobad: object, model: Model) -> None:
         Class Model consists of tfidf_vectorizer, knn_model (further information about class in orm_handling/models.py) 
         and traindata-information """
         
-    logging.info(f'before split in paragraphs')
     # Split the jobad texts (content) and receive a list of paragraphs for each jobad + remove whitespaces
     list_paragraphs = classify_units.get_paragraphs(jobad)
 
-    logging.info(f'before clean parargrapsh')
     # Clean each paragraph and merge ListItems and WhatBelongsTogether
     list_paragraphs = classify_units.clean_paragraphs(list_paragraphs)
 
@@ -52,7 +49,7 @@ def generate_classifyunits(jobad: object, model: Model) -> None:
             cu.set_featureunits(fus)
             # Connect the cu (classifyunit) as a child to its parent (jobad)
             jobad.children.append(cu)
-        #if paragraph is already processed in a classifyunit --> store it again at the same place (to avoid duplicates)
+        #if paragraph is already processed in a classifyunit --> store it again at the same place (to avoid duplicates) (happens in append mode)
         else:
             if fus != []:
                 for child in jobad.children:

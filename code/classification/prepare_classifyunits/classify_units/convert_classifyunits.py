@@ -22,7 +22,7 @@ def split_at_empty_line(jobad_content: str) -> list:
     -------
     list
         list of paragraphs from the jobad_content text """
-
+    # TODO: OPTION wenn splitting so nicht funktioniert, also ein try und except
     # Returns list of paragraphs per object
     return jobad_content.split("\n\n")
 
@@ -46,7 +46,7 @@ def remove_whitespaces(list_paragraphs: list) -> list:
     cleaned_paralist = list()
     # Iterate over each paragraph
     for para in list_paragraphs:
-        # Set lists for cleaned paragraph
+        # Set list for cleaned paragraph
         newpara = str()
         # split paragraph after each line, remove whitespaces (beg and end) of each line, join the lines back
         # together and strip again the new paragraph --> append cleaned paragraph back on cleaned_paralist

@@ -13,7 +13,7 @@ def get_featurevectors(cu: object, model: Model) -> None:
     model: Model
         Class Model consists of tfidf_vectorizer, knn_model (further information about class in orm_handling/models.py) 
         and traindata-information """
-
+    
     # Pass fus and vectorizer to vectorization
     vectorized_cu = convert_featurevectors.gen_tfidf_cu(cu.featureunits, model.vectorizer)
 

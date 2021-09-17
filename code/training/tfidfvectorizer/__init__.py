@@ -1,6 +1,8 @@
 """ Init-Script for tfidf-training."""
 
 # ## Imports
+import warnings
+warnings.simplefilter(action='ignore', category=FutureWarning)
 from sklearn.feature_extraction.text import TfidfVectorizer
 from . import gen_vectorizer
 from typing import Union
