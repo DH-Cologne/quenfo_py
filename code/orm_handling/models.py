@@ -4,8 +4,8 @@
         b. ClassifyUnits        --> preprocessed and classified paragraphs
         c. TrainData            --> Traindata (already in paragraphs and classified)
         d. ClassifyUnits_Train  --> contains each Traindata paragraph (preprocessed and classified)
-        e. ExtrationUnits
-        f. InformationEntity """
+        e. ExtrationUnits       --> preprocessed and splitted sentences from paragraphs
+        f. InformationEntity    --> extracted entities"""
 
 # ## Imports
 from sqlalchemy.ext.declarative import declarative_base
@@ -20,6 +20,7 @@ Base = declarative_base()
 # ## Define Classes
 
 # *** JOBADS/CU MODELS ***
+
 
 # Class JobAds
 class JobAds(Base):
@@ -82,6 +83,7 @@ class ClassifyUnits(Base):
 
 # *** TRAINDATA MODELS ***
 
+
 # Class TrainingData
 class TrainingData(Base):
     """ Checks and sets all TrainingData values. Defines tablename, columnnames and makes values reachable. """
@@ -103,6 +105,7 @@ class TrainingData(Base):
     # Name the objects
     def __repr__(self):
         return "(%s, %s, %s)" % (self.postingId, self.zeilennr, self.classID)
+
 
 # Class ClassifyUnits_Train
 class ClassifyUnits_Train(Base):
@@ -137,6 +140,7 @@ class ClassifyUnits_Train(Base):
         self.featurevector = value
     def set_classID(self, value):
         self.classID = value
+
 
 class ExtractionUnits(Base):
     """ Checks and sets all ExtractionUnits values. Defines tablename, columnnames and makes values reachable. """

@@ -67,10 +67,9 @@ import training
 import classification
 import database
 import logger
-
-# ## Initiate Logging-Module
 from information_extraction import extract
 
+# ## Initiate Logging-Module
 """ 
 Set four different logging-files: 
     a. log_main.log --> for all main related processes and raises.

@@ -38,10 +38,10 @@ ie_config:
   type:
     competences: True
     tools: False
-  # mode: append | overwrite
-  # query_limit: 500 (default: -1)
-  # fetch_size: 200
-  # expand_coordiantes: True
+  start_pos: 0
+  query_limit: 500
+  fetch_size: 200
+  expand_coordinates: True
   search: 3
 
 # --- Paths ---

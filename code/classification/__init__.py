@@ -13,6 +13,7 @@ import configuration
 import sys
 import logger
 
+
 # ## Function
 def classify(model: Model) -> None:
     """ Classify JobAds
@@ -27,11 +28,11 @@ def classify(model: Model) -> None:
         and traindata-information """
 
     # ## Set Variables
-    query_limit = configuration.config_obj.get_query_limit()  # query_limit: Number of JobAds to process
+    query_limit = configuration.config_obj.get_c_query_limit()  # query_limit: Number of JobAds to process
     if query_limit == -1:  # if query_limit is -1, the whole table will be processed.
-        query_limit = orm.get_length()  # Therefore the length of the table is extracted and set as query_limit.
+        query_limit = orm.get_length('ad')  # Therefore the length of the table is extracted and set as query_limit.
 
-    start_pos = configuration.config_obj.get_start_pos()  # start_pos: Row Number where to start query
+    start_pos = configuration.config_obj.get_c_start_pos()  # start_pos: Row Number where to start query
     current_pos = start_pos  # set row number for query
     counter = 0  # set counter in fetch_size steps
     jobad_counter = 1  # set jobad counter for each jobad
@@ -52,7 +53,8 @@ def classify(model: Model) -> None:
             logger.log_clf.info(f'Query_limit reached. Stop processing.')
             break
 
-        logger.log_clf.info(f'New chunk of jobads loaded. Start processing --> generate_classifyunits and start_prediction.')
+        logger.log_clf.info(
+            f'New chunk of jobads loaded. Start processing --> generate_classifyunits and start_prediction.')
         # iterate over each jobad
         for jobad in jobads:
             # STEP 2: Generate classify_units, feature_units and feature_vectors for each JobAd.
@@ -68,15 +70,15 @@ def classify(model: Model) -> None:
 
         # Commit generated classify units with paragraphs and classes to table
         orm.pass_output(database.session)
-        counter += len(jobads)              # update counter
-        current_pos += len(jobads)          # update current position
+        counter += len(jobads)  # update counter
+        current_pos += len(jobads)  # update current position
 
         logger.log_clf.info(
             f'session is cleaned and every obj of current batch is flushed: {database.session._is_clean()}.\
             Continue with next batch from current row position: {current_pos}.')
-    
-    orm.handle_td_changes(model)            # Reset traindata changes (used as filler)
-    orm.close_session(database.session)     # Close session
+
+    orm.handle_td_changes(model)  # Reset traindata changes (used as filler)
+    orm.close_session(database.session)  # Close session
     print()
     logger.log_clf.info(f'Classification done. Return to main-level.')
 

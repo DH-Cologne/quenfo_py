@@ -13,10 +13,11 @@ class Configurations:
         with open(Path('configuration/config.yaml'), 'r') as yamlfile:
             yaml = ruamel.yaml.YAML(typ='safe')
             cfg = yaml.load(yamlfile)
+            # classification config
             fus_config = cfg['classification']['fus_config']
-            query_limit = cfg['classification']['query_limit']
-            fetch_size = cfg['classification']['fetch_size']
-            start_pos = cfg['classification']['start_pos']
+            c_query_limit = cfg['classification']['query_limit']
+            c_fetch_size = cfg['classification']['fetch_size']
+            c_start_pos = cfg['classification']['start_pos']
             tfidf_path = cfg['classification']['models']['tfidf_path']
             knn_path = cfg['classification']['models']['knn_path']
             tfidf_config = cfg['classification']['tfidf_config']
@@ -24,11 +25,32 @@ class Configurations:
             traindata_path = cfg['resources']['traindata_path']
             stopwords_path = cfg['resources']['stopwords_path']
             regex_path = cfg['resources']['regex_path']
+
+            # ie config
+            ie_query_limit = cfg['ie_config']['query_limit']
+            ie_fetch_size = cfg['ie_config']['fetch_size']
+            ie_start_pos = cfg['ie_config']['start_pos']
+            expand_coordinates = cfg['ie_config']['expand_coordinates']
+            search_type = cfg['ie_config']['search']
+            ie_type = cfg['ie_config']['type']
+
+            # competence paths
+            competence_path = cfg['resources']['competences_path']
+            no_competence_path = cfg['resources']['nocompetences_path']
+            modifier_path = cfg['resources']['modifier_path']
+            comppattern_path = cfg['resources']['comppattern_path']
+
+            # tool paths
+            tools_path = cfg['resources']['tools_path']
+            no_tools_path = cfg['resources']['notools_path']
+            toolpattern_path = cfg['resources']['toolpattern_path']
+
         # Set default values
+        # classification
         self.fus_config = fus_config
-        self.query_limit = query_limit
-        self.fetch_size = fetch_size
-        self.start_pos = start_pos
+        self.c_query_limit = c_query_limit
+        self.c_fetch_size = c_fetch_size
+        self.c_start_pos = c_start_pos
         self.tfidf_path = tfidf_path
         self.knn_path = knn_path
         self.tfidf_config = tfidf_config
@@ -36,6 +58,22 @@ class Configurations:
         self.traindata_path = traindata_path
         self.stopwords_path = stopwords_path
         self.regex_path = regex_path
+
+        # ie
+        self.ie_query_limit = ie_query_limit
+        self.ie_fetch_size = ie_fetch_size
+        self.ie_start_pos = ie_start_pos
+        self.expand_coordinates = expand_coordinates
+        self.search_type = search_type
+        self.ie_type = ie_type
+        self.competence_path = competence_path
+        self.no_competence_path = no_competence_path
+        self.modifier_path = modifier_path
+        self.comppattern_path = comppattern_path
+        self.tool_path = tools_path
+        self.no_tools_path = no_tools_path
+        self.toolpattern_path = toolpattern_path
+
         # Values passed by ArgumentParser
         self.db_mode = arg_db_mode
         self.input_path = arg_input_path
@@ -66,22 +104,28 @@ class Configurations:
         self.regex_path = regex_path
 
     def set_query_limit(self):
-        query_limit = Configurations.__check_type(self.query_limit, 50, int)
-        self.query_limit = query_limit
+        c_query_limit = Configurations.__check_type(self.c_query_limit, 50, int)
+        ie_query_limit = Configurations.__check_type(self.ie_query_limit, 50, int)
+        self.c_query_limit = c_query_limit
+        self.ie_query_limit = ie_query_limit
 
     def set_fetch_size(self):
-        fetch_size = Configurations.__check_type(self.fetch_size, 500, int)
-        self.fetch_size = fetch_size
+        c_fetch_size = Configurations.__check_type(self.c_fetch_size, 500, int)
+        ie_fetch_size = Configurations.__check_type(self.ie_fetch_size, 500, int)
+        self.c_fetch_size = c_fetch_size
+        self.ie_fetch_size = ie_fetch_size
 
     def set_start_pos(self):
-        start_pos = Configurations.__check_type(self.start_pos, 0, int)
-        self.start_pos = start_pos
+        c_start_pos = Configurations.__check_type(self.c_start_pos, 0, int)
+        ie_start_pos = Configurations.__check_type(self.ie_start_pos, 0, int)
+        self.c_start_pos = c_start_pos
+        self.ie_start_pos = ie_start_pos
 
     def set_mode(self):
         db_mode = Configurations.__check_strings(self.db_mode, 'overwrite', ('append', 'overwrite'))
         self.db_mode = db_mode
 
-    def set_tfidf_config(self) -> dict:
+    def set_tfidf_config(self):
         tfidf_config = self.tfidf_config
         if tfidf_config == None:
             tfidf_config = dict()
@@ -93,7 +137,7 @@ class Configurations:
         tfidf_config = Configurations.__check_type_for_dict(tfidf_config, 'use_idf', True, bool)
         self.tfidf_config = tfidf_config
 
-    def set_fus_config(self) -> dict:
+    def set_fus_config(self):
         fus_config = self.fus_config
         if fus_config == None:
             fus_config = dict()
@@ -105,7 +149,7 @@ class Configurations:
         fus_config = Configurations.__check_type_for_dict(fus_config, 'continuousNGrams', False, bool)
         self.fus_config = fus_config
 
-    def set_knn_config(self) -> dict:
+    def set_knn_config(self):
         knn_config = self.knn_config
         if knn_config == None:
             knn_config = dict()
@@ -116,6 +160,42 @@ class Configurations:
                                                              ('auto', 'ball_tree', 'kd_tree', 'brute'))
         knn_config = Configurations.__check_type_for_dict(knn_config, 'leaf_size', 30, int)
         self.knn_config = knn_config
+
+    def set_expand_coordinates(self):
+        expand_coordinates = Configurations.__check_type(self.expand_coordinates, True, bool)
+        self.expand_coordinates = expand_coordinates
+
+    def set_search_type(self):
+        search_type = Configurations.__check_type(self.search_type, 3, int)
+        self.search_type = search_type
+
+    def set_ie_type(self):
+        ie_type = self.ie_type
+        if ie_type == None:
+            ie_type = dict()
+        ie_type = Configurations.__check_type_for_dict(ie_type, 'competences', True, bool)
+        ie_type = Configurations.__check_type_for_dict(ie_type, 'tools', False, bool)
+        self.ie_type = ie_type
+
+    def set_competence_paths(self):
+        competence_path = Configurations.__check_path(self.competence_path)
+        no_competence_path = Configurations.__check_path(self.no_competence_path)
+        modifier_path = Configurations.__check_path(self.modifier_path)
+        comppattern_path = Configurations.__check_path(self.comppattern_path)
+
+        self.competence_path = competence_path
+        self.no_competence_path = no_competence_path
+        self.modifier_path = modifier_path
+        self.comppattern_path = comppattern_path
+
+    def set_tool_paths(self):
+        tool_path = Configurations.__check_path(self.tool_path)
+        no_tools_path = Configurations.__check_path(self.no_tools_path)
+        toolpattern_path = Configurations.__check_path(self.toolpattern_path)
+
+        self.tool_path = tool_path
+        self:no_tools_path = no_tools_path
+        self.toolpattern_path = toolpattern_path
 
     # Getter
     def get_traindata_path(self) -> str:
@@ -136,14 +216,14 @@ class Configurations:
     def get_regex_path(self) -> str:
         return self.regex_path
 
-    def get_query_limit(self) -> int:
-        return self.query_limit
+    def get_c_query_limit(self) -> int:
+        return self.c_query_limit
 
-    def get_fetch_size(self) -> int:
-        return self.fetch_size
+    def get_c_fetch_size(self) -> int:
+        return self.c_fetch_size
 
-    def get_start_pos(self) -> int:
-        return self.start_pos
+    def get_c_start_pos(self) -> int:
+        return self.c_start_pos
 
     def get_mode(self) -> str:
         return self.db_mode
@@ -156,6 +236,45 @@ class Configurations:
 
     def get_knn_config(self) -> dict:
         return self.knn_config
+
+    def get_ie_start_pos(self) -> int:
+        return self.ie_start_pos
+
+    def get_ie_query_limit(self) -> int:
+        return self.ie_query_limit
+
+    def get_ie_fetch_size(self) -> int:
+        return self.ie_fetch_size
+
+    def get_expand_coordinates(self) -> bool:
+        return self.expand_coordinates
+
+    def get_search_type(self) -> int:
+        return self.search_type
+
+    def get_ie_type(self) -> dict:
+        return self.ie_type
+
+    def get_competences_path(self) -> str:
+        return self.competence_path
+
+    def get_no_competences_path(self) -> str:
+        return self.no_competence_path
+
+    def get_modifier_path(self) -> str:
+        return self.modifier_path
+
+    def get_comppattern_path(self) -> str:
+        return self.competence_path
+
+    def get_tool_path(self) -> str:
+        return self.tool_path
+
+    def get_no_tools_path(self) -> str:
+        return self.no_tools_path
+
+    def get_toolpattern_path(self) -> str:
+        return self.toolpattern_path
 
     # Checker
     def __check_path(path):
