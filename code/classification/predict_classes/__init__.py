@@ -1,4 +1,4 @@
-""" Script manages the prediction of classes via knn- and reg-classifier and comparing/merging of results. In the end a final class is set for cu. """
+""" Script manages the prediction of classes via knn- and reg-classifier and comparing/merging of results. At the end a final class is set for cu. """
 
 # ## Imports
 from training.train_models import Model

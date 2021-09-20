@@ -36,12 +36,13 @@ def get_paragraphs(jobad: object) -> list:
 def clean_paragraphs(list_paragraphs: list) -> list:
     """ 
     Step 3: identify_listitems: 
-    Iterate over a list of paragraphs and compare one paragraph to the previous one. If both paragraphs contain certain list-characters
-    (like * or _), the paragraphs are merged together to one paragraph.
+    Iterate over a list of paragraphs and compare one paragraph to the previous one. 
+    If a paragraph contains specific list-characteristics and previous ends with ":" or is a oneliner, merge them together
     
     Step 4: identify_whatbelongstogether:
     Iterate over a list of paragraphs and compare one paragraph to the previous one. 
-    If the previous one ends with a period and the current one starts with uppercase/isjobtitle both paragraphs are merged together to one paragraph.
+    If the previous one ends with a period and the current one starts with uppercase/isjobtitle both paragraphs 
+    are merged together to one paragraph.
     
     Parameters
     ----------
@@ -53,11 +54,9 @@ def clean_paragraphs(list_paragraphs: list) -> list:
     list_paragraphs: list
         list with better cleaned paragraphs for one jobad item """
 
-    logging.info(f'before identifylistitems')
     # ## Step 3: to merge ListItems Together
     list_paragraphs = convert_classifyunits.identify_listitems(list_paragraphs)
-
-    logging.info(f'before whatbelongstogehter')
+    
     # ## Step 4: to merge What Belongs Together
     list_paragraphs = convert_classifyunits.identify_whatbelongstogether(list_paragraphs)
 

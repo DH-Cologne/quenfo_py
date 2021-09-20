@@ -34,7 +34,8 @@ def get_featureunits(cu: object) -> None:
     # Tokenization --> most important step (the others are kind of optional, but better use them!)
     fus = convert_featureunits.tokenize(cu.featureunits)
     cu.set_featureunits(fus)
-    if fus != []:
+    # if list is not empty
+    if fus:
         # Normalization
         fus = convert_featureunits.normalize(cu.featureunits, fus_config['normalize'])
         cu.set_featureunits(fus)

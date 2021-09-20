@@ -70,9 +70,9 @@ def get_jobads(current_pos: int) -> list:
             if inspect(database.engine).has_table(ClassifyUnits.__tablename__):                             # if table does exist, get related units
                 database.session.query(ClassifyUnits).filter(ClassifyUnits.parent_id == JobAds.id).all()
             else:                                                                                           # else: create classifyunits table
-                ClassifyUnits.__table__.create(database.engine)
+                ClassifyUnits.__table__.create(database.engine)                                             # for case that table does exist, but is empty
     except sqlalchemy.exc.OperationalError:
-        logger.log_clf.info(f'table classify_unit does not exist --> create new one')
+        logger.log_clf.info(f'Table classify_unit does not exist --> create new one')
         ClassifyUnits.__table__.create(database.engine)
 
     pass_output(database.session)
