@@ -22,8 +22,7 @@ def merge(reg: list, knn: int) -> int:
     predicted:  int
         Final predicted class for a cu. """
         
-    # Does reg-list contain more than one element?
-    # If only 1, compare it with the knn-prediction
+    # Does reg-list contain more than one element? --> If only 1, compare it with the knn-prediction
     if len(reg) == 1:
         # Both are equal, set prediction as final choice.
         if reg[0] == knn:

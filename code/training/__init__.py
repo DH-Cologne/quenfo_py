@@ -91,5 +91,7 @@ def initialize_model() -> Model:
     regex_clf = regexclassifier.call_regex_clf()
     model.set_regex_clf(regex_clf)
 
+    # TODO: Letzter Checkup, ob auch jetzt alles gefüllt ist. 
+
     # return obj of class Model
     return model
