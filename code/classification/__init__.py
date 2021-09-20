@@ -13,7 +13,6 @@ import configuration
 import sys
 import logger
 
-
 # ## Function
 def classify(model: Model) -> None:
     """ Classify JobAds
@@ -53,6 +52,7 @@ def classify(model: Model) -> None:
             logger.log_clf.info(f'Query_limit reached. Stop processing.')
             break
 
+        logger.log_clf.info(f'New chunk of jobads loaded. Start processing --> generate_classifyunits and start_prediction.')
         # iterate over each jobad
         for jobad in jobads:
             # STEP 2: Generate classify_units, feature_units and feature_vectors for each JobAd.
@@ -68,15 +68,17 @@ def classify(model: Model) -> None:
 
         # Commit generated classify units with paragraphs and classes to table
         orm.pass_output(database.session)
-        counter += len(jobads)  # update counter
-        current_pos += len(jobads)  # update current position
+        counter += len(jobads)              # update counter
+        current_pos += len(jobads)          # update current position
 
         logger.log_clf.info(
             f'session is cleaned and every obj of current batch is flushed: {database.session._is_clean()}.\
             Continue with next batch from current row position: {current_pos}.')
-
-    orm.handle_td_changes(model)  # Reset traindata changes (used as filler)
-    orm.close_session(database.session)  # Close session
+    
+    orm.handle_td_changes(model)            # Reset traindata changes (used as filler)
+    orm.close_session(database.session)     # Close session
+    print()
+    logger.log_clf.info(f'Classification done. Return to main-level.')
 
 
 # Progress Bar to keep track of already processed JobAds

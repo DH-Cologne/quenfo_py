@@ -59,7 +59,7 @@ def initialize_model() -> Model:
                 and helper.check_configvalues(configuration.config_obj.get_tfidf_config(), model_tfidf) == True \
                 and helper.check_configvalues(configuration.config_obj.get_knn_config(), model_knn) == True \
                 and helper.check_fitted(model_tfidf, 'model_tfidf') and helper.check_fitted(model_knn, 'model_knn'):
-
+                
                 # Instantiate an object of class Model and store the tfidf-vectorizer, knn-classifier and the used traindata-information
                 model = Model(model_knn, model_tfidf, traindata_name, traindata_date)
                 break 

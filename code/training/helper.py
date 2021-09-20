@@ -6,7 +6,7 @@ from typing import Union
 import sklearn
 import dill as pickle
 from pathlib import Path
-from training.train_models import Model, SaveModel, TraindataInfo
+from training.train_models import SaveModel, TraindataInfo
 import inspect
 import os
 import datetime
@@ -16,7 +16,7 @@ import configuration
 
 # ## Set variables
 all_features = list()
-all_classes=list()
+all_classes = list()
 traindata_name = str()
 traindata_date = str()
 

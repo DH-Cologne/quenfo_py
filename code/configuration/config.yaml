@@ -9,8 +9,8 @@ classification:
     continuousNGrams: false
 
   # --- Data-Handling Parameters ---
-  query_limit: 500              # Number of JobAds to query --> set -1 if all JobAds need to be processed
-  fetch_size: 100               # Number of JobAds per chunk
+  query_limit: 50               # Number of JobAds to query --> set -1 if all JobAds need to be processed
+  fetch_size: 10                 # Number of JobAds per chunk
   start_pos: 0                  # Index Number of row where query starts
 
   # --- Model Paths ---

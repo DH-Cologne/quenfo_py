@@ -1,4 +1,5 @@
-"""Script to build data and to create data"""
+""" Script is the intermediary between the database and the data-handling.
+    --> The data loading and handling takes place here and the modified data to be saved in the database is handled here too."""
 
 # ## Imports
 from information_extraction.helpers import get_search_type
@@ -13,7 +14,8 @@ import os
 import configuration
 from sqlalchemy.orm import Session
 from sqlalchemy import func
-
+import logger
+from sqlalchemy import inspect
 
 # ## Set Variables
 is_created = None
@@ -45,33 +47,34 @@ def get_jobads(current_pos: int) -> list:
     global drop_once
 
     # Get Configuration Settings from config.yaml file 
-    # Number of JobAds to fetch in one query
-    fetch_size = configuration.config_obj.get_fetch_size()
-    query_limit = configuration.config_obj.get_query_limit()
-
-    # db_mode: append data or overwrite it
-    db_mode = configuration.config_obj.get_mode()
+    fetch_size = configuration.config_obj.get_fetch_size()                                                  # Number of JobAds to fetch in one query
+    db_mode = configuration.config_obj.get_mode()                                                           # db_mode: append data or overwrite it
 
 
     # load the jobads
-    #job_ads = database.session.query(JobAds).slice(current_pos, (current_pos+fetch_size)).all()                    # 0:02:26.691769 bei 2500 JobAds and 0:16:07.362719 bei 9593
-    job_ads = database.session.query(JobAds).offset(current_pos).limit(fetch_size).all()                           # 0:02:25.670638 bei 2500 JobAds and 0:14:19.315887 bei 9593
-    #job_ads = database.session.query(JobAds).where(current_pos<(current_pos+fetch_size)).all()                      # 0:02:21.205672 bei 2500 JobAds and 0:13:37.800832 bei 9593
+    #job_ads = database.session.query(JobAds).slice(current_pos, (current_pos+fetch_size)).all()            # 0:02:26.691769 bei 2500 JobAds and 0:16:07.362719 bei 9593
+    job_ads = database.session.query(JobAds).offset(current_pos).limit(fetch_size).all()                    # 0:02:25.670638 bei 2500 JobAds and 0:14:19.315887 bei 9593
+    #job_ads = database.session.query(JobAds).where(current_pos<(current_pos+fetch_size)).all()             # 0:02:21.205672 bei 2500 JobAds and 0:13:37.800832 bei 9593
 
     try:
         # delete the handles from jobads to classifyunits or create new table
         if db_mode == 'overwrite':
             if drop_once is None:
-                database.session.query(ClassifyUnits).delete()
+                try:
+                    ClassifyUnits.__table__.create(database.engine)
+                except sqlalchemy.exc.OperationalError as err:
+                    database.session.query(ClassifyUnits).delete()
                 drop_once = 'filled'
             else:
                 pass
         # load all related classify units for appending
         else:
-            database.session.query(ClassifyUnits).filter(ClassifyUnits.parent_id == JobAds.id).all()
-
+            if inspect(database.engine).has_table(ClassifyUnits.__tablename__):                             # if table does exist, get related units
+                database.session.query(ClassifyUnits).filter(ClassifyUnits.parent_id == JobAds.id).all()
+            else:                                                                                           # else: create classifyunits table
+                ClassifyUnits.__table__.create(database.engine)
     except sqlalchemy.exc.OperationalError:
-        print("table classify_unit does not exist --> create new one")
+        logger.log_clf.info(f'table classify_unit does not exist --> create new one')
         ClassifyUnits.__table__.create(database.engine)
 
     pass_output(database.session)
@@ -94,11 +97,11 @@ def get_traindata() -> list:
 
     # load the TrainingData
     traindata = database.session2.query(TrainingData).all()
-
+    
     try:
         ClassifyUnits_Train.__table__.create(database.engine2)
     except sqlalchemy.exc.OperationalError:
-        print("table does already exist")
+        logger.log_clf.info(f'ClassifyUnits_Train table already there, drop it.')
         ClassifyUnits_Train.__table__.drop(database.engine2)
         ClassifyUnits_Train.__table__.create(database.engine2)
         pass
@@ -173,19 +176,23 @@ def handle_td_changes(model: Model) -> None:
         __delete_filler()
         # reset modification date from traindata database to the same saved in model
         __reset_td_info(model)
+        logger.log_clf.info(f'Reset added traindata-obj in current session and reset modification date from traindata. \
+            Because: Traindata was used to train new model, but while loading and using traindata the modification date changed. \
+                But the last modification date was stored in model for later checkup. If date is not reset, traindata and model never match.')
     except sqlalchemy.exc.OperationalError as err:
-        print(
-            f'{err}: No need to delete traindata-filler because traindata didnt get processed (model was already there)')
+        logger.log_clf.info(f'{err}: No need to delete traindata-filler because traindata \
+            didnt get processed because model was already there. Error message can be ignored.')
 
+def __delete_filler() -> None:
+    """ Remove all unwanted and in memory stored Traindata-objects and drop the traindata table. Nothing is modified in those tables."""
 
-def __delete_filler():
-    # remove all unwanted and in memory stored objects and drop the traindata table
+    # rollback
     database.session2.rollback()
+    # drop the table
     ClassifyUnits_Train.__table__.drop(database.engine2)
 
-
-def __reset_td_info(model: Model):
-    """ 
+def __reset_td_info(model: Model) -> None:
+    """
     If a new model was trained, the passed object is filled and it contains the actual_timestamp.
         --> The actual_timestamp is set as last modification date for traindata-file
         --> Important because the Traindata file is closed in the previous step and thereby gets new modification date 
@@ -216,7 +223,7 @@ def __reset_td_info(model: Model):
         date = datetime.datetime(year=int(year), month=int(month), day=int(day), \
                                  hour=int(hour), minute=int(minute), second=int(second), microsecond=0)
         modTime = time.mktime(date.timetuple())
-        # Set acutal time as last modification date for traindata-file
+        # Set actual time as last modification date for traindata-file
         os.utime(traindata_path, (modTime, modTime))
     except IndexError:
         pass
@@ -240,8 +247,6 @@ def pass_output(session: Session):
         Session object, generated in module database. Contains the database path. """
     session.commit()
 
-
-
 def close_session(session: Session):
     """ The session.close() statement closes the current session.
 
@@ -249,9 +254,7 @@ def close_session(session: Session):
     ----------
     session: Session
         Session object, generated in module database. Contains the database path. """
-
     session.close()
-
 
 # Function to manage session adding
 def create_output(session: Session, output: object):
@@ -281,7 +284,7 @@ def __check_once():
         try:
             ClassifyUnits.__table__.create(database.engine)
         except sqlalchemy.exc.OperationalError:
-            print("table does already exist")
+            logger.log_clf.info(f'Table ClassifyUnits does already exist. Will be dropped, because of overwrite mode.')
             ClassifyUnits.__table__.drop(database.engine)
             ClassifyUnits.__table__.create(database.engine)
             pass

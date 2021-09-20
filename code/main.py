@@ -67,7 +67,6 @@ import training
 import classification
 import database
 import logger
-import logging
 
 # ## Initiate Logging-Module
 from information_extraction import extract
