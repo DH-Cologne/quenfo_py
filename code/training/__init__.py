@@ -34,14 +34,14 @@ def initialize_model() -> Model:
     print(f'\n\nTraining-Module started.')
     logger.log_clf.info(f'\n\nTraining-Module started.')
 
-    # STEP 1: TRY TO LOAD MODELS AND TRAINDATA INFORMATION
-    __preparation()
-    # STEP 2:  CHECK IF MODELS ARE ALREADY TRAINED (separatly for tfidf and knn)
-    __check_and_fill_model()
-    # STEP 3: TRAIN AGAIN IF MODEL IS STILL NOT FILLED (NO MATCHING MODEL FOUND OR PROBLEMS WHILE LOADING)
-    __train_model()
-    # STEP 4: LOAD AND SET REGEX CLASSIFIER
-    __load_regex()
+    # STEP 1: 
+    __preparation()             # TRY TO LOAD MODELS AND TRAINDATA INFORMATION
+    # STEP 2: 
+    __check_and_fill_model()    # CHECK IF MODELS ARE ALREADY TRAINED (separatly for tfidf and knn)
+    # STEP 3: 
+    __train_model()             # TRAIN AGAIN IF MODEL IS STILL NOT FILLED (NO MATCHING MODEL FOUND OR PROBLEMS WHILE LOADING)
+    # STEP 4:
+    __load_regex()              # LOAD AND SET REGEX CLASSIFIER
 
     # Last check if Model is filled with Knn-clf, tfidf-vectorizer and regex-clf.
     __document_result()
@@ -107,8 +107,8 @@ def __train_model():
     global model
     if model == None:
 
-        print('Model criteria didnt match. Both need to be redone.')
-        logger.log_clf.info('Model criteria didnt match. Both need to be redone.')
+        print('No matching KNN and/or Tfidf Model found. Both need to be redone.')
+        logger.log_clf.info('No matching KNN and/or Tfidf Model found. Both need to be redone.')
         
         # PREPARATION
         # prepare data for training --> process data to fus
@@ -137,8 +137,8 @@ def __load_regex():
 """ LOG/PRINT Valid Model"""
 def __document_result():
     if not(model.get_regex_clf().empty) and model.model_knn and model.vectorizer:
-        logger.log_clf.info(f'Model is fully filled and can be used to classify data.')
-        print(f'Model is fully filled and can be used to classify data.')
+        logger.log_clf.info(f'Model is fully filled (KNN, TFIDF and REGEX) and can be used to classify data.')
+        print(f'Model is fully filled (KNN, TFIDF and REGEX) and can be used to classify data.')
     elif model.model_knn and model.vectorizer:
         logger.log_clf.warning(f'Model is filled with knn-clf and vectorizer. Continue without regex-clf.')
         print(f'Model is filled with knn-clf and vectorizer. Continue without regex-clf.')

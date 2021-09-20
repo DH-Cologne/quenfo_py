@@ -7,6 +7,7 @@ import logger
 def call_regex_clf() -> pd.DataFrame():
     # Start extraction of regex pattern and classes from given regex file
     regex_clf = gen_regex.start()
+    # Print/Log status
     if not(regex_clf.empty):
         logger.log_clf.info(f'Regex Classifier is loaded and returned to next processing step.')
         print(f'Regex Classifier is loaded and returned to next processing step.')

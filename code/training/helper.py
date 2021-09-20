@@ -149,14 +149,12 @@ def save_model(model: Union[sklearn.feature_extraction.text.TfidfVectorizer or s
     # Check if Path already exists and append or overwrite old model
     if Path(model_path).exists():
         try:
-            print(f'File {model_path} does already exist, new model will be appended.')
             logger.log_clf.info(f'File {model_path} does already exist, new model will be appended.')
             # load all already stored models from file
             old_models = __extract_models(model_path)
             # append stored models and new model --> dump them together in pickle file
             __dumper(model_path, old_models + [[SaveModel(model),TraindataInfo(traindata_name, traindata_date)]])
         except:
-            print(f'Problems while appending, model file will be overwritten with new model.')
             logger.log_clf.warning(f'Problems while appending, model file will be overwritten with new model.')
             __dumper(model_path, [[SaveModel(model),TraindataInfo(traindata_name, traindata_date)]])    
     else:
