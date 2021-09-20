@@ -3,7 +3,7 @@ from pathlib import Path
 
 import yaml
 
-with open(Path('config.yaml'), 'r') as yamlfile:
+with open(Path('configuration/config.yaml'), 'r') as yamlfile:
     cfg = yaml.load(yamlfile, Loader=yaml.FullLoader)
 
 

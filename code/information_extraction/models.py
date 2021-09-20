@@ -4,6 +4,9 @@ from pathlib import Path
 
 import yaml
 
+import configuration
+import database
+
 
 class Token:
     """Describes the attributes of a single token.
@@ -108,12 +111,13 @@ class Configuration():
             --> If not, set default values. """
 
     # ## Open Configuration-file and set variables + paths
-    with open(Path('config.yaml'), 'r') as yamlfile:
+    with open(Path('configuration/config.yaml'), 'r') as yamlfile:
         cfg = yaml.load(yamlfile, Loader=yaml.FullLoader)
 
         # get path from config
         resources = cfg['resources']
-        input_path = resources['input_path']
+        # TODO input_path
+        input_path = configuration.config_obj.get_input_path()
 
         # competences
         competence_path = resources['competences_path']

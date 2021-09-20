@@ -2,10 +2,12 @@
 import ruamel.yaml
 from pathlib import Path
 
+
 # Configuration Class
 class Configurations:
     """ Class to get the parameters set in config.yaml and check if they are valid. 
         --> If not, set default values. """
+
     def __init__(self, arg_input_path, arg_db_mode):
         # ## Open Configuration-file and set variables + paths
         with open(Path('configuration/config.yaml'), 'r') as yamlfile:
@@ -42,30 +44,39 @@ class Configurations:
     def set_traindata_path(self):
         traindata_path = Configurations.__check_path(self.traindata_path)
         self.traindata_path = traindata_path
+
     def set_tfidf_path(self):
         tfidf_path = Configurations.__check_path(self.tfidf_path)
         self.tfidf_path = tfidf_path
+
     def set_knn_path(self):
         knn_path = Configurations.__check_path(self.knn_path)
         self.knn_path = knn_path
+
     def set_input_path(self):
         input_path = Configurations.__check_path(self.input_path)
         self.input_path = input_path
+
     def set_stopwords_path(self):
         stopwords_path = Configurations.__check_path(self.stopwords_path)
         self.stopwords_path = stopwords_path
+
     def set_regex_path(self):
         regex_path = Configurations.__check_path(self.regex_path)
         self.regex_path = regex_path
+
     def set_query_limit(self):
         query_limit = Configurations.__check_type(self.query_limit, 50, int)
         self.query_limit = query_limit
+
     def set_fetch_size(self):
         fetch_size = Configurations.__check_type(self.fetch_size, 500, int)
         self.fetch_size = fetch_size
+
     def set_start_pos(self):
         start_pos = Configurations.__check_type(self.start_pos, 0, int)
         self.start_pos = start_pos
+
     def set_mode(self):
         db_mode = Configurations.__check_strings(self.db_mode, 'overwrite', ('append', 'overwrite'))
         self.db_mode = db_mode
@@ -90,7 +101,7 @@ class Configurations:
         fus_config = Configurations.__check_type_for_dict(fus_config, 'normalize', True, bool)
         fus_config = Configurations.__check_type_for_dict(fus_config, 'stem', True, bool)
         fus_config = Configurations.__check_type_for_dict(fus_config, 'filterSW', True, bool)
-        fus_config = Configurations.__check_type_for_dict(fus_config, 'nGrams', {3,4}, dict)
+        fus_config = Configurations.__check_type_for_dict(fus_config, 'nGrams', {3, 4}, dict)
         fus_config = Configurations.__check_type_for_dict(fus_config, 'continuousNGrams', False, bool)
         self.fus_config = fus_config
 
@@ -101,38 +112,51 @@ class Configurations:
         # Check-functions to avoid error raises because of missing or wrong inputs
         knn_config = Configurations.__check_type_for_dict(knn_config, 'n_neighbors', 5, int)
         knn_config = Configurations.__check_strings_for_dict(knn_config, 'weights', 'uniform', ('uniform', 'distance'))
-        knn_config = Configurations.__check_strings_for_dict(knn_config, 'algorithm', 'auto', ('auto', 'ball_tree', 'kd_tree', 'brute'))
+        knn_config = Configurations.__check_strings_for_dict(knn_config, 'algorithm', 'auto',
+                                                             ('auto', 'ball_tree', 'kd_tree', 'brute'))
         knn_config = Configurations.__check_type_for_dict(knn_config, 'leaf_size', 30, int)
         self.knn_config = knn_config
-    
+
     # Getter
-    def get_traindata_path(self) -> str: 
+    def get_traindata_path(self) -> str:
         return self.traindata_path
-    def get_tfidf_path(self) -> str: 
+
+    def get_tfidf_path(self) -> str:
         return self.tfidf_path
-    def get_knn_path(self) -> str: 
+
+    def get_knn_path(self) -> str:
         return self.knn_path
-    def get_input_path(self) -> str: 
+
+    def get_input_path(self) -> str:
         return self.input_path
-    def get_stopwords_path(self) -> str: 
+
+    def get_stopwords_path(self) -> str:
         return self.stopwords_path
-    def get_regex_path(self) -> str: 
+
+    def get_regex_path(self) -> str:
         return self.regex_path
+
     def get_query_limit(self) -> int:
         return self.query_limit
+
     def get_fetch_size(self) -> int:
         return self.fetch_size
+
     def get_start_pos(self) -> int:
         return self.start_pos
+
     def get_mode(self) -> str:
         return self.db_mode
+
     def get_tfidf_config(self) -> dict:
         return self.tfidf_config
+
     def get_fus_config(self) -> dict:
         return self.fus_config
+
     def get_knn_config(self) -> dict:
         return self.knn_config
-    
+
     # Checker
     def __check_path(path):
         try:
