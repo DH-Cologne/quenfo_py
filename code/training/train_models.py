@@ -4,14 +4,12 @@
 import sklearn
 import pandas as pd
 
-# class Model which contains the knnclassifier, tfidfvectorizer and regexclassifier
+# Class Model contains the knnclassifier, tfidfvectorizer and regexclassifier
 class Model():
-    # Set knn
-    model_knn = sklearn.neighbors.KNeighborsClassifier()
-    # Set vectorizer
-    vectorizer = sklearn.feature_extraction.text.TfidfVectorizer()
-    # Set regex_clf
-    regex_clf = pd.DataFrame()
+    # Set Variables
+    model_knn = sklearn.neighbors.KNeighborsClassifier()            # Set knn
+    vectorizer = sklearn.feature_extraction.text.TfidfVectorizer()  # Set vectorizer
+    regex_clf = pd.DataFrame()                                      # Set regex_clf
     # Set traindata information
     traindata_name = str()
     traindata_date = str()
@@ -23,14 +21,24 @@ class Model():
         self.traindata_name = traindata_name
         self.traindata_date = traindata_date
 
+    # Setter
     def set_regex_clf(self, value):
         self.regex_clf = value
-    
+    # Getter
     def get_regex_clf(self):
         return self.regex_clf
 
+# DUMPING-Classes (only purpose)
 
-# class just to dump the traindatainfo with model
+# Class SaveModel to tump the Model
+class SaveModel:
+    def __init__(self, name):
+        self.name = name
+
+    def set_name(self, value):
+        self.name = value
+
+# Class TraindataInfo to dump the traindatainfo with model
 class TraindataInfo():
     def __init__(self, name, date):
         self.name = name
@@ -40,11 +48,3 @@ class TraindataInfo():
         self.name = value
     def set_date(self, value):
         self.date = value
-
-# class just to dump model 
-class SaveModel:
-    def __init__(self, name):
-        self.name = name
-
-    def set_name(self, value):
-        self.name = value

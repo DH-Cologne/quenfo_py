@@ -13,6 +13,7 @@ import datetime
 import classification
 from orm_handling import orm
 import configuration 
+import logger
 
 # ## Set variables
 all_features = list()
@@ -45,6 +46,7 @@ def get_traindata_information() -> Union[str, str]:
         traindata_name = str(Path(configuration.config_obj.get_traindata_path()).name)
         traindata_date = str(datetime.datetime.fromtimestamp(os.path.getmtime(str(configuration.config_obj.get_traindata_path()))).replace(microsecond=0))
     except OSError:
+        logger.log_clf.warning("Key Information for Traindata could not be extracted. Model will be saved without Traindata Information.")
         print("Key Information for Traindata could not be extracted. Model will be saved without Traindata Information.")
         traindata_name = traindata_date = str()
     return traindata_name, traindata_date
@@ -135,6 +137,7 @@ def save_model(model: Union[sklearn.feature_extraction.text.TfidfVectorizer or s
         model_path = configuration.config_obj.get_knn_path()
     else:
         print(f'Path for {model} could not be resolved. No model was saved. Check config for path adjustment.')
+        logger.log_clf.warning(f'Path for {model} could not be resolved. No model was saved. Check config for path adjustment.')
         pass
 
     def __dumper(model_path: Path, models_to_dump: list):
@@ -146,13 +149,15 @@ def save_model(model: Union[sklearn.feature_extraction.text.TfidfVectorizer or s
     # Check if Path already exists and append or overwrite old model
     if Path(model_path).exists():
         try:
-            print(f'Model {model_path} does already exist, new model will be appended.')
+            print(f'File {model_path} does already exist, new model will be appended.')
+            logger.log_clf.info(f'File {model_path} does already exist, new model will be appended.')
             # load all already stored models from file
             old_models = __extract_models(model_path)
             # append stored models and new model --> dump them together in pickle file
             __dumper(model_path, old_models + [[SaveModel(model),TraindataInfo(traindata_name, traindata_date)]])
         except:
             print(f'Problems while appending, model file will be overwritten with new model.')
+            logger.log_clf.warning(f'Problems while appending, model file will be overwritten with new model.')
             __dumper(model_path, [[SaveModel(model),TraindataInfo(traindata_name, traindata_date)]])    
     else:
         __dumper(model_path, [[SaveModel(model),TraindataInfo(traindata_name, traindata_date)]])
@@ -207,9 +212,11 @@ def check_fitted(model: Union[sklearn.feature_extraction.text.TfidfVectorizer, s
         # check if model is already fitted (example from https://www.py4u.net/discuss/230863)
         if (0 < len( [k for k,v in inspect.getmembers(model) if k.endswith('_') and not k.startswith('__')])) and model is not None:
             print(f'Model {name} is loaded and returned to next processing step.')
+            logger.log_clf.info(f'Model {name} is loaded and returned to next processing step.')
             return model
         else:
             raise TypeError
     except sklearn.exceptions.NotFittedError and TypeError:
         print(f'Model {name} failed to be loaded or is not fitted. Check Settings in config and paths for {name}. New Trainingprocess starts.')
+        logger.log_clf.warning(f'Model {name} failed to be loaded or is not fitted. Check Settings in config and paths for {name}. New Trainingprocess starts.')
         return model

@@ -177,7 +177,7 @@ def __reset_td_info(model: Model) -> None:
         modTime = time.mktime(date.timetuple())
         # Set actual time as last modification date for traindata-file
         os.utime(traindata_path, (modTime, modTime))
-    except IndexError:
+    except (IndexError, ValueError):
         pass
 
 def get_length() -> int:

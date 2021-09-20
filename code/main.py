@@ -67,6 +67,7 @@ import training
 import classification
 import database
 import logger
+from pathlib import Path
 
 # ## Initiate Logging-Module
 """ 
@@ -189,7 +190,7 @@ def get_application_parser() -> argparse.ArgumentParser:
     return application_parser
 
 def __file_path(path: str) -> str:
-    if os.path.isfile(path):
+    if os.path.exists(Path(path)):
         return path
     else:
         raise argparse.ArgumentTypeError(f"Readable_file:{path} is not a valid file")

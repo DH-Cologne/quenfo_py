@@ -1,7 +1,6 @@
 """ Script contains the training of the knn_classifier. """
 # ## Imports
 from scipy.sparse.csr import csr_matrix
-from configuration.config_model import Configurations
 from sklearn.neighbors import KNeighborsClassifier 
 import training 
 import configuration
@@ -12,7 +11,7 @@ def initialize_knn(vectorized_train: csr_matrix, all_classes: list) -> KNeighbor
 
      Parameters
      ----------
-     vectorized_train: csr_matrix
+     vectorized_train: csr_matrix --> Compressed Sparse Row matrix
         The transformed traindata.
 
      all_classes: list
