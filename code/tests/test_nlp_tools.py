@@ -183,3 +183,7 @@ class TestNLPTools(unittest.TestCase):
             test_output)
         self.assertIsInstance(
             convert_featureunits.gen_ngrams(test_input, fus_config["nGrams"], fus_config["continuousNGrams"]), list)
+
+
+if __name__ == '__main__':
+    unittest.main()

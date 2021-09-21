@@ -13,6 +13,7 @@ import configuration
 import sys
 import logger
 
+
 # ## Function
 def classify(model: Model) -> None:
     """ Classify JobAds

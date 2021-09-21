@@ -2,7 +2,7 @@
     --> The data loading and handling takes place here and the modified data to be saved in the database is handled here too."""
 
 # ## Imports
-from .models import ClassifyUnits, ClassifyUnits_Train, TrainingData, JobAds
+from .models import ClassifyUnits, ClassifyUnits_Train, TrainingData, JobAds, ExtractionUnits, InformationEntity
 from training.train_models import Model
 import sqlalchemy
 import database
@@ -19,6 +19,7 @@ from sqlalchemy import inspect
 # ## Set Variables
 is_created = None
 drop_once = None
+
 
 # ## Functions
 
@@ -107,6 +108,7 @@ def get_traindata() -> list:
     # return Trainindata objects as list
     return traindata
 
+
 def handle_td_changes(model: Model) -> None:
     """ Manages the traindata changes.
         a. __delete_filler() --> delete all session adding for traindata. 
@@ -160,7 +162,7 @@ def __reset_td_info(model: Model) -> None:
     ------
     IndexError
         If model is not filled or no date could be set, IndexError is raised """
- 
+
     try:
         # Get traindata_path --> to reset last mod. date
         traindata_path = Path(configuration.config_obj.get_traindata_path())
@@ -173,7 +175,7 @@ def __reset_td_info(model: Model) -> None:
 
         # Set it as datetime object
         date = datetime.datetime(year=int(year), month=int(month), day=int(day), \
-            hour=int(hour), minute=int(minute), second=int(second), microsecond=0)
+                                 hour=int(hour), minute=int(minute), second=int(second), microsecond=0)
         modTime = time.mktime(date.timetuple())
         # Set actual time as last modification date for traindata-file
         os.utime(traindata_path, (modTime, modTime))
@@ -199,6 +201,7 @@ def pass_output(session: Session):
         Session object, generated in module database. Contains the database path. """
     session.commit()
 
+
 def close_session(session: Session):
     """ The session.close() statement closes the current session.
 
@@ -207,6 +210,7 @@ def close_session(session: Session):
     session: Session
         Session object, generated in module database. Contains the database path. """
     session.close()
+
 
 # Function to manage session adding
 def create_output(session: Session, output: object):
@@ -227,7 +231,7 @@ def create_output(session: Session, output: object):
         session.add(output)
     else:
         session.add(output)
-    
+
 
 # Private function to check if needed table already exists, else drop it and create a new empty table
 def __check_once():
@@ -243,3 +247,47 @@ def __check_once():
         is_created = 'checked'
     else:
         pass
+
+
+def get_classify_units() -> list:
+    # load classify_units
+    # TODO use query_limit for ie
+    mode = configuration.config_obj.get_mode()  
+    query_limit = configuration.config_obj.get_query_limit()
+    all_classify_units = database.session.query(ClassifyUnits).limit(query_limit).all()
+    classify_units = list()
+    search_type = get_search_type()
+
+    for cu in all_classify_units:
+        if cu.classID == search_type:
+            classify_units.append(cu)
+
+    try:
+        # delete the handles from classify_units to extractions_units or create new table
+        if mode == 'overwrite':
+            database.session.query(ExtractionUnits).delete()
+        # load all related extraction units for appending
+        else:
+            database.session.query(ExtractionUnits).filter(ExtractionUnits.parent_id == ClassifyUnits.id).all()
+
+    except sqlalchemy.exc.OperationalError:
+        print("table extraction_units not existing --> create new one")
+        ExtractionUnits.__table__.create(database.engine)
+
+    pass_output(database.session)
+
+    try:
+        # delete the handles from extractions_units to information_entity or create new table
+        if mode == 'overwrite':
+            database.session.query(InformationEntity).delete()
+        # load all related information entity for appending
+        else:
+            database.session.query(InformationEntity).filter(InformationEntity.parent_id == ExtractionUnits.id).all()
+
+    except sqlalchemy.exc.OperationalError:
+        print("table information_entity not existing --> create new one")
+        InformationEntity.__table__.create(database.engine)
+
+    pass_output(database.session)
+
+    return classify_units

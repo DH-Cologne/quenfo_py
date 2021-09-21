@@ -14,8 +14,11 @@ from sqlalchemy.orm import relationship
 import itertools
 from sqlalchemy.ext.mutable import MutableList
 
+# import IE-Classes
+
 # get Base connection
 Base = declarative_base()
+
 
 # ## Define Classes
 
@@ -75,8 +78,10 @@ class ClassifyUnits(Base):
     # Setter
     def set_featureunits(self, value):
         self.featureunits = value
+
     def set_featurevector(self, value):
         self.featurevector = value
+
     def set_classID(self, value):
         self.classID = value
 
@@ -104,6 +109,7 @@ class TrainingData(Base):
     # Name the objects
     def __repr__(self):
         return "(%s, %s, %s)" % (self.postingId, self.zeilennr, self.classID)
+
 
 # Class ClassifyUnits_Train
 class ClassifyUnits_Train(Base):
@@ -133,8 +139,10 @@ class ClassifyUnits_Train(Base):
     # Setter
     def set_featureunits(self, value):
         self.featureunits = value
+
     def set_featurevector(self, value):
         self.featurevector = value
+
     def set_classID(self, value):
         self.classID = value
 

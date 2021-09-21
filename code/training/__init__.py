@@ -12,6 +12,11 @@ import sys
 
 # ## Set variables
 model = None
+all_features = list()
+all_classes = list()
+traindata_name = str()
+traindata_date = str()
+
 
 # ## Functions
 def initialize_model() -> Model:

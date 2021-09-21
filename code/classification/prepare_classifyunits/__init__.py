@@ -66,6 +66,7 @@ def generate_classifyunits(jobad: object, model: Model) -> None:
         # Generate featurevectors
         feature_vectors.get_featurevectors(cu, model)
 
+
 # Generate ClassifyUnits_Train (and fus) for Trainingdata JobAds
 def generate_train_cus(train_obj: object) -> None:
     """ Function to generate CUs for Trainingdata JobAds
@@ -83,7 +84,7 @@ def generate_train_cus(train_obj: object) -> None:
 
     # Set paragraph variable
     para = train_obj.content
-    
+
     """ Remove all non-alphanumerical characters from para and return fus. 
         A lot of fus will be empty lists afterwards, so only ClassifyUnits_Train for filled
         fus are instantiated."""
