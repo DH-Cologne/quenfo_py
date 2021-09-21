@@ -18,7 +18,7 @@ def start_prediction(jobad: object, model: Model) -> None:
     jobad: object
         jobad is an object of the class JobAds and contains all given variables 
     model: Model
-        Class Model contains tfidf_vectorizer, knn_clf, regex_clf (further information about class in orm_handling/models.py) 
+        Class Model contains tfidf_vectorizer, knn_clf, regex_clf (further information about class in orm_handling/models.py)
         and traindata-information """
 
     # Iterate over each classifyunit

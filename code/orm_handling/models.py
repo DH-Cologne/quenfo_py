@@ -4,8 +4,8 @@
         b. ClassifyUnits        --> preprocessed and classified paragraphs
         c. TrainData            --> Traindata (already in paragraphs and classified)
         d. ClassifyUnits_Train  --> contains each Traindata paragraph (preprocessed and classified)
-        e. ExtrationUnits
-        f. InformationEntity """
+        e. ExtrationUnits       --> preprocessed and splitted sentences from paragraphs
+        f. InformationEntity    --> extracted entities"""
 
 # ## Imports
 from sqlalchemy.ext.declarative import declarative_base
@@ -14,15 +14,13 @@ from sqlalchemy.orm import relationship
 import itertools
 from sqlalchemy.ext.mutable import MutableList
 
-# import IE-Classes
-
 # get Base connection
 Base = declarative_base()
-
 
 # ## Define Classes
 
 # *** JOBADS/CU MODELS ***
+
 
 # Class JobAds
 class JobAds(Base):
@@ -146,8 +144,9 @@ class ClassifyUnits_Train(Base):
     def set_classID(self, value):
         self.classID = value
 
+
 class ExtractionUnits(Base):
-    """ Checks and sets all ExtractionUnits values. Defines tablename, columnnames and makes values reachable. """    
+    """ Checks and sets all ExtractionUnits values. Defines tablename, columnnames and makes values reachable. """
     parent_id = Column(Integer, ForeignKey('classify_units.id'))                # ExtractionUnits have a parent-child relationship as a child with ClassifyUnits.
     parent = relationship('ClassifyUnits', back_populates="children")           # ForeignKey to connect both Classes
     children = relationship("InformationEntity", back_populates="parent")       # parent-child relationship as a parent

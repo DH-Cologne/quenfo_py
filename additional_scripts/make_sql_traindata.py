@@ -4,8 +4,8 @@ import sqlite3
 from sqlite3 import Error
 
 # Paths definieren
-input_path = 'C:\\Users\\Christine\\Documents\\Qualifikationsentwicklungsforschung\\quenfo\\quenfo_v1_1_3\\quenfo_data\\resources\\classification\\trainingSets\\trainingdata_anonymized.tsv'
-output_path = 'C:\\Users\\Christine\\Documents\\Qualifikationsentwicklungsforschung\\quenfo\\quenfo_v1_1_3\\quenfo_data\\sqlite\\orm\\traindata_sql.db'
+input_path = '..\\..\\quenfo_data\\resources\\classification\\trainingSets\\trainingdata_anonymized.tsv'
+output_path = '..\\..\\quenfo_v1_1_3\\quenfo_data\\sqlite\\orm\\traindata_sql.db'
 
 
 # Loads Input Data (Trainingdata) and readlines
@@ -46,7 +46,7 @@ def transfer_lines_to_df(filelines):
             # reset list
             list_df_prepraration= []
  
-    # Genearte df with all rows in specific columns
+    # Generate df with all rows in specific columns
     df = pd.DataFrame(all_rows, columns=['postingId', 'zeilennr', 'classID', 'content'])
     return df
 
@@ -79,7 +79,8 @@ def writer(df_train):
     data.to_sql(key, conn_temp, if_exists='replace', chunksize=1000, index=False)
     conn_temp.close()
 
-# Main Method
+
+# Main Methode
 def main():
     filelines = load_input_data()
     df = transfer_lines_to_df(filelines)

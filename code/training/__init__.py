@@ -31,7 +31,7 @@ def initialize_model() -> Model:
     model: Model
         Class Model consists of tfidf_vectorizer, knn_model (further information about class in orm_handling/models.py), 
         traindata-information and regex_classifier """
-    
+
     # Set globals
     global model
     
@@ -39,11 +39,11 @@ def initialize_model() -> Model:
     print(f'\n\nTraining-Module started.')
     logger.log_clf.info(f'\n\nTraining-Module started.')
 
-    # STEP 1: 
+    # STEP 1:
     __preparation()             # TRY TO LOAD MODELS AND TRAINDATA INFORMATION
-    # STEP 2: 
+    # STEP 2:
     __check_and_fill_model()    # CHECK IF MODELS ARE ALREADY TRAINED (separatly for tfidf and knn)
-    # STEP 3: 
+    # STEP 3:
     __train_model()             # TRAIN AGAIN IF MODEL IS STILL NOT FILLED (NO MATCHING MODEL FOUND OR PROBLEMS WHILE LOADING)
     # STEP 4:
     __load_regex()              # LOAD AND SET REGEX CLASSIFIER
@@ -58,8 +58,8 @@ def initialize_model() -> Model:
     return model
 
 
-""" STEP 1: TRY TO LOAD MODELS AND TRAINDATA INFORMATION """ 
-def __preparation(): 
+""" STEP 1: TRY TO LOAD MODELS AND TRAINDATA INFORMATION """
+def __preparation():
     # Set global
     global all_models_knn, all_models_tfidf, traindata_name, traindata_date
 
@@ -114,7 +114,7 @@ def __train_model():
 
         print('No matching KNN and/or Tfidf Model found. Both need to be redone.')
         logger.log_clf.info('No matching KNN and/or Tfidf Model found. Both need to be redone.')
-        
+
         # PREPARATION
         # prepare data for training --> process data to fus
         traindata = helper.prepare_traindata()

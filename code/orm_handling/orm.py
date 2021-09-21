@@ -1,4 +1,4 @@
-""" Script is the intermediary between the database and the data-handling. 
+""" Script is the intermediary between the database and the data-handling.
     --> The data loading and handling takes place here and the modified data to be saved in the database is handled here too."""
 
 # ## Imports
@@ -46,14 +46,14 @@ def get_jobads(current_pos: int) -> list:
     global drop_once
 
     # Get Configuration Settings from config.yaml file 
-    fetch_size = configuration.config_obj.get_fetch_size()                                                  # Number of JobAds to fetch in one query
-    db_mode = configuration.config_obj.get_mode()                                                           # db_mode: append data or overwrite it
-
+    fetch_size = configuration.config_obj.get_c_fetch_size()  # Number of JobAds to fetch in one query
+    db_mode = configuration.config_obj.get_mode()  # db_mode: append data or overwrite it
 
     # load the jobads
-    #job_ads = database.session.query(JobAds).slice(current_pos, (current_pos+fetch_size)).all()            # 0:02:26.691769 bei 2500 JobAds and 0:16:07.362719 bei 9593
-    job_ads = database.session.query(JobAds).offset(current_pos).limit(fetch_size).all()                    # 0:02:25.670638 bei 2500 JobAds and 0:14:19.315887 bei 9593
-    #job_ads = database.session.query(JobAds).where(current_pos<(current_pos+fetch_size)).all()             # 0:02:21.205672 bei 2500 JobAds and 0:13:37.800832 bei 9593
+    # job_ads = database.session.query(JobAds).slice(current_pos, (current_pos+fetch_size)).all()            # 0:02:26.691769 bei 2500 JobAds and 0:16:07.362719 bei 9593
+    job_ads = database.session.query(JobAds).offset(current_pos).limit(
+        fetch_size).all()  # 0:02:25.670638 bei 2500 JobAds and 0:14:19.315887 bei 9593
+    # job_ads = database.session.query(JobAds).where(current_pos<(current_pos+fetch_size)).all()             # 0:02:21.205672 bei 2500 JobAds and 0:13:37.800832 bei 9593
 
     try:
         # delete the handles from jobads to classifyunits or create new table
@@ -61,14 +61,15 @@ def get_jobads(current_pos: int) -> list:
             if drop_once is None:
                 try:
                     ClassifyUnits.__table__.create(database.engine)
-                except sqlalchemy.exc.OperationalError as err:  
+                except sqlalchemy.exc.OperationalError as err:
                     database.session.query(ClassifyUnits).delete()
                 drop_once = 'filled'
             else:
                 pass
         # load all related classify units for appending
         else:
-            if inspect(database.engine).has_table(ClassifyUnits.__tablename__):                             # if table does exist, get related units
+            if inspect(database.engine).has_table(
+                    ClassifyUnits.__tablename__):  # if table does exist, get related units
                 database.session.query(ClassifyUnits).filter(ClassifyUnits.parent_id == JobAds.id).all()
             else:                                                                                           # else: create classifyunits table
                 ClassifyUnits.__table__.create(database.engine)                                             # for case that table does exist, but is empty
@@ -77,7 +78,7 @@ def get_jobads(current_pos: int) -> list:
         ClassifyUnits.__table__.create(database.engine)
 
     pass_output(database.session)
-    
+
     return job_ads
 
 
@@ -96,7 +97,7 @@ def get_traindata() -> list:
 
     # load the TrainingData
     traindata = database.session2.query(TrainingData).all()
-    
+
     try:
         ClassifyUnits_Train.__table__.create(database.engine2)
     except sqlalchemy.exc.OperationalError:
@@ -107,6 +108,74 @@ def get_traindata() -> list:
 
     # return Trainindata objects as list
     return traindata
+
+
+def get_classify_units(current_pos: int) -> list:
+
+    # Set global
+    global drop_once
+
+    # Get Configuration Settings from config.yaml file
+    fetch_size = configuration.config_obj.get_ie_fetch_size()  # Number of ClassifyUnits to fetch in one query
+    db_mode = configuration.config_obj.get_mode()  # db_mode: append data or overwrite it
+
+    # load the cus
+    all_cus = database.session.query(ClassifyUnits).offset(current_pos).limit(fetch_size).all()
+    classify_units = list()
+    search_type = configuration.config_obj.get_search_type()
+
+    # TODO query_limit wird nicht voll ausgenutzt, weil nur cus mit bestimmter classid weiter verarbeitet werden
+    for cu in all_cus:
+        if cu.classID == search_type:
+            classify_units.append(cu)
+
+    try:
+        # delete the handles from classifyunits to extractionunits or create new table
+        if db_mode == 'overwrite':
+            if drop_once is None:
+                try:
+                    ExtractionUnits.__table__.create(database.engine)
+                except sqlalchemy.exc.OperationalError as err:
+                    database.session.query(ExtractionUnits).delete()
+                drop_once = 'filled'
+            else:
+                pass
+        # load all related extractionunits for appending
+        else:
+            if inspect(database.engine).has_table(
+                    ExtractionUnits.__tablename__):  # if table does exist, get related units
+                database.session.query(ExtractionUnits).filter(ExtractionUnits.parent_id == ClassifyUnits.id).all()
+            else:  # else: create extractionunit table
+                ExtractionUnits.__table__.create(database.engine)
+    except sqlalchemy.exc.OperationalError:
+        logger.ie.info(f'table extraction_units does not exist --> create new one')
+        ExtractionUnits.__table__.create(database.engine)
+
+    try:
+        # delete the handles from extractionunits to extractions or create new table
+        if db_mode == 'overwrite':
+            if drop_once is None:
+                try:
+                    InformationEntity.__table__.create(database.engine)
+                except sqlalchemy.exc.OperationalError as err:
+                    database.session.query(InformationEntity).delete()
+                drop_once = 'filled'
+            else:
+                pass
+        # load all related InformationEntity for appending
+        else:
+            if inspect(database.engine).has_table(
+                    InformationEntity.__tablename__):  # if table does exist, get related units
+                database.session.query(InformationEntity).filter(InformationEntity.parent_id == ExtractionUnits.id).all()
+            else:  # else: create extractionunit table
+                InformationEntity.__table__.create(database.engine)
+    except sqlalchemy.exc.OperationalError:
+        logger.ie.info(f'table extracted_entities does not exist --> create new one')
+        InformationEntity.__table__.create(database.engine)
+
+    pass_output(database.session)
+
+    return classify_units
 
 
 def handle_td_changes(model: Model) -> None:
@@ -146,7 +215,7 @@ def __delete_filler() -> None:
     ClassifyUnits_Train.__table__.drop(database.engine2)
 
 def __reset_td_info(model: Model) -> None:
-    """ 
+    """
     If a new model was trained, the passed object is filled and it contains the actual_timestamp.
         --> The actual_timestamp is set as last modification date for traindata-file
         --> Important because the Traindata file is closed in the previous step and thereby gets new modification date 
@@ -182,15 +251,27 @@ def __reset_td_info(model: Model) -> None:
     except (IndexError, ValueError):
         pass
 
-def get_length() -> int:
+
+# TODO Abfrage je nach Schritt: bei Classification wird JobAds-Tabelle angefragt, bei IE ClassifyUnits-Tabelle
+def get_length(table_type: str) -> int:
     """ The function gets the number of JobAds in the database table.
+
+    Parameters
+    ----------
+    table_type: str
+        Keyword with selected database-table.
 
     Returns
     -------
     row_nrs: int
-        Integer with the count of all JobAds in table. """
-    row_nrs = database.session.query(func.count(JobAds.id)).scalar()
+        Integer with the count of all JobAds or ClassfiyUnits in table. """
+
+    if table_type.__eq__('ad'):
+        row_nrs = database.session.query(func.count(JobAds.id)).scalar()
+    elif table_type.__eq__('cu'):
+        row_nrs = database.session.query(func.count(ClassifyUnits.id)).scalar()
     return row_nrs
+
 
 def pass_output(session: Session):
     """ The session.commit() statement commits all adds to the current session.
@@ -223,7 +304,7 @@ def create_output(session: Session, output: object):
         Session object, generated in module database. Contains the database path. 
     output: object
         output object --> contains the jobad """
-    
+
     # db_mode: append data or overwrite it
     db_mode = configuration.config_obj.get_mode()
     if db_mode == "overwrite":
@@ -247,47 +328,3 @@ def __check_once():
         is_created = 'checked'
     else:
         pass
-
-
-def get_classify_units() -> list:
-    # load classify_units
-    # TODO use query_limit for ie
-    mode = configuration.config_obj.get_mode()  
-    query_limit = configuration.config_obj.get_query_limit()
-    all_classify_units = database.session.query(ClassifyUnits).limit(query_limit).all()
-    classify_units = list()
-    search_type = get_search_type()
-
-    for cu in all_classify_units:
-        if cu.classID == search_type:
-            classify_units.append(cu)
-
-    try:
-        # delete the handles from classify_units to extractions_units or create new table
-        if mode == 'overwrite':
-            database.session.query(ExtractionUnits).delete()
-        # load all related extraction units for appending
-        else:
-            database.session.query(ExtractionUnits).filter(ExtractionUnits.parent_id == ClassifyUnits.id).all()
-
-    except sqlalchemy.exc.OperationalError:
-        print("table extraction_units not existing --> create new one")
-        ExtractionUnits.__table__.create(database.engine)
-
-    pass_output(database.session)
-
-    try:
-        # delete the handles from extractions_units to information_entity or create new table
-        if mode == 'overwrite':
-            database.session.query(InformationEntity).delete()
-        # load all related information entity for appending
-        else:
-            database.session.query(InformationEntity).filter(InformationEntity.parent_id == ExtractionUnits.id).all()
-
-    except sqlalchemy.exc.OperationalError:
-        print("table information_entity not existing --> create new one")
-        InformationEntity.__table__.create(database.engine)
-
-    pass_output(database.session)
-
-    return classify_units

@@ -1,7 +1,9 @@
 # ## Open Configuration-file and set paths to txt files with lists, pattern etc.
 import codecs
+from pathlib import Path
 
-from information_extraction.models import Pattern, PatternToken, Configuration
+import configuration
+from information_extraction.models import Pattern, PatternToken
 from information_extraction.prepare_resources import convert_entities
 
 
@@ -19,11 +21,11 @@ def get_entities_from_file(extraction_type: str) -> list:
                 list with content from file"""
     entities = list()
     switch = {
-        "competences": Configuration.competence_path,
-        "no_competences": Configuration.no_competence_path,
-        "modifier": Configuration.modifier_path,
-        "tools": Configuration.tools_path,
-        "no_tools": Configuration.no_tools_path,
+        "competences": configuration.config_obj.get_competences_path(),
+        "no_competences": configuration.config_obj.get_no_competences_path(),
+        "modifier": configuration.config_obj.get_modifier_path(),
+        "tools": configuration.config_obj.get_tool_path(),
+        "no_tools": configuration.config_obj.get_no_tools_path(),
     }
 
     path = switch.get(extraction_type)
@@ -68,8 +70,8 @@ def get_entities_from_file(extraction_type: str) -> list:
 def read_pattern_from_file(type: str) -> list:
     pattern_list = list()
     switch = {
-        "comp_pattern": Configuration.comppattern_path,
-        "tool_pattern": Configuration.toolpattern_path,
+        "comp_pattern": configuration.config_obj.get_comppattern_path(),
+        "tool_pattern": configuration.config_obj.get_toolpattern_path(),
     }
 
     path = switch.get(type)

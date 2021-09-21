@@ -3,10 +3,10 @@ from pathlib import Path
 
 import yaml
 
-from prepare_classifyunits.classify_units import convert_classifyunits
-from prepare_classifyunits.feature_units import convert_featureunits
+from classification.prepare_classifyunits.classify_units import convert_classifyunits
+from classification.prepare_classifyunits.feature_units import convert_featureunits
 
-with open(Path('config.yaml'), 'r') as yamlfile:
+with open(Path('configuration/config.yaml'), 'r') as yamlfile:
     cfg = yaml.load(yamlfile, Loader=yaml.FullLoader)
     fus_config = cfg['fus_config']
     resources = cfg['resources']

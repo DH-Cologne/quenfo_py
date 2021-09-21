@@ -6,7 +6,7 @@ import re
 
 from classification.prepare_classifyunits.classify_units import convert_classifyunits
 from information_extraction.models import Token
-from information_extraction.prepare_resources import competences, tools, no_competences, no_tools, modifier
+from information_extraction.prepare_resources import competences, tools, no_tools, no_competences, modifier
 from information_extraction.prepare_resources.convert_entities import normalize_entities
 
 # load nlp-model for sentence detection, pos tagger and lemmatizer

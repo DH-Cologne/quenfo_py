@@ -68,8 +68,10 @@ import classification
 import database
 import logger
 from pathlib import Path
+from information_extraction import extract, prepare_resources
 
 # ## Initiate Logging-Module
+
 """ 
 Set four different logging-files: 
     a. log_main.log --> for all main related processes and raises.
@@ -78,6 +80,7 @@ Set four different logging-files:
     d. log_match.log--> for all matching related processes and raises."""
 
 logger.main()
+
 
 # ## Functions
 
@@ -93,12 +96,14 @@ def start_classification() -> None:
     # STEP 2: Start Classification
     classification.classify(model)
 
+
 # *** PART 2: Information Extraction ***
 def start_extraction() -> None:
-    pass
+    extract()
+
 
 # *** PART 3: Matching ***
-def start_matching() -> None: 
+def start_matching() -> None:
     pass
 
 
@@ -112,7 +117,7 @@ def manage_app(args: dict) -> None:
     ----------
     args: dict
         dictionary with the arguments received by argparser. """
-    
+
     # Get items from dict
     method_args = vars(args)
 
@@ -123,31 +128,36 @@ def manage_app(args: dict) -> None:
             configuration.set_config(method_args)
             database.set_train_conn()
             database.set_input_conn()
+            prepare_resources.set_ie_resources()
             logger.log_main.info(f'Configurations set: {configuration.config_obj} and database connections created: \n \
                 input_data: {database.session} traindata: {database.session2}')
         except Exception as e:
-            logger.log_main.info(f'Error {e} occurred. Checkout configurations, argparser and connections to databases.')
+            logger.log_main.info(
+                f'Error {e} occurred. Checkout configurations, argparser and connections to databases.')
             print(f'Error {e} occurred. Checkout configurations, argparser and connections to databases.')
             sys.exit()
+
     __set_all()
 
     # Second: Call each part of the application (depending on given argparse arguments)
     def __call_parts():
         # Textclassification
         def __call_clf():
-            logger.set_infos(logger.log_clf,'Classification', 'start')
+            logger.set_infos(logger.log_clf, 'Classification', 'start')
             start_classification()
-            logger.set_infos(logger.log_clf,'Classification', 'finish')
+            logger.set_infos(logger.log_clf, 'Classification', 'finish')
+
         # Information Extraction
         def __call_ie():
-            logger.set_infos(logger.log_ie,'Information Extraction', 'start')
+            logger.set_infos(logger.log_ie, 'Information Extraction', 'start')
             start_extraction()
-            logger.set_infos(logger.log_ie,'Information Extraction', 'finish')
+            logger.set_infos(logger.log_ie, 'Information Extraction', 'finish')
+
         # Matching
         def __call_match():
-            logger.set_infos(logger.log_match,'Matching', 'start')
+            logger.set_infos(logger.log_match, 'Matching', 'start')
             start_matching()
-            logger.set_infos(logger.log_match,'Matching', 'finish')
+            logger.set_infos(logger.log_match, 'Matching', 'finish')
 
         # Call part or all depending on argparser
         if method_args['classification']:
@@ -156,10 +166,11 @@ def manage_app(args: dict) -> None:
             __call_ie()
         if method_args['matching']:
             __call_match()
-        if  not(method_args['classification']) and not(method_args['extraction']) and not(method_args['matching']):
+        if not (method_args['classification']) and not (method_args['extraction']) and not (method_args['matching']):
             __call_clf()
             __call_ie()
             __call_match()
+
     __call_parts()
 
 
@@ -175,16 +186,16 @@ def get_application_parser() -> argparse.ArgumentParser:
             a. the three tool parts as options: classification, extraction, matching (if non is given, call all parts)
             b. input_path argument (use string format!)
             c. db_mode (options: overwrite or append) """
-        
+
     # ## create parser
     application_parser = argparse.ArgumentParser(description='classify jobads and extract/match information')
     # ## add arguments
     application_parser.add_argument('--classification', action="store_true")
     application_parser.add_argument('--extraction', action="store_true")
     application_parser.add_argument('--matching', action="store_true")
-    application_parser.add_argument('--input_path', type = __file_path)
+    application_parser.add_argument('--input_path', type=__file_path)
     application_parser.add_argument('--db_mode', choices=['overwrite', 'append'],
-                                   default='overwrite')
+                                    default='overwrite')
     # ## set default function
     application_parser.set_defaults(func=manage_app)
     return application_parser
@@ -199,12 +210,14 @@ def __file_path(path: str) -> str:
 # ########## START & FINISH PROGRAM ##########
 
 if __name__ == '__main__':
+
     # start timer
     start = timer()
     # set first logging/printing
     logger.log_main.info('\nThe Program started. More information about the process can be found in the logger-files.')
     logger.log_main.info('\n\n******************************** The program started. ********************************\n')
     print('\n\n******************************** The program started. ********************************\n')
+
 
     # Check if CLI is used correctly
     def __get_arguments():
@@ -218,13 +231,16 @@ if __name__ == '__main__':
         except (TypeError, AttributeError) as e:
             print(f'Error {e} occurred while parsing for arguments. Use -h flag to get further informations.')
             sys.exit()
+
+
     __get_arguments()
 
     # set final logging/printing
-    logger.log_main.info('\n\n******************************** The program finished. ********************************\n')
+    logger.log_main.info(
+        '\n\n******************************** The program finished. ********************************\n')
     print('Processing done. For further information see logger-files.')
     print('\n\n******************************** The program finished. ********************************\n')
     # finish timer
     end = timer()
-    print(f'Runtime of program: {timedelta(seconds=end-start)}.')
+    print(f'Runtime of program: {timedelta(seconds=end - start)}.')
     sys.exit()

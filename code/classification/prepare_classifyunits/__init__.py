@@ -14,7 +14,7 @@ import logger
 def generate_classifyunits(jobad: object, model: Model) -> None:
     """ Function manages the preparation for the textclassification. Therefore classifyunits are needed and will be
     generated in this step. Following steps are used: 
-        --> Each Jobad is splitted into paragraphs and each paragraph is a paragraph of the Class ClassifyUnit. 
+        --> Each Jobad is splitted into paragraphs and each paragraph is a paragraph of the Class ClassifyUnit.
         --> JobAds and ClassifyUnits are organized in a parent -> children relationship 
         --> One JobAd contains several classifyunits with the following values: 
             a. paragraph = slightly cleaned content (whitespaces at the beginning and the end) 
@@ -28,7 +28,7 @@ def generate_classifyunits(jobad: object, model: Model) -> None:
     model: Model
         Class Model consists of tfidf_vectorizer, knn_model (further information about class in orm_handling/models.py) 
         and traindata-information """
-        
+
     # Split the jobad texts (content) and receive a list of paragraphs for each jobad + remove whitespaces
     list_paragraphs = classify_units.get_paragraphs(jobad)
 
@@ -71,10 +71,10 @@ def generate_classifyunits(jobad: object, model: Model) -> None:
 def generate_train_cus(train_obj: object) -> None:
     """ Function to generate CUs for Trainingdata JobAds
         --> No split into paragraphs needed
-        --> TrainData and ClassifyUnits_Train are organized in a parent -> children relationship 
-        --> One TrainData object contains one ClassifyUnits_Train object with the following values: 
-            a. paragraph = slightly cleaned content (whitespaces at the beginning and the end) 
-            b. featureunit = normalized, stemmed, Stopwords filtered and nGrams processed paragraph 
+        --> TrainData and ClassifyUnits_Train are organized in a parent -> children relationship
+        --> One TrainData object contains one ClassifyUnits_Train object with the following values:
+            a. paragraph = slightly cleaned content (whitespaces at the beginning and the end)
+            b. featureunit = normalized, stemmed, Stopwords filtered and nGrams processed paragraph
             c. featurevector = vectorized featureunit
 
     Parameters
