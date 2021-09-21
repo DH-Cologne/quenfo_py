@@ -1,5 +1,6 @@
 # ## Open Configuration-file and set paths to txt files with lists, pattern etc.
 import codecs
+from pathlib import Path
 
 import configuration
 from information_extraction.models import Pattern, PatternToken
@@ -28,6 +29,7 @@ def get_entities_from_file(extraction_type: str) -> list:
     }
 
     path = switch.get(extraction_type)
+    print(path)
 
     # get file object
     f = codecs.open(path, "r", encoding="utf-8")

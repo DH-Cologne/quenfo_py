@@ -73,6 +73,7 @@ def extract():
         logger.log_ie.info(f'InformationExtraction done. Return to main-level.')
 
 
+# TODO Methode wird auch bei Classification genutzt
 # Progress Bar to keep track of already processed ClassifyUnits
 def __progress(count: int, total: int, status: str):
     bar_len = 20

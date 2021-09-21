@@ -6,7 +6,7 @@ import re
 
 from classification.prepare_classifyunits.classify_units import convert_classifyunits
 from information_extraction.models import Token
-# from information_extraction.prepare_resources import competences, tools, no_competences, no_tools, modifier
+from information_extraction.prepare_resources import competences, tools, no_tools, no_competences, modifier
 from information_extraction.prepare_resources.convert_entities import normalize_entities
 
 # load nlp-model for sentence detection, pos tagger and lemmatizer
@@ -199,12 +199,12 @@ def annotate_token(token: list) -> list[Token]:
 
     for t in token:
         lemma = normalize_entities(t.lemma)
-        """if competences.__contains__(lemma) or tools.__contains__(lemma):
+        if competences.__contains__(lemma) or tools.__contains__(lemma):
             t.set_ie_token(True)
         elif no_competences.__contains__(lemma) or no_tools.__contains__(lemma):
             t.set_no_token(True)
         elif modifier.__contains__(lemma):
-            t.set_modifier_token(True)"""
+            t.set_modifier_token(True)
         annotate_list.append(t)
 
     return annotate_list

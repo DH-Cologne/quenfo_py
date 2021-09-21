@@ -41,7 +41,7 @@ class Configurations:
             comppattern_path = cfg['resources']['comppattern_path']
 
             # tool paths
-            tools_path = cfg['resources']['tools_path']
+            tool_path = cfg['resources']['tools_path']
             no_tools_path = cfg['resources']['notools_path']
             toolpattern_path = cfg['resources']['toolpattern_path']
 
@@ -70,7 +70,7 @@ class Configurations:
         self.no_competence_path = no_competence_path
         self.modifier_path = modifier_path
         self.comppattern_path = comppattern_path
-        self.tool_path = tools_path
+        self.tool_path = tool_path
         self.no_tools_path = no_tools_path
         self.toolpattern_path = toolpattern_path
 
@@ -194,7 +194,7 @@ class Configurations:
         toolpattern_path = Configurations.__check_path(self.toolpattern_path)
 
         self.tool_path = tool_path
-        self:no_tools_path = no_tools_path
+        self.no_tools_path = no_tools_path
         self.toolpattern_path = toolpattern_path
 
     # Getter

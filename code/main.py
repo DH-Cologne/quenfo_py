@@ -57,6 +57,8 @@
 CLI-example: python main.py --classification --input_path '..\..\quenfo_data\sqlite\orm\text_kernel_orm_2018_03.db' --db_mode overwrite """
 
 # ## Imports
+from pathlib import Path
+
 import configuration
 from timeit import default_timer as timer
 from datetime import timedelta
@@ -199,7 +201,7 @@ def get_application_parser() -> argparse.ArgumentParser:
 
 
 def __file_path(path: str) -> str:
-    if os.path.isfile(path):
+    if os.path.exists(path):
         return path
     else:
         raise argparse.ArgumentTypeError(f"Readable_file:{path} is not a valid file")
@@ -208,6 +210,7 @@ def __file_path(path: str) -> str:
 # ########## START & FINISH PROGRAM ##########
 
 if __name__ == '__main__':
+
     # start timer
     start = timer()
     # set first logging/printing
