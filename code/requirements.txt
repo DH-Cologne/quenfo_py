@@ -19,9 +19,6 @@ scipy==1.7.0
 six==1.16.0
 sklearn==0.0
 SQLAlchemy==1.4.18
-tenacity==6.3.1
-threadpoolctl==2.1.0
-tornado==6.1
 tqdm==4.61.1
 typing-extensions==3.10.0.0
 dill~=0.3.4

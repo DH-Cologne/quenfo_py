@@ -1,3 +1,4 @@
+# Imports
 import pandas as pd
 import sqlite3
 from sqlite3 import Error
@@ -13,45 +14,64 @@ def load_input_data():
     # create a database connection
     with open(input_path, 'r', encoding="utf-8") as f:
         filelines = f.readlines()
+<<<<<<< HEAD:additional_scripts/make_sql_traindata.py
+=======
     # print(filelines)
+>>>>>>> 8556f489fb9eeb290f76787d221be24aebd2bf3b:make_sql_traindata.py
     return filelines
 
 
 # Gets filelines and transfers content to dataframe
 def transfer_lines_to_df(filelines):
-    jahrgang = 0
     postingID = str
     classID = 0
     line_content = []
     all_rows = []
 
     for line in filelines:
+<<<<<<< HEAD:additional_scripts/make_sql_traindata.py
+        # If line is divided by 2 or 3 tabs, it is the header (with the important information): postingID, Zeilennr. und classID
+        if line.split('\t').__len__() == 3 or line.split('\t').__len__() == 2:
+            splitted = line.split('\t')
+            classID = splitted[2] 
+=======
         # Wenn eine Zeile 2 oder 3 Tabs hat, handelt es sich um die Kopfzeile mit den Informationen: postingID,
         # Zeilennr. und classID
         if line.split('\t').__len__() == 3 or line.split('\t').__len__() == 2:
             splitted = line.split('\t')
             # print(line)
             classID = splitted[2]
+>>>>>>> 8556f489fb9eeb290f76787d221be24aebd2bf3b:make_sql_traindata.py
             postingID = splitted[0]
             zeilennr = splitted[1]
-        # Alle anderen Zeilen, die keine leeren Zeilen sind, sind content-Informationen
+        # All other lines (that are not empty) are content-information
         elif line != '\n':
+<<<<<<< HEAD:additional_scripts/make_sql_traindata.py
+=======
             # print(line)
+>>>>>>> 8556f489fb9eeb290f76787d221be24aebd2bf3b:make_sql_traindata.py
             line_content.append(line)
-        # Das sind die leeren Zeilen, die zur Unterteilung zwischen den einzelnen Stellenanzeigen benutzt werden
+        # These are the empty lines that are used to subdivide the individual job advertisements
         else:
-            # Füge die einzelnen Content-Sätze zu einem Text zsm
+            # join lines to one content-text
             content = ''.join(line_content)
-            # Setze line_content für die nächste Jobad zurück
+            # Reset line_content for each jobad
             line_content = []
-            # Erstelle mit allen gesammelten Infos für die aktuelle Jobad einen Eintrag in der Liste
+            # Create an entry in the list with all the information you have collected for the current job
             list_df_prepraration = [postingID, zeilennr, classID, content]
-            # Lege Eintrag für die Jobad in großer Liste an
+            # Create an entry for the Jobad in a large list
             all_rows.append(list_df_prepraration)
+<<<<<<< HEAD:additional_scripts/make_sql_traindata.py
+            # reset list
+            list_df_prepraration= []
+ 
+    # Genearte df with all rows in specific columns
+=======
             # Setze die Jobad liste zurück
             list_df_prepraration = []
 
     # Generiere das df mit den gesammelten Infos und folgenden Spalten:
+>>>>>>> 8556f489fb9eeb290f76787d221be24aebd2bf3b:make_sql_traindata.py
     df = pd.DataFrame(all_rows, columns=['postingId', 'zeilennr', 'classID', 'content'])
     return df
 
@@ -62,7 +82,6 @@ def writer(df_train):
 
     # Name of database table
     key = 'traindata'
-
     df_train['index'] = df_train.index
 
     # make connection
@@ -85,8 +104,12 @@ def writer(df_train):
     data.to_sql(key, conn_temp, if_exists='replace', chunksize=1000, index=False)
     conn_temp.close()
 
+<<<<<<< HEAD:additional_scripts/make_sql_traindata.py
+# Main Method
+=======
 
 # Main Methode
+>>>>>>> 8556f489fb9eeb290f76787d221be24aebd2bf3b:make_sql_traindata.py
 def main():
     filelines = load_input_data()
     df = transfer_lines_to_df(filelines)

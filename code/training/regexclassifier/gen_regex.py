@@ -5,6 +5,7 @@ import pandas as pd
 from pathlib import Path
 from typing import Union
 import configuration
+import logger
 
 # Set Variables
 regex_clf = pd.DataFrame()
@@ -44,4 +45,5 @@ def __read_file(regex_path: str) -> Union[list, list]:
             f.close()
     except:
         print(f'Problems occurred while reading file {regex_path}.')
+        logger.log_clf.warning(f'Problems occurred while reading file {regex_path}.')
     return class_list, pattern_list

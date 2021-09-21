@@ -71,10 +71,10 @@ def get_jobads(current_pos: int) -> list:
             if inspect(database.engine).has_table(
                     ClassifyUnits.__tablename__):  # if table does exist, get related units
                 database.session.query(ClassifyUnits).filter(ClassifyUnits.parent_id == JobAds.id).all()
-            else:  # else: create classifyunits table
-                ClassifyUnits.__table__.create(database.engine)
+            else:                                                                                           # else: create classifyunits table
+                ClassifyUnits.__table__.create(database.engine)                                             # for case that table does exist, but is empty
     except sqlalchemy.exc.OperationalError:
-        logger.log_clf.info(f'table classify_unit does not exist --> create new one')
+        logger.log_clf.info(f'Table classify_unit does not exist --> create new one')
         ClassifyUnits.__table__.create(database.engine)
 
     pass_output(database.session)
@@ -206,7 +206,6 @@ def handle_td_changes(model: Model) -> None:
         logger.log_clf.info(f'{err}: No need to delete traindata-filler because traindata \
             didnt get processed because model was already there. Error message can be ignored.')
 
-
 def __delete_filler() -> None:
     """ Remove all unwanted and in memory stored Traindata-objects and drop the traindata table. Nothing is modified in those tables."""
 
@@ -214,7 +213,6 @@ def __delete_filler() -> None:
     database.session2.rollback()
     # drop the table
     ClassifyUnits_Train.__table__.drop(database.engine2)
-
 
 def __reset_td_info(model: Model) -> None:
     """
@@ -250,7 +248,7 @@ def __reset_td_info(model: Model) -> None:
         modTime = time.mktime(date.timetuple())
         # Set actual time as last modification date for traindata-file
         os.utime(traindata_path, (modTime, modTime))
-    except IndexError:
+    except (IndexError, ValueError):
         pass
 
 

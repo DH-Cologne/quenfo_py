@@ -265,7 +265,7 @@ class Configurations:
         return self.modifier_path
 
     def get_comppattern_path(self) -> str:
-        return self.competence_path
+        return self.comppattern_path
 
     def get_tool_path(self) -> str:
         return self.tool_path

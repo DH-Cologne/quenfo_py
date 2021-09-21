@@ -20,7 +20,7 @@ def gen_classes(para: str, regex_clf: pd.DataFrame()) -> list:
     predicted: list
         The predicted class(es). """
 
-    # Initiate predicted list again for each paragraph
+    # Initiate predicted list for each paragraph
     predicted = list()
 
     def __compare_matches(class_nr, pattern):

@@ -1,4 +1,4 @@
-""" Script manages the prediction of classes via knn- and reg-classifier and comparing/merging of results. In the end a final class is set for cu. """
+""" Script manages the prediction of classes via knn- and reg-classifier and comparing/merging of results. At the end a final class is set for cu. """
 
 # ## Imports
 from training.train_models import Model
@@ -18,7 +18,7 @@ def start_prediction(jobad: object, model: Model) -> None:
     jobad: object
         jobad is an object of the class JobAds and contains all given variables 
     model: Model
-        Class Model consists of tfidf_vectorizer, knn_clf, regex_clf (further information about class in orm_handling/models.py) 
+        Class Model contains tfidf_vectorizer, knn_clf, regex_clf (further information about class in orm_handling/models.py)
         and traindata-information """
 
     # Iterate over each classifyunit
@@ -31,11 +31,9 @@ def start_prediction(jobad: object, model: Model) -> None:
         reg_predicted = regex_predictor.gen_classes(cu.paragraph, model.get_regex_clf())
 
         # c. MERGE: compare the prediction from knn and regex
-        if reg_predicted != []:
-            # compare knn and regex results
-            predicted = result_merger.merge(reg_predicted, knn_predicted)
-        else:
-            # no regex class was predicted, use knn
+        if reg_predicted:                                                   # if regex pattern suggested a prediction
+            predicted = result_merger.merge(reg_predicted, knn_predicted)   # compare knn and regex results
+        else:                                                               # no regex class was predicted, use knn
             predicted = knn_predicted
 
         # Set class

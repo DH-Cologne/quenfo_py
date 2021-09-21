@@ -76,13 +76,15 @@ class ClassifyUnits(Base):
     # Setter
     def set_featureunits(self, value):
         self.featureunits = value
+
     def set_featurevector(self, value):
         self.featurevector = value
+
     def set_classID(self, value):
         self.classID = value
 
-# *** TRAINDATA MODELS ***
 
+# *** TRAINDATA MODELS ***
 
 # Class TrainingData
 class TrainingData(Base):
@@ -125,7 +127,6 @@ class ClassifyUnits_Train(Base):
     def __init__(self, classID, content, featureunits, featurevector):
         self.classID = classID
         self.content = content
-        self.id = next(ClassifyUnits.id_iter)
         self.featureunits = featureunits
         self.featurevector = featurevector
 
@@ -136,8 +137,10 @@ class ClassifyUnits_Train(Base):
     # Setter
     def set_featureunits(self, value):
         self.featureunits = value
+
     def set_featurevector(self, value):
         self.featurevector = value
+
     def set_classID(self, value):
         self.classID = value
 

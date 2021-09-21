@@ -57,8 +57,6 @@
 CLI-example: python main.py --classification --input_path '..\..\quenfo_data\sqlite\orm\text_kernel_orm_2018_03.db' --db_mode overwrite """
 
 # ## Imports
-from pathlib import Path
-
 import configuration
 from timeit import default_timer as timer
 from datetime import timedelta
@@ -69,6 +67,7 @@ import training
 import classification
 import database
 import logger
+from pathlib import Path
 from information_extraction import extract
 
 # ## Initiate Logging-Module
@@ -199,9 +198,8 @@ def get_application_parser() -> argparse.ArgumentParser:
     application_parser.set_defaults(func=manage_app)
     return application_parser
 
-
 def __file_path(path: str) -> str:
-    if os.path.exists(path):
+    if os.path.exists(Path(path)):
         return path
     else:
         raise argparse.ArgumentTypeError(f"Readable_file:{path} is not a valid file")

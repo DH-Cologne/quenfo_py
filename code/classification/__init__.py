@@ -37,6 +37,8 @@ def classify(model: Model) -> None:
     counter = 0  # set counter in fetch_size steps
     jobad_counter = 1  # set jobad counter for each jobad
 
+    logger.log_clf.info(f'\n\nClassification of JobAds starts.')
+    print(f'Classification of JobAds starts.')
     logger.log_clf.info(f'The query_limit is set to {query_limit}.\
             The start_pos is {start_pos}.')
 
