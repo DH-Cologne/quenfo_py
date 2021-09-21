@@ -29,7 +29,6 @@ def get_entities_from_file(extraction_type: str) -> list:
     }
 
     path = switch.get(extraction_type)
-    print(path)
 
     # get file object
     f = codecs.open(path, "r", encoding="utf-8")

@@ -10,6 +10,7 @@ session2 = None
 engine = None
 engine2 = None
 
+
 # ## Functions
 # Input-Connection
 def set_input_conn() -> None:
@@ -24,7 +25,8 @@ def set_input_conn() -> None:
     # Get instantiated session object and engine for Input_data
     session, engine = connection.create_connection(input_path)
 
-# Traindata-Connection  
+
+# Traindata-Connection
 def set_train_conn() -> None:
     """ Function to manage database-connection for train-data.
             a. Set session2 and engine2 global

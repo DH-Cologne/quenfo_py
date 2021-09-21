@@ -68,9 +68,10 @@ import classification
 import database
 import logger
 from pathlib import Path
-from information_extraction import extract
+from information_extraction import extract, prepare_resources
 
 # ## Initiate Logging-Module
+
 """ 
 Set four different logging-files: 
     a. log_main.log --> for all main related processes and raises.
@@ -127,6 +128,7 @@ def manage_app(args: dict) -> None:
             configuration.set_config(method_args)
             database.set_train_conn()
             database.set_input_conn()
+            prepare_resources.set_ie_resources()
             logger.log_main.info(f'Configurations set: {configuration.config_obj} and database connections created: \n \
                 input_data: {database.session} traindata: {database.session2}')
         except Exception as e:
