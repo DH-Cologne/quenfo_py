@@ -186,7 +186,7 @@ def get_lemmata(sentence: str) -> list:
     return lemmata
 
 
-def annotate_token(token: list) -> list[Token]:
+def annotate_token(token: list) -> list:
     """Get ExtractionUnits:
                     +++ Step 4: Annotate tokens by comparing them with list of extraction errors,
                     modifiers and known extractions. +++
