@@ -71,8 +71,8 @@ def get_jobads(current_pos: int) -> list:
             if inspect(database.engine).has_table(
                     ClassifyUnits.__tablename__):  # if table does exist, get related units
                 database.session.query(ClassifyUnits).filter(ClassifyUnits.parent_id == JobAds.id).all()
-            else:                                                                                           # else: create classifyunits table
-                ClassifyUnits.__table__.create(database.engine)                                             # for case that table does exist, but is empty
+            else:  # else: create classifyunits table
+                ClassifyUnits.__table__.create(database.engine)  # for case that table does exist, but is empty
     except sqlalchemy.exc.OperationalError:
         logger.log_clf.info(f'Table classify_unit does not exist --> create new one')
         ClassifyUnits.__table__.create(database.engine)
@@ -111,23 +111,16 @@ def get_traindata() -> list:
 
 
 def get_classify_units(current_pos: int) -> list:
-
     # Set global
     global drop_once
 
     # Get Configuration Settings from config.yaml file
     fetch_size = configuration.config_obj.get_ie_fetch_size()  # Number of ClassifyUnits to fetch in one query
     db_mode = configuration.config_obj.get_mode()  # db_mode: append data or overwrite it
-
-    # load the cus
-    all_cus = database.session.query(ClassifyUnits).offset(current_pos).limit(fetch_size).all()
-    classify_units = list()
     search_type = configuration.config_obj.get_search_type()
 
-    # TODO query_limit wird nicht voll ausgenutzt, weil nur cus mit bestimmter classid weiter verarbeitet werden
-    for cu in all_cus:
-        if cu.classID == search_type:
-            classify_units.append(cu)
+    # load the cus
+    classify_units = database.session.query(ClassifyUnits).filter(ClassifyUnits.classID == search_type).offset(current_pos).limit(fetch_size).all()
 
     try:
         # delete the handles from classifyunits to extractionunits or create new table
@@ -166,7 +159,8 @@ def get_classify_units(current_pos: int) -> list:
         else:
             if inspect(database.engine).has_table(
                     InformationEntity.__tablename__):  # if table does exist, get related units
-                database.session.query(InformationEntity).filter(InformationEntity.parent_id == ExtractionUnits.id).all()
+                database.session.query(InformationEntity).filter(
+                    InformationEntity.parent_id == ExtractionUnits.id).all()
             else:  # else: create extractionunit table
                 InformationEntity.__table__.create(database.engine)
     except sqlalchemy.exc.OperationalError:
@@ -206,6 +200,7 @@ def handle_td_changes(model: Model) -> None:
         logger.log_clf.info(f'{err}: No need to delete traindata-filler because traindata \
             didnt get processed because model was already there. Error message can be ignored.')
 
+
 def __delete_filler() -> None:
     """ Remove all unwanted and in memory stored Traindata-objects and drop the traindata table. Nothing is modified in those tables."""
 
@@ -213,6 +208,7 @@ def __delete_filler() -> None:
     database.session2.rollback()
     # drop the table
     ClassifyUnits_Train.__table__.drop(database.engine2)
+
 
 def __reset_td_info(model: Model) -> None:
     """
@@ -243,8 +239,7 @@ def __reset_td_info(model: Model) -> None:
         hour, minute, second = (actual_date.split(' ')[1]).split(':')
 
         # Set it as datetime object
-        date = datetime.datetime(year=int(year), month=int(month), day=int(day), \
-                                 hour=int(hour), minute=int(minute), second=int(second), microsecond=0)
+        date = datetime.datetime(year=int(year), month=int(month), day=int(day), hour=int(hour), minute=int(minute), second=int(second), microsecond=0)
         modTime = time.mktime(date.timetuple())
         # Set actual time as last modification date for traindata-file
         os.utime(traindata_path, (modTime, modTime))
@@ -252,7 +247,6 @@ def __reset_td_info(model: Model) -> None:
         pass
 
 
-# TODO Abfrage je nach Schritt: bei Classification wird JobAds-Tabelle angefragt, bei IE ClassifyUnits-Tabelle
 def get_length(table_type: str) -> int:
     """ The function gets the number of JobAds in the database table.
 
@@ -265,7 +259,7 @@ def get_length(table_type: str) -> int:
     -------
     row_nrs: int
         Integer with the count of all JobAds or ClassfiyUnits in table. """
-
+    row_nrs = int()
     if table_type.__eq__('ad'):
         row_nrs = database.session.query(func.count(JobAds.id)).scalar()
     elif table_type.__eq__('cu'):

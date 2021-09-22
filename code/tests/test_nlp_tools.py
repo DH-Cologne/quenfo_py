@@ -4,6 +4,7 @@ from pathlib import Path
 import yaml
 from classification.prepare_classifyunits.classify_units import convert_classifyunits
 from classification.prepare_classifyunits.feature_units import convert_featureunits
+from information_extraction.prepare_extractionunits.extraction_units import convert_extractionunits
 
 with open(Path('configuration/config.yaml'), 'r') as yamlfile:
     cfg = yaml.load(yamlfile, Loader=yaml.FullLoader)
@@ -129,6 +130,8 @@ class TestNLPTools(unittest.TestCase):
 
         self.assertEqual(convert_featureunits.tokenize(test_input), test_output)
         self.assertIsInstance(convert_featureunits.tokenize(test_input), list)
+        self.assertEqual(convert_extractionunits.get_token(test_input), test_output)
+        self.assertIsInstance(convert_extractionunits.get_token(test_input), list)
 
     def test_normalize(self):
         test_input = ["Wir", "suchen", "Personal", "1234"]

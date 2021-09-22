@@ -9,8 +9,8 @@ classification:
     continuousNGrams: false
 
   # --- Data-Handling Parameters ---
-  query_limit: 50               # Number of JobAds to query --> set -1 if all JobAds need to be processed
-  fetch_size: 10                 # Number of JobAds per chunk
+  query_limit: 500               # Number of JobAds to query --> set -1 if all JobAds need to be processed
+  fetch_size: 100                 # Number of JobAds per chunk
   start_pos: 0                  # Index Number of row where query starts
 
   # --- Model Paths ---
@@ -38,9 +38,9 @@ ie_config:
   type:
     competences: True
     tools: False
-  start_pos: 0
+  start_pos: 50
   query_limit: 500
-  fetch_size: 200
+  fetch_size: 100
   expand_coordinates: True
   search: 3
 

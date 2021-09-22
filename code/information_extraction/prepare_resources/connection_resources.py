@@ -1,6 +1,5 @@
 # ## Open Configuration-file and set paths to txt files with lists, pattern etc.
 import codecs
-from pathlib import Path
 
 import configuration
 from information_extraction.models import Pattern, PatternToken

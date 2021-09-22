@@ -1,13 +1,13 @@
 from information_extraction.prepare_resources import connection_resources
 
 # ## Set Variables
-competences = None
-no_competences = None
-modifier = None
-comp_pattern = None
-tools = None
-no_tools = None
-tool_pattern = None
+competences = list()
+no_competences = list()
+modifier = list()
+comp_pattern = list()
+tools = list()
+no_tools = list()
+tool_pattern = list()
 
 
 # ## Functions

@@ -21,12 +21,12 @@ def get_extractionunits(classifyunit: ClassifyUnits):
         token_array = list()
         sentence = convert_extractionunits.normalize_sentence(sentence)
         # set lexical data
-        token = convert_featureunits.tokenize(sentence)
+        token = convert_extractionunits.get_token(sentence)
         postags = convert_extractionunits.get_pos_tags(sentence)
         lemmata = convert_extractionunits.get_lemmata(sentence)
 
-        for i in range(len(token) - 1):
-            if postags is None:
+        for i, item in enumerate(token):
+            if postags[i] is None:
                 text_token = Token(token[i], lemmata[i], None)
                 token_array.append(text_token)
             else:

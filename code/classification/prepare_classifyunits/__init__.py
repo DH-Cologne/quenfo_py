@@ -53,7 +53,7 @@ def generate_classifyunits(jobad: object, model: Model) -> None:
         #if paragraph is already processed in a classifyunit --> store it again at the same place (to avoid duplicates) (happens in append mode)
         elif (any(para == v.paragraph for v in jobad.children)) and fus:
             for child in jobad.children:
-                if child.paragraph == para :
+                if child.paragraph == para:
                     child.set_featureunits(fus)
         elif not fus:
             logger.log_clf.warning(f'Feature_unit of JobAd {jobad.id} is empty. Continue with next paragraph.')
