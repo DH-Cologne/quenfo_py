@@ -46,7 +46,7 @@ ie_config:
 
 # --- Paths ---
 resources:
-  traindata_path: ..\..\quenfo_data\sqlite\orm\traindata_sql.db             # Path for Train data to be used for training process
+  traindata_path: ..\..\traindata_sql.db             # Path for Train data to be used for training process
   stopwords_path: ..\..\quenfo_data\resources\classification\stopwords.txt  # Path for file with stopwords
   regex_path: ..\..\quenfo_data\resources\classification\regex.txt          # Path for regex file
 

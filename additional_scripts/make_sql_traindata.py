@@ -2,7 +2,6 @@
 import pandas as pd
 import sqlite3
 from sqlite3 import Error
-import os
 
 # Paths definieren
 input_path = '..\\..\\quenfo_data\\resources\\classification\\trainingSets\\trainingdata_anonymized.tsv'
@@ -25,7 +24,6 @@ def transfer_lines_to_df(filelines):
     all_rows = []
 
     for line in filelines:
-
         # If line is divided by 2 or 3 tabs, it is the header (with the important information): postingID, Zeilennr. und classID
         if line.split('\t').__len__() == 3 or line.split('\t').__len__() == 2:
             splitted = line.split('\t')
