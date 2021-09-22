@@ -4,8 +4,8 @@ import sqlite3
 from sqlite3 import Error
 
 # Paths definieren
-input_path = '..\\..\\quenfo_data\\resources\\classification\\trainingSets\\trainingdata_anonymized.tsv'
-output_path = '..\\..\\quenfo_v1_1_3\\quenfo_data\\sqlite\\orm\\traindata_sql.db'
+input_path = '..\\quenfo_data\\resources\\classification\\trainingSets\\trainingdata_anonymized.tsv'
+output_path = '..\\traindata_sql.db'
 
 
 # Loads Input Data (Trainingdata) and readlines
