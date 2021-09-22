@@ -140,6 +140,16 @@ def normalize_sentence(sentence: str) -> str:
     return sentence
 
 
+def get_token(sentence: str) -> list:
+    tokens = list()
+
+    pre_token =nlp(sentence)
+    for token in pre_token:
+        tokens.append(token.text)
+
+    return tokens
+
+
 # get POS-tag for each token of given sentence
 def get_pos_tags(sentence: str) -> list:
     """Get ExtractionUnits:
@@ -186,7 +196,7 @@ def get_lemmata(sentence: str) -> list:
     return lemmata
 
 
-def annotate_token(token: list) -> list[Token]:
+def annotate_token(token: list) -> 'list[Token]':
     """Get ExtractionUnits:
                     +++ Step 4: Annotate tokens by comparing them with list of extraction errors,
                     modifiers and known extractions. +++

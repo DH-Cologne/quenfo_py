@@ -9,7 +9,7 @@ classification:
     continuousNGrams: false
 
   # --- Data-Handling Parameters ---
-  query_limit: 50               # Number of JobAds to query --> set -1 if all JobAds need to be processed
+  query_limit: 500               # Number of JobAds to query --> set -1 if all JobAds need to be processed
   fetch_size: 10                 # Number of JobAds per chunk
   start_pos: 0                  # Index Number of row where query starts
 
@@ -39,8 +39,8 @@ ie_config:
     competences: True
     tools: False
   start_pos: 0
-  query_limit: 500
-  fetch_size: 200
+  query_limit: 1000
+  fetch_size: 500
   expand_coordinates: True
   search: 3
 

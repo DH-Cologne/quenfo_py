@@ -1,5 +1,6 @@
 import sys
 
+import classification
 import configuration
 import database
 import logger
@@ -30,8 +31,10 @@ def extract():
     counter = 0  # set counter in fetch_size steps
     cu_counter = 1  # set cu counter for each cu
 
+    logger.log_ie.info(f'\n\nInformation Extraction starts.')
+    print(f'Information Extraction starts.')
     logger.log_ie.info(f'The query_limit is set to {query_limit}.\
-            The start_pos is {start_pos}.')
+               The start_pos is {start_pos}.')
 
     # process cus as long as the conditions are met
     while True:
@@ -52,7 +55,6 @@ def extract():
         # iterate over each cu
         for cu in classify_units:
             generate_extractionunits(cu)
-            orm.create_output(session, cu)
             # add obj to current session --> to be written in db
             orm.create_output(database.session, cu)
             # Update progress in progress bar
@@ -70,6 +72,7 @@ def extract():
                 Continue with next batch from current row position: {current_pos}.')
 
         orm.close_session(database.session)  # Close session
+        print()
         logger.log_ie.info(f'InformationExtraction done. Return to main-level.')
 
 
@@ -84,4 +87,3 @@ def __progress(count: int, total: int, status: str):
 
     sys.stdout.write('\r[%s] %s%s%s\r' % (bar, percents, '%', status))
     sys.stdout.flush()
-
