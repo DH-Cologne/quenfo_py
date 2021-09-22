@@ -31,13 +31,15 @@ def extract():
     counter = 0  # set counter in fetch_size steps
     cu_counter = 1  # set cu counter for each cu
 
+    ie_mode = set_ie_mode(configuration.config_obj.get_ie_type())
+
     logger.log_ie.info(f'\n\nInformation Extraction starts.')
-    print(f'Information Extraction starts.')
     logger.log_ie.info(f'The query_limit is set to {query_limit}.\
                The start_pos is {start_pos}.')
 
     # process cus as long as the conditions are met
     while True:
+        logger.log_ie.info(f'Generation of ExtractionUnits starts.')
         # Step 1: Load the Input data: ClassifyUnits in ClassifyUnits Class.
         classify_units = orm.get_classify_units(current_pos)
 
@@ -58,8 +60,10 @@ def extract():
             # add obj to current session --> to be written in db
             orm.create_output(database.session, cu)
             # Update progress in progress bar
-            __progress(cu_counter, query_limit,
-                       status=f" of {query_limit} ClassifyUnits generated. Current ClassifyUnit {cu_counter}.")
+            # TODO replace place of function -> global use in each step (classification, ie, matching)
+            classification.__progress(cu_counter, query_limit,
+                                      status=f" of {query_limit} ClassifyUnits are processed and {ie_mode} have been "
+                                             f"extracted. Current ClassifyUnit {cu_counter}.")
             cu_counter += 1
 
         # Commit generated extraction units to table
@@ -71,19 +75,19 @@ def extract():
             f'session is cleaned and every obj of current batch is flushed: {database.session._is_clean()}.\
                 Continue with next batch from current row position: {current_pos}.')
 
-        orm.close_session(database.session)  # Close session
-        print()
-        logger.log_ie.info(f'InformationExtraction done. Return to main-level.')
+    orm.close_session(database.session)  # Close session
+    print()
+    logger.log_ie.info(f'InformationExtraction done. Return to main-level.')
 
 
-# TODO Methode wird auch bei Classification genutzt
-# Progress Bar to keep track of already processed ClassifyUnits
-def __progress(count: int, total: int, status: str):
-    bar_len = 20
-    filled_len = int(round(bar_len * count / float(total)))
-
-    percents = round(100.0 * count / float(total), 1)
-    bar = '=' * filled_len + '-' * (bar_len - filled_len)
-
-    sys.stdout.write('\r[%s] %s%s%s\r' % (bar, percents, '%', status))
-    sys.stdout.flush()
+def set_ie_mode(ie_types: dict) -> str:
+    ie_mode = str()
+    if ('tools', True) in ie_types.items():
+        ie_mode = "TOOLS"
+    elif ('competences', True) in ie_types.items():
+        ie_mode = "COMPETENCES"
+    elif ('tools', True) in ie_types.items() and ('competences', True) in ie_types.items():
+        ie_mode = "COMPETENCES AND TOOLS"
+    else:
+        ie_mode = "TYPE OF EXTRACTION NOT GIVEN"
+    return ie_mode

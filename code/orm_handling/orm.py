@@ -117,16 +117,10 @@ def get_classify_units(current_pos: int) -> list:
     # Get Configuration Settings from config.yaml file
     fetch_size = configuration.config_obj.get_ie_fetch_size()  # Number of ClassifyUnits to fetch in one query
     db_mode = configuration.config_obj.get_mode()  # db_mode: append data or overwrite it
-
-    # load the cus
-    all_cus = database.session.query(ClassifyUnits).offset(current_pos).limit(fetch_size).all()
-    classify_units = list()
     search_type = configuration.config_obj.get_search_type()
 
-    # TODO query_limit wird nicht voll ausgenutzt, weil nur cus mit bestimmter classid weiter verarbeitet werden
-    for cu in all_cus:
-        if cu.classID == search_type:
-            classify_units.append(cu)
+    # load the cus
+    classify_units = database.session.query(ClassifyUnits).filter(ClassifyUnits.classID == search_type).offset(current_pos).limit(fetch_size).all()
 
     try:
         # delete the handles from classifyunits to extractionunits or create new table

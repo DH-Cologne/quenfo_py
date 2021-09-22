@@ -155,8 +155,6 @@ class ExtractionUnits(Base):
     paragraph = Column('paragraph', String(225))
     position_index = Column('position_index', Integer)
     sentence = Column('sentence', String(225))
-    # TODO type for token_array, in java: Texttoken
-    # try pickle? token_array = list[Token]
     token_array = Column("token_array", MutableList.as_mutable(PickleType), default=[])
 
     # Set lexical data

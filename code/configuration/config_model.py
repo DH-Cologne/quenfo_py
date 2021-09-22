@@ -139,7 +139,7 @@ class Configurations:
 
     def set_fus_config(self):
         fus_config = self.fus_config
-        if fus_config == None:
+        if fus_config is None:
             fus_config = dict()
         # Check-functions to avoid error raises because of missing or wrong inputs
         fus_config = Configurations.__check_type_for_dict(fus_config, 'normalize', True, bool)
@@ -151,7 +151,7 @@ class Configurations:
 
     def set_knn_config(self):
         knn_config = self.knn_config
-        if knn_config == None:
+        if knn_config is None:
             knn_config = dict()
         # Check-functions to avoid error raises because of missing or wrong inputs
         knn_config = Configurations.__check_type_for_dict(knn_config, 'n_neighbors', 5, int)
@@ -177,7 +177,7 @@ class Configurations:
 
     def set_ie_type(self):
         ie_type = self.ie_type
-        if ie_type == None:
+        if ie_type is None:
             ie_type = dict()
         ie_type = Configurations.__check_type_for_dict(ie_type, 'competences', True, bool)
         ie_type = Configurations.__check_type_for_dict(ie_type, 'tools', False, bool)

@@ -37,8 +37,8 @@ class TestGenerateExtractionUnits(unittest.TestCase):
         self.assertEqual(convert_extractionunits.normalize_sentence(case7), output7)
         self.assertIsInstance(convert_extractionunits.normalize_sentence(case7), str)
 
-    def test_get_entities_list(self):
-        self.assertIsInstance(connection_resources.get_entities_from_file("tools"), list)
+    """def test_get_entities_list(self):
+        self.assertIsInstance(connection_resources.get_entities_from_file("tools"), list)"""
 
     def test_normalize_entities(self):
         case1 = "<end-"
@@ -57,10 +57,29 @@ class TestGenerateExtractionUnits(unittest.TestCase):
         self.assertEqual(convert_entities.normalize_entities(case1), output1)
         self.assertEqual(convert_entities.normalize_entities(case2), output2)
         self.assertEqual(convert_entities.normalize_entities(case3), output3)
-        """self.assertEqual(convert_entities.normalize_entities_from_file(case4), output4)
-        self.assertEqual(convert_entities.normalize_entities_from_file(case5), output4)
-        self.assertEqual(convert_entities.normalize_entities_from_file(case6), output4)
-        self.assertEqual(convert_entities.normalize_entities_from_file(case7), output4)"""
+        """self.assertEqual(convert_entities.normalize_entities(case4), output4)
+        self.assertEqual(convert_entities.normalize_entities(case5), output4)
+        self.assertEqual(convert_entities.normalize_entities(case6), output4)
+        self.assertEqual(convert_entities.normalize_entities(case7), output4)"""
+
+    def test_split_list_items(self):
+        test_input = "Freuen Sie sich außerdem auf:\n" \
+                     "+ Eine abwechslungsreiche und verantwortungsvolle Tätigkeit in einem interdisziplinären Team\n" \
+                     "+ Umfangreiche und strukturierte Einarbeitung\n" \
+                     "+ Regelmäßige Weiterbildung und Schulungen\n" \
+                     "+ Fahrzeugpool mit hochwertigen Pkw\n" \
+                     "+ Attraktives Gehaltsmodell\n" \
+                     "+ Verkehrsgünstige Lage\n"
+        test_output = ["Freuen Sie sich außerdem auf:",
+                       "Eine abwechslungsreiche und verantwortungsvolle Tätigkeit in einem interdisziplinären Team",
+                       "Umfangreiche und strukturierte Einarbeitung",
+                       "Regelmäßige Weiterbildung und Schulungen",
+                       "Fahrzeugpool mit hochwertigen Pkw",
+                       "Attraktives Gehaltsmodell",
+                       "Verkehrsgünstige Lage"]
+
+        self.assertEqual(convert_extractionunits.split_into_sentences(test_input), test_output)
+        self.assertIsInstance(convert_extractionunits.split_into_sentences(test_input), list)
 
 
 if __name__ == '__main__':

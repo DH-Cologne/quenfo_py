@@ -1,6 +1,6 @@
 def normalize_entities(entity: str) -> str:
     """Normalizes the given string - trim - deletes (most) special characters at the begin and end of the string
-        (with some exceptions)
+        (with some exceptions).
 
         Parameters:
         -----------

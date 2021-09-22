@@ -4,7 +4,6 @@
 import spacy
 import re
 
-from classification.prepare_classifyunits.classify_units import convert_classifyunits
 from information_extraction.models import Token
 from information_extraction.prepare_resources import competences, tools, no_tools, no_competences, modifier
 from information_extraction.prepare_resources.convert_entities import normalize_entities
@@ -49,7 +48,7 @@ def split_into_sentences(content: str) -> list:
 def __split_list_items(sentence: str) -> list:
     extractionunits = list()
     # split sentence at empty lines
-    splitted_eu = convert_classifyunits.split_at_empty_line(sentence)
+    splitted_eu = __split_at_empty_line(sentence)
     # regex for match any existing list item in the sentence
     list_item_regex = re.compile(r"^[0-9][\.| ]?|^[\+|\-|\*]")
     for string in splitted_eu:
@@ -75,6 +74,10 @@ def __contains_only_word_characters(string: str) -> bool:
     if re.match(word_regex, string):
         return True
     return False
+
+
+def __split_at_empty_line(content: str) -> list:
+    return content.split("\n")
 
 
 # correct sentence
