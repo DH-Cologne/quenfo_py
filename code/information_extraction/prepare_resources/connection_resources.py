@@ -44,7 +44,7 @@ def get_entities_from_file(extraction_type: str) -> list:
         line = line.lower()
         # if there are more than one string in line, add strings to list
         entity = line.split(" ")
-
+        # TODO singlewordentitiy multiwordentity
         # normalize strings of line
         for e in entity:
             index = entity.index(e)
@@ -66,14 +66,14 @@ def get_entities_from_file(extraction_type: str) -> list:
     return entities
 
 
-def read_pattern_from_file(type: str) -> list:
+def read_pattern_from_file(pattern_type: str) -> 'list[Pattern]':
     pattern_list = list()
     switch = {
         "comp_pattern": configuration.config_obj.get_comppattern_path(),
         "tool_pattern": configuration.config_obj.get_toolpattern_path(),
     }
 
-    path = switch.get(type)
+    path = switch.get(pattern_type)
 
     f = codecs.open(path, "r", encoding="utf-8")
 

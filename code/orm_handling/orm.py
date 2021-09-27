@@ -18,7 +18,9 @@ from sqlalchemy import inspect
 
 # ## Set Variables
 is_created = None
-drop_once = None
+drop_once_c = None
+drop_once_eu = None
+drop_once_e = None
 
 
 # ## Functions
@@ -43,7 +45,7 @@ def get_jobads(current_pos: int) -> list:
         If changes in db are not possible, OperationalError is raised to continue with creation of table """
 
     # Set global
-    global drop_once
+    global drop_once_c
 
     # Get Configuration Settings from config.yaml file 
     fetch_size = configuration.config_obj.get_c_fetch_size()  # Number of JobAds to fetch in one query
@@ -51,19 +53,19 @@ def get_jobads(current_pos: int) -> list:
 
     # load the jobads
     # job_ads = database.session.query(JobAds).slice(current_pos, (current_pos+fetch_size)).all()            # 0:02:26.691769 bei 2500 JobAds and 0:16:07.362719 bei 9593
-    job_ads = database.session.query(JobAds).offset(current_pos).limit(
+    job_ads = database.session.query(JobAds).order_by('id').offset(current_pos).limit(
         fetch_size).all()  # 0:02:25.670638 bei 2500 JobAds and 0:14:19.315887 bei 9593
     # job_ads = database.session.query(JobAds).where(current_pos<(current_pos+fetch_size)).all()             # 0:02:21.205672 bei 2500 JobAds and 0:13:37.800832 bei 9593
 
     try:
         # delete the handles from jobads to classifyunits or create new table
         if db_mode == 'overwrite':
-            if drop_once is None:
+            if drop_once_c is None:
                 try:
                     ClassifyUnits.__table__.create(database.engine)
                 except sqlalchemy.exc.OperationalError as err:
                     database.session.query(ClassifyUnits).delete()
-                drop_once = 'filled'
+                drop_once_c = 'filled'
             else:
                 pass
         # load all related classify units for appending
@@ -112,7 +114,7 @@ def get_traindata() -> list:
 
 def get_classify_units(current_pos: int) -> list:
     # Set global
-    global drop_once
+    global drop_once_eu
 
     # Get Configuration Settings from config.yaml file
     fetch_size = configuration.config_obj.get_ie_fetch_size()  # Number of ClassifyUnits to fetch in one query
@@ -120,17 +122,18 @@ def get_classify_units(current_pos: int) -> list:
     search_type = configuration.config_obj.get_search_type()
 
     # load the cus
-    classify_units = database.session.query(ClassifyUnits).filter(ClassifyUnits.classID == search_type).offset(current_pos).limit(fetch_size).all()
+    classify_units = database.session.query(ClassifyUnits).order_by('id').filter(
+        ClassifyUnits.classID == search_type).offset(current_pos).limit(fetch_size).all()
 
     try:
         # delete the handles from classifyunits to extractionunits or create new table
         if db_mode == 'overwrite':
-            if drop_once is None:
+            if drop_once_eu is None:
                 try:
                     ExtractionUnits.__table__.create(database.engine)
                 except sqlalchemy.exc.OperationalError as err:
                     database.session.query(ExtractionUnits).delete()
-                drop_once = 'filled'
+                drop_once_eu = 'filled'
             else:
                 pass
         # load all related extractionunits for appending
@@ -144,15 +147,27 @@ def get_classify_units(current_pos: int) -> list:
         logger.ie.info(f'table extraction_units does not exist --> create new one')
         ExtractionUnits.__table__.create(database.engine)
 
+    pass_output(database.session)
+
+    return classify_units
+
+
+def get_extraction_units() -> list:
+    global drop_once_e
+    db_mode = configuration.config_obj.get_mode()  # db_mode: append data or overwrite it
+
+    # load the eus
+    extraction_units = database.session.query(ExtractionUnits).order_by('id').all()
+
     try:
         # delete the handles from extractionunits to extractions or create new table
         if db_mode == 'overwrite':
-            if drop_once is None:
+            if drop_once_e is None:
                 try:
                     InformationEntity.__table__.create(database.engine)
                 except sqlalchemy.exc.OperationalError as err:
                     database.session.query(InformationEntity).delete()
-                drop_once = 'filled'
+                drop_once_e = 'filled'
             else:
                 pass
         # load all related InformationEntity for appending
@@ -169,7 +184,7 @@ def get_classify_units(current_pos: int) -> list:
 
     pass_output(database.session)
 
-    return classify_units
+    return extraction_units
 
 
 def handle_td_changes(model: Model) -> None:
@@ -239,7 +254,8 @@ def __reset_td_info(model: Model) -> None:
         hour, minute, second = (actual_date.split(' ')[1]).split(':')
 
         # Set it as datetime object
-        date = datetime.datetime(year=int(year), month=int(month), day=int(day), hour=int(hour), minute=int(minute), second=int(second), microsecond=0)
+        date = datetime.datetime(year=int(year), month=int(month), day=int(day), hour=int(hour), minute=int(minute),
+                                 second=int(second), microsecond=0)
         modTime = time.mktime(date.timetuple())
         # Set actual time as last modification date for traindata-file
         os.utime(traindata_path, (modTime, modTime))
