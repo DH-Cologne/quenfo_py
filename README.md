@@ -70,17 +70,12 @@ Informationen über die erfolgten Abläufe und Ergebnisse werden in dem Modul `/
 ***
 ### Workflow🔁
 ***
-Hier kommt der Workflow hin
+Im folgenden wird der Workflow der quenfo_py Software beschrieben.
 
 #### Allgemein
 
-Hier kommt der allgemeine Workflow hin
-
-#### Aufteilung Classification(Aufgeteilt in Training und classification), IE und Matching
-
-Das sind die drei Steps
-
-und hier bitte das Workflow bild einbinden
+Allgmein besteht die Software aus 3 bzw. 4 Hauptmodulen. Zunächst wird das Trainings-Modul aufgerufen, in welchem das Model geladen oder je nach dem neu trainiert wird.
+Danach beginnt der Hauptprozess der Software, in dem die zu verarbeitenden Stellenanzeigen erst klassifiziert werden und dann Informationen zu Kompetenzen oder Tools extrahiert und bereits bekannte Entitäten gematched werden.
 
 <img src="docs/quenfo_py.svg"/>
 
@@ -158,29 +153,35 @@ Der Code ist so struktuiert, dass sich die einzelnen Module (im Workflow s.o. er
 ***
 ### Implementierung und Module 🛠️
 ***
-#### orm_handling
 
-#### database
+#### Hauptbestandteile: Training, Classification, IE und Matching
+##### Training
+##### Classification
+##### Information Extraction
+##### Matching
+
+#### Support Module
+
+##### configuration
+##### orm_handling
+##### database
 1. `connection.py`: Script mit dem die connections zu den SQL-Datenbanken hergestellt werden (Input, Output und Backup-Dateien).
 
-#### tests
+##### logger
 
-#### classification
+Logging-Ordner, in dem zusätzliche Informationen während der Ausführung des Tools gespeichert werden.
+
+##### tests
 
 
-
-
+#### Files
 **main.py**
 
 Main-Skript des Tools. Hier befindet sich die grobe Architektur und Verwaltung des Programms. Des Weiteren sind hier die ArgumentParser Befehle deklariert, mit denen bestimmte Teile des Skriptes aufgerufen werden können (mehr dazu weiter unten).
 
-**requirements**
+**requirements.txt**
 
 Enthält eine Auflistung an Python-Dependencies, die benötigt werden, um das Tool auszuführen.
-
-**logger**
-
-Logging-Ordner, in dem zusätzliche Informationen während der Ausführung des Tools gespeichert werden. 
 
 **input, output **
 Input-Path wird über die CMDLine mitgegeben und Output wird in diese reingeschrieben.
@@ -188,9 +189,10 @@ Input-Path wird über die CMDLine mitgegeben und Output wird in diese reingeschr
 ***
 ### Configuration📋✔️
 ***
-In der Datei config.yaml sind alle Pfade, einstellbare Parameter und der Metadaten-Filter vermerkt. Dadurch wird gewährleistet, dass im Code selbst für eine Anwendung nichts verändert werden muss. Alle Änderungen werden in der `config.yaml` Datei vorgenommen.
+In der Datei config.yaml sind alle Pfade und einstellbare Parameter vermerkt. Dadurch wird gewährleistet, dass im Code selbst für eine Anwendung nichts verändert werden muss. Alle Änderungen werden in der `config.yaml` Datei vorgenommen.
 
 Ansonsten können folgende Werte angepasst werden:
+
 
 ***
 ### CommandLine - Befehle📢
@@ -223,9 +225,6 @@ Als Input-Dateien müssen SQL-Datenbanken vorliegen. Die Tabelle mit den enthalt
 
 - id
 - content (Text der Stellenanzeige)
-
-Optional:
-
 - postingID
 - language
 - jahrgang
@@ -256,6 +255,19 @@ Kompetenzen oder Tools werden durch StringMatching gefunden
 - lemmaArray
 - lemmaExpression
 - modifier
+
+#### Trainingsdaten als Input
+--> Pfadangabe in config.yaml notwendig
+--> Trainingsdaten als SQLite Datenbank 
+--> Tablename = 'traindata' (oder Abänderung im Code orm.py)
+Folgende Spalten müssen vorliegen:
+- content
+- classID
+- index
+- postingID
+- zeilennr
+
+--> Zusätzliches file *make_sql_traindata.py*  in *additional_scripts/* Folder kann benutzt werden um tsv-Dateien in SQLite Datenbank zu konvertieren.
 
 
 
