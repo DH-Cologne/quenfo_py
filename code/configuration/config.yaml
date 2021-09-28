@@ -38,7 +38,7 @@ ie_config:
   type:
     competences: True
     tools: False
-  start_pos: 50
+  start_pos: 0
   query_limit: 500
   fetch_size: 100
   expand_coordinates: True
@@ -46,7 +46,7 @@ ie_config:
 
 # --- Paths ---
 resources:
-  traindata_path: ..\..\traindata_sql.db             # Path for Train data to be used for training process
+  traindata_path: ..\..\quenfo_data\sqlite\orm\traindata_sql.db             # Path for Train data to be used for training process
   stopwords_path: ..\..\quenfo_data\resources\classification\stopwords.txt  # Path for file with stopwords
   regex_path: ..\..\quenfo_data\resources\classification\regex.txt          # Path for regex file
 

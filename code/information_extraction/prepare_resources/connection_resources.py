@@ -2,7 +2,8 @@
 import codecs
 
 import configuration
-from information_extraction.models import Pattern, PatternToken
+import logger
+from information_extraction.models import Pattern, PatternToken, MatchedEntity
 from information_extraction.prepare_resources import convert_entities
 
 
@@ -20,14 +21,16 @@ def get_entities_from_file(extraction_type: str) -> list:
                 list with content from file"""
     entities = list()
     switch = {
-        "competences": configuration.config_obj.get_competences_path(),
+        "COMPETENCES": configuration.config_obj.get_competences_path(),
         "no_competences": configuration.config_obj.get_no_competences_path(),
         "modifier": configuration.config_obj.get_modifier_path(),
-        "tools": configuration.config_obj.get_tool_path(),
+        "TOOLS": configuration.config_obj.get_tool_path(),
         "no_tools": configuration.config_obj.get_no_tools_path(),
     }
 
     path = switch.get(extraction_type)
+
+    logger.log_ie.info(f'Read entities from file: ' + path)
 
     # get file object
     f = codecs.open(path, "r", encoding="utf-8")
@@ -44,21 +47,36 @@ def get_entities_from_file(extraction_type: str) -> list:
         line = line.lower()
         # if there are more than one string in line, add strings to list
         entity = line.split(" ")
-
         # normalize strings of line
         for e in entity:
             index = entity.index(e)
             entity[index] = convert_entities.normalize_entities(e)
 
-        # if return is not empty, join strings from list
-        normalize_entity = " ".join(entity).strip()
-        # if return is empty, go to next line
-        if normalize_entity:
-            # add line to list without spaces
-            entities.append(normalize_entity)
-            continue
+        # set found entities as MatchedEntities if there are known
+        if extraction_type == "COMPETENCES" or extraction_type == "TOOLS":
+            # if entity is not empty set as MatchedEntity
+            if entity[0]:
+                ie = MatchedEntity(start_lemma=entity[0], is_single_word=len(entity) == 1, ie_type=extraction_type,
+                                   label=set())
+                if not ie.is_single_word:
+                    ie.set_lemma_array(entity)
+                    entity = ' '.join(entity).strip()
+                    ie.set_full_expression(entity)
+                entities.append(ie)
+                continue
+            else:
+                continue
+        # otherwise set one line to one string
         else:
-            continue
+            # if return is not empty, join strings from list
+            normalize_entity = " ".join(entity).strip()
+            # if return is empty, go to next line
+            if normalize_entity:
+                # add line to list without spaces
+                entities.append(normalize_entity)
+                continue
+            else:
+                continue
 
     # close file
     f.close()
@@ -66,14 +84,16 @@ def get_entities_from_file(extraction_type: str) -> list:
     return entities
 
 
-def read_pattern_from_file(type: str) -> list:
+def read_pattern_from_file(pattern_type: str) -> 'list[Pattern]':
     pattern_list = list()
     switch = {
         "comp_pattern": configuration.config_obj.get_comppattern_path(),
         "tool_pattern": configuration.config_obj.get_toolpattern_path(),
     }
 
-    path = switch.get(type)
+    path = switch.get(pattern_type)
+
+    logger.log_ie.info(f'Read pattern from file: ' + path)
 
     f = codecs.open(path, "r", encoding="utf-8")
 

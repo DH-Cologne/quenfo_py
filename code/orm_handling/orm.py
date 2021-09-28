@@ -18,7 +18,9 @@ from sqlalchemy import inspect
 
 # ## Set Variables
 is_created = None
-drop_once = None
+drop_once_c = None
+drop_once_eu = None
+drop_once_e = None
 
 
 # ## Functions
@@ -43,7 +45,7 @@ def get_jobads(current_pos: int) -> list:
         If changes in db are not possible, OperationalError is raised to continue with creation of table """
 
     # Set global
-    global drop_once
+    global drop_once_c
 
     # Get Configuration Settings from config.yaml file 
     fetch_size = configuration.config_obj.get_c_fetch_size()  # Number of JobAds to fetch in one query
@@ -57,12 +59,12 @@ def get_jobads(current_pos: int) -> list:
     try:
         # delete the handles from jobads to classifyunits or create new table
         if db_mode == 'overwrite':
-            if drop_once is None:
+            if drop_once_c is None:
                 try:
                     ClassifyUnits.__table__.create(database.engine)
                 except sqlalchemy.exc.OperationalError as err:
                     database.session.query(ClassifyUnits).delete()
-                drop_once = 'filled'
+                drop_once_c = 'filled'
             else:
                 pass
         # load all related classify units for appending
@@ -111,7 +113,7 @@ def get_traindata() -> list:
 
 def get_classify_units(current_pos: int) -> list:
     # Set global
-    global drop_once
+    global drop_once_eu
 
     # Get Configuration Settings from config.yaml file
     fetch_size = configuration.config_obj.get_ie_fetch_size()  # Number of ClassifyUnits to fetch in one query
@@ -119,17 +121,18 @@ def get_classify_units(current_pos: int) -> list:
     search_type = configuration.config_obj.get_search_type()
 
     # load the cus
-    classify_units = database.session.query(ClassifyUnits).filter(ClassifyUnits.classID == search_type).offset(current_pos).limit(fetch_size).all()
+    classify_units = database.session.query(ClassifyUnits).order_by('id').filter(
+        ClassifyUnits.classID == search_type).offset(current_pos).limit(fetch_size).all()
 
     try:
         # delete the handles from classifyunits to extractionunits or create new table
         if db_mode == 'overwrite':
-            if drop_once is None:
+            if drop_once_eu is None:
                 try:
                     ExtractionUnits.__table__.create(database.engine)
                 except sqlalchemy.exc.OperationalError as err:
                     database.session.query(ExtractionUnits).delete()
-                drop_once = 'filled'
+                drop_once_eu = 'filled'
             else:
                 pass
         # load all related extractionunits for appending
@@ -143,15 +146,27 @@ def get_classify_units(current_pos: int) -> list:
         logger.log_ie.info(f'table extraction_units does not exist --> create new one')
         ExtractionUnits.__table__.create(database.engine)
 
+    pass_output(database.session)
+
+    return classify_units
+
+
+def get_extraction_units() -> list:
+    global drop_once_e
+    db_mode = configuration.config_obj.get_mode()  # db_mode: append data or overwrite it
+
+    # load the eus
+    extraction_units = database.session.query(ExtractionUnits).order_by('id').all()
+
     try:
         # delete the handles from extractionunits to extractions or create new table
         if db_mode == 'overwrite':
-            if drop_once is None:
+            if drop_once_e is None:
                 try:
                     InformationEntity.__table__.create(database.engine)
                 except sqlalchemy.exc.OperationalError as err:
                     database.session.query(InformationEntity).delete()
-                drop_once = 'filled'
+                drop_once_e = 'filled'
             else:
                 pass
         # load all related InformationEntity for appending
@@ -163,12 +178,12 @@ def get_classify_units(current_pos: int) -> list:
             else:  # else: create extractionunit table
                 InformationEntity.__table__.create(database.engine)
     except sqlalchemy.exc.OperationalError:
-        logger.ie.info(f'table extracted_entities does not exist --> create new one')
+        logger.log_ie.info(f'table extracted_entities does not exist --> create new one')
         InformationEntity.__table__.create(database.engine)
 
     pass_output(database.session)
 
-    return classify_units
+    return extraction_units
 
 
 def handle_td_changes(model: Model) -> None:
@@ -238,7 +253,8 @@ def __reset_td_info(model: Model) -> None:
         hour, minute, second = (actual_date.split(' ')[1]).split(':')
 
         # Set it as datetime object
-        date = datetime.datetime(year=int(year), month=int(month), day=int(day), hour=int(hour), minute=int(minute), second=int(second), microsecond=0)
+        date = datetime.datetime(year=int(year), month=int(month), day=int(day), hour=int(hour), minute=int(minute),
+                                 second=int(second), microsecond=0)
         modTime = time.mktime(date.timetuple())
         # Set actual time as last modification date for traindata-file
         os.utime(traindata_path, (modTime, modTime))
@@ -287,12 +303,14 @@ def close_session(session: Session):
 
 
 # Function to manage session adding
-def create_output(session: Session, output: object, tablename: str):
+def create_output(session: Session, output: object, table_type: str):
     """ Function checks if table to store output in already exists. Else the table is dropped and created again.
     The session.add(object) statement adds the passed object to the current session.
 
     Parameters
     ----------
+    table_type: str
+        Name of the database table to create.
     session: Session
         Session object, generated in module database. Contains the database path. 
     output: object
@@ -302,22 +320,38 @@ def create_output(session: Session, output: object, tablename: str):
     db_mode = configuration.config_obj.get_mode()
     
     if db_mode == "overwrite":
-        __check_once()
+        __check_once(table_type)
         session.add(output)
     else:
         session.add(output)
 
 
 # Private function to check if needed table already exists, else drop it and create a new empty table
-def __check_once():
+def __check_once(table_type: str):
     global is_created
+    switch_table = {
+        'cu': ClassifyUnits,
+        'eu': ExtractionUnits,
+        'e': InformationEntity,
+        # 'me': MatchedEntity
+    }
+    switch_logger = {
+        'cu': logger.log_clf,
+        'eu': logger.log_ie,
+        'e': logger.log_ie,
+        # 'me': logger.log_m,
+    }
+
+    table_name = switch_table.get(table_type)
+    log_name = switch_logger.get(table_type)
+
     if is_created is None:
         try:
-            ClassifyUnits.__table__.create(database.engine)
+            table_name.__table__.create(database.engine)
         except sqlalchemy.exc.OperationalError:
-            logger.log_clf.info(f'Table ClassifyUnits does already exist. Will be dropped, because of overwrite mode.')
-            ClassifyUnits.__table__.drop(database.engine)
-            ClassifyUnits.__table__.create(database.engine)
+            log_name.info(f'Table {table_name} does already exist. Will be dropped, because of overwrite mode.')
+            table_name.__table__.drop(database.engine)
+            table_name.__table__.create(database.engine)
             pass
         is_created = 'checked'
     else:

@@ -166,6 +166,7 @@ class Configurations:
         self.expand_coordinates = expand_coordinates
 
     def set_search_type(self):
+        # TODO ClassIDs nochmal anpassen
         # standard value for tool extraction
         if "tools" in self.ie_type is True:
             self.search_type = 6

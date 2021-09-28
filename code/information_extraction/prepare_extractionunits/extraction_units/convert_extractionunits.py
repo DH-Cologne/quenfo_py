@@ -4,8 +4,7 @@
 import spacy
 import re
 
-from information_extraction.models import Token
-from information_extraction.prepare_resources import competences, tools, no_tools, no_competences, modifier
+from information_extraction.prepare_resources import modifier, get_entities, get_no_entities
 from information_extraction.prepare_resources.convert_entities import normalize_entities
 
 # load nlp-model for sentence detection, pos tagger and lemmatizer
@@ -13,7 +12,6 @@ nlp = spacy.load("de_core_news_sm")
 
 
 # ##Functions
-# TODO split Item List etc. does not work
 
 # Split into Sentences
 def split_into_sentences(content: str) -> list:
@@ -199,7 +197,7 @@ def get_lemmata(sentence: str) -> list:
     return lemmata
 
 
-def annotate_token(token: list) -> 'list[Token]':
+def annotate_token(token: list, ie_mode: str) -> 'list[TextToken]':
     """Get ExtractionUnits:
                     +++ Step 4: Annotate tokens by comparing them with list of extraction errors,
                     modifiers and known extractions. +++
@@ -207,17 +205,23 @@ def annotate_token(token: list) -> 'list[Token]':
                     Parameters:
                     -----------
                         token: list of Token
-                            Receives list with tokens from ExtractionUnit"""
+                            Receives list with tokens from ExtractionUnit
+                        ie_mode: str
+                            Receives a string with the current extraction mode: competences or tools"""
+
     annotate_list = list()
+    known_entities = get_entities(ie_mode)
+    no_entities = get_no_entities(ie_mode)
 
     for t in token:
         lemma = normalize_entities(t.lemma)
-        if competences.__contains__(lemma) or tools.__contains__(lemma):
+        if known_entities.__contains__(lemma):
             t.set_ie_token(True)
-        elif no_competences.__contains__(lemma) or no_tools.__contains__(lemma):
+        elif no_entities.__contains__(lemma):
             t.set_no_token(True)
-        elif modifier.__contains__(lemma):
-            t.set_modifier_token(True)
+        if ie_mode != 'TOOLS':
+            if modifier.__contains__(lemma):
+                t.set_modifier_token(True)
         annotate_list.append(t)
 
     return annotate_list
