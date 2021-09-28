@@ -58,7 +58,6 @@ class ClassifyUnits(Base):
     parent_id = Column(Integer, ForeignKey('jobads.id'))                # ClassifyUnits have a parent-child relationship as a child with JobAds.
     parent = relationship("JobAds", back_populates="children")          # ForeignKey to connect both Classes
     children = relationship("ExtractionUnits", back_populates="parent") # Each CU is parent of ExtractionUnits
-    id_iter = itertools.count()                                         # Set uid for each classify unit
     featureunits = list()                                               # Set featureunit
     featurevectors = list()                                             # Set featurevector
 
