@@ -219,7 +219,7 @@ def annotate_token(token: list, ie_mode: str) -> 'list[TextToken]':
             t.set_ie_token(True)
         elif no_entities.__contains__(lemma):
             t.set_no_token(True)
-        if ie_mode is not 'TOOLS':
+        if ie_mode != 'TOOLS':
             if modifier.__contains__(lemma):
                 t.set_modifier_token(True)
         annotate_list.append(t)

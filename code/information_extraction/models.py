@@ -1,4 +1,5 @@
 """Models using for information extraction."""
+from orm_handling.models import InformationEntity
 
 
 class Token:
@@ -155,3 +156,14 @@ class PatternToken(Token):
             full_expression += "is (start of) modifier" + "\t"
 
         return full_expression
+
+
+class MatchedEntity(InformationEntity):
+    labels = set()
+
+    def __init__(self, start_lemma, is_single_word, ie_type, label):
+        super(MatchedEntity, self).__init__(ie_type=ie_type, start_lemma=start_lemma, is_single_word=is_single_word)
+        self.labels = label
+
+    def add_label(self, label: str):
+        self.labels.append(label)

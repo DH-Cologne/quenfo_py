@@ -62,7 +62,7 @@ def extract():
         for cu in classify_units:
             generate_extractionunits(cu, ie_mode)
             # add obj to current session --> to be written in db
-            orm.create_output(database.session, cu)
+            orm.create_output(database.session, cu, 'eu')
             # Update progress in progress bar
             # TODO replace place of function -> global use in each step (classification, ie, matching)
             classification.__progress(cu_counter, query_limit,

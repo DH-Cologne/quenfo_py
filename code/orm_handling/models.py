@@ -180,26 +180,38 @@ class InformationEntity(Base):
     __tablename__ = 'extracted_entities'                                        # Tablename for matching with db table
     id = Column(Integer, primary_key=True)                                      # Columns to query
     sentence = Column('extraction_unit', String(225))                           # extraction_unit with found entity
+    # TODO pattern as list
     pattern = Column('pattern_string', String(225))                             # matched pattern description
     ie_type = Column("ie_type", String(225))                                    # type
     start_lemma = Column("start_lemma", String(225))                            # start_lemma: first string
     is_single_word = Column("is_single_word", Boolean)                          # single word entity?
     full_expression = Column("full_expression", String(225))                    # multi word entity -> full expression as string
-    # save as BLOB -> pickle?
-    # multi word entity -> full expression as array
     lemma_array = Column("lemma_array", MutableList.as_mutable(PickleType), default=[])
     modifier = Column("modifier", String(225))                                  # used modifier
     first_index = int
 
     # init-function to set values
-    def __init__(self, sentence, pattern, ie_type, start_lemma, is_single_word, full_expression, lemma_array, modifier,
-                 first_index):
-        self.sentence = sentence
-        self.pattern = pattern
+    def __init__(self, ie_type, start_lemma, is_single_word):
         self.ie_type = ie_type
         self.start_lemma = start_lemma
         self.is_single_word = is_single_word
+
+    # Setter
+    def set_sentence(self, sentence: str):
+        self.sentence = sentence
+
+    def set_pattern(self, pattern: str):
+        self.pattern = pattern
+
+    def set_full_expression(self, full_expression: str):
         self.full_expression = full_expression
+
+    def set_lemma_array(self, lemma_array: list):
         self.lemma_array = lemma_array
+
+    def set_modifier(self, modifier: str):
         self.modifier = modifier
+
+    def set_first_index(self, first_index: int):
         self.first_index = first_index
+

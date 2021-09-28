@@ -144,7 +144,7 @@ def get_classify_units(current_pos: int) -> list:
             else:  # else: create extractionunit table
                 ExtractionUnits.__table__.create(database.engine)
     except sqlalchemy.exc.OperationalError:
-        logger.ie.info(f'table extraction_units does not exist --> create new one')
+        logger.log_ie.info(f'table extraction_units does not exist --> create new one')
         ExtractionUnits.__table__.create(database.engine)
 
     pass_output(database.session)
@@ -179,7 +179,7 @@ def get_extraction_units() -> list:
             else:  # else: create extractionunit table
                 InformationEntity.__table__.create(database.engine)
     except sqlalchemy.exc.OperationalError:
-        logger.ie.info(f'table extracted_entities does not exist --> create new one')
+        logger.log_ie.info(f'table extracted_entities does not exist --> create new one')
         InformationEntity.__table__.create(database.engine)
 
     pass_output(database.session)
@@ -304,12 +304,14 @@ def close_session(session: Session):
 
 
 # Function to manage session adding
-def create_output(session: Session, output: object):
+def create_output(session: Session, output: object, table_type: str):
     """ Function checks if table to store output in already exists. Else the table is dropped and created again.
     The session.add(object) statement adds the passed object to the current session.
 
     Parameters
     ----------
+    table_type: str
+        Name of the database table to create.
     session: Session
         Session object, generated in module database. Contains the database path. 
     output: object
@@ -318,22 +320,38 @@ def create_output(session: Session, output: object):
     # db_mode: append data or overwrite it
     db_mode = configuration.config_obj.get_mode()
     if db_mode == "overwrite":
-        __check_once()
+        __check_once(table_type)
         session.add(output)
     else:
         session.add(output)
 
 
 # Private function to check if needed table already exists, else drop it and create a new empty table
-def __check_once():
+def __check_once(table_type: str):
     global is_created
+    switch_table = {
+        'cu': ClassifyUnits,
+        'eu': ExtractionUnits,
+        'e': InformationEntity,
+        # 'me': MatchedEntity
+    }
+    switch_logger = {
+        'cu': logger.log_clf,
+        'eu': logger.log_ie,
+        'e': logger.log_ie,
+        # 'me': logger.log_m,
+    }
+
+    table_name = switch_table.get(table_type)
+    log_name = switch_logger.get(table_type)
+
     if is_created is None:
         try:
-            ClassifyUnits.__table__.create(database.engine)
+            table_name.__table__.create(database.engine)
         except sqlalchemy.exc.OperationalError:
-            logger.log_clf.info(f'Table ClassifyUnits does already exist. Will be dropped, because of overwrite mode.')
-            ClassifyUnits.__table__.drop(database.engine)
-            ClassifyUnits.__table__.create(database.engine)
+            log_name.info(f'Table {table_name} does already exist. Will be dropped, because of overwrite mode.')
+            table_name.__table__.drop(database.engine)
+            table_name.__table__.create(database.engine)
             pass
         is_created = 'checked'
     else:
