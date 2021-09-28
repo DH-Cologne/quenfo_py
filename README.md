@@ -31,20 +31,22 @@ Mögliche Klassen:
 
 **Input:**
 
-	1. Trainingsdaten (SQL-Datenbank mit bereits klassifizierten Stellenanzeigen)
-	2. Input-Daten (SQL-Datenbank mit Stellenanzeigen)
+	Trainingsdaten (SQL-Datenbank mit bereits klassifizierten Stellenanzeigen)
+	Input-Daten (SQL-Datenbank mit Stellenanzeigen)
 
 **Hauptstruktur:**
 
-	1. Classification
-	2. Information Extraction
-	3. Matching
+	Textclassification
+	Information Extraction
+	Matching
 
 **Output:** SQL-Datenbank bestehend aus:
 
-	1.  SQL-Tabelle mit klassifizierten Paragraphen
-	2.
-	3.
+	SQL-Tabelle mit klassifizierten Paragraphen
+	SQL-Tabelle mit ExtractionUnits
+	SQL-Tabelle mit MatchingUnits
+	
+--> Mehr zu Input und Output siehe Ende der Readme
 
 ***
 ### Quickstart🏃
@@ -59,7 +61,8 @@ cd in den Ordner **quenfo_py/code**: hier liegt die requirements Datei und das P
 
 `python -m pip install -r requirements.txt`
 
-Mit der nachfolgenden Ausführung wird das gesamte Programm samt Default-Settings aufgerufen (Pfade zu Testdaten und Trainingsdaten müssen zuvor in der config.yaml angegeben werden).
+Mit der nachfolgenden Ausführung wird das gesamte Programm samt Default-Settings aufgerufen (Pfad zu den Trainingsdaten muss zuvor in der config.yaml angegeben werden). 
+--> Textclassification, Information Extraction, Matching
 
 `python main.py --input_path "path_to_input_data" --db_mode {overwrite,append}`
 
@@ -235,16 +238,25 @@ Alle Befehle werden relativ zum Ordner `code/` ausgeführt.
 
 
 ***
-### Input Daten📚
+### Daten - Aufbau📚
 ***
-Als Input-Dateien müssen SQL-Datenbanken vorliegen. Die Benennung der darin verzeichneten Tabellen ist irrelevant. Die Daten müssen mindestens über folgende Metadaten verfügen, damit sie als Input-Daten verwendet werden können (egal ob als Test- oder Trainingsdaten):
 
-- full_text
+####Input
+Als Input-Dateien müssen SQL-Datenbanken vorliegen. Die Tabelle mit den enthaltenen Stellenanzeigen sollte bestenfalls den Namen *jobads*  haben oder der neue Tabellenname muss manuell im Script *code/orm_handling/models.py *geändert werden. Die Daten müssen mindestens über folgende gefüllte Spalten verfügen, damit sie als Input-Daten verwendet werden können (egal ob als Test- oder Trainingsdaten):
 
-- location_name
+- id
+- content (Text der Stellenanzeige)
 
-- date
+Optional:
 
-- profession_isco_code
+- postingID
+- language
+- jahrgang
 
-- advertiser_name
+####Output
+
+Tabelle zur Textclassification:
+-  id
+- classID
+- parentID --> Zu welcher JobAd der Paragraph gehört
+- paragraph

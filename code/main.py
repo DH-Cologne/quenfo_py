@@ -81,7 +81,6 @@ Set four different logging-files:
 
 logger.main()
 
-
 # ## Functions
 
 # *** PART 1: Textclassification ***
