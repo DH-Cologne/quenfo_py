@@ -2,7 +2,6 @@ import unittest
 from pathlib import Path
 
 import yaml
-
 from classification.prepare_classifyunits.classify_units import convert_classifyunits
 from classification.prepare_classifyunits.feature_units import convert_featureunits
 from information_extraction.prepare_extractionunits.extraction_units import convert_extractionunits
@@ -28,19 +27,19 @@ class TestNLPTools(unittest.TestCase):
     def test_remove_whitespaces(self):
         test_input = ["     Wir stellen ab sofort ein:\n\nAltenpflegehelfer/in\n\nWas Sie mitbringen "
                       "sollten:\n-Abgeschlossenes Studium\n-Gute Sprachkenntnisse in Deutsch und Englisch           ",
-                      "             Technischer Zeichner für Tga Tech.Gebäudeausrüstung Technische / -r "
+                      "             Technischer Zeichner für Test Tech.Gebäudeausrüstung Technische / -r "
                       "Systemplaner / - in - Versorgungs - und "
-                      "Ausrüstungst. GeHatec-Gesellschaft für Haustechnik Berlin mbH\n\n            ",
-                      "             Ausbildungsplatz für 2018 als Technischer Zeichner für Tga Tech.Gebäudeausrüstung "
-                      "Technische / -r Haustechnik Berlin mbH. \n"
+                      "Ausrüstungst. Testen-Gesellschaft für Haustechnik Teststadt Test\n\n            ",
+                      "             Ausbildungsplatz für 2018 als Technischer Zeichner für Test Tech.Gebäudeausrüstung "
+                      "Technische / -r Haustechnik Teststadt Test. \n"
                       "Aussagekräftige Bewerbung bitte direkt über den Bewerben - Button versenden.             "]
 
         test_output = ['Wir stellen ab sofort ein:\n\nAltenpflegehelfer/in\n\nWas Sie mitbringen '
                        'sollten:\n-Abgeschlossenes Studium\n-Gute Sprachkenntnisse in Deutsch und Englisch',
-                       'Technischer Zeichner für Tga Tech.Gebäudeausrüstung Technische / -r Systemplaner / - in - '
-                       'Versorgungs - und Ausrüstungst. GeHatec-Gesellschaft für Haustechnik Berlin mbH',
-                       'Ausbildungsplatz für 2018 als Technischer Zeichner für Tga Tech.Gebäudeausrüstung Technische '
-                       '/ -r Haustechnik Berlin mbH.\nAussagekräftige Bewerbung bitte direkt über den Bewerben - '
+                       'Technischer Zeichner für Test Tech.Gebäudeausrüstung Technische / -r Systemplaner / - in - '
+                       'Versorgungs - und Ausrüstungst. Testen-Gesellschaft für Haustechnik Teststadt Test',
+                       'Ausbildungsplatz für 2018 als Technischer Zeichner für Test Tech.Gebäudeausrüstung Technische '
+                       '/ -r Haustechnik Teststadt Test.\nAussagekräftige Bewerbung bitte direkt über den Bewerben - '
                        'Button versenden.']
 
         self.assertEqual(convert_classifyunits.remove_whitespaces(test_input), test_output)
@@ -54,29 +53,29 @@ class TestNLPTools(unittest.TestCase):
                          "* Wettbewerbsbeobachtungen und -analysen\n",
                          "* Organisation und Durchführung von Fachvorträgen und Produktpräsentationen\n"
                          "* Teilnahme an Ausstellungen und Messen\n"
-                         "* Einsatzgebiet Region Nord-/Ostdeutschland\n"
-                         "* Homeoffice idealerweise in Berlin/Potsdam"]
+                         "* Einsatzgebiet Region Testdeutschland\n"
+                         "* Homeoffice idealerweise in Test"]
 
         example_output = ["Ihre Aufgabe:\n* Identifizieren von Marktanforderungen und Kundenprojekten\n* Technische "
                           "Beratung und Betreuung von Kundenprojekten von der Planung bis zur Realisierung gemeinsam "
                           "mit dem Vertriebsinnendienst\n* Betreuung der Gebäudetechnik Planer\n* "
                           "Wettbewerbsbeobachtungen und -analysen\n\n* Organisation und Durchführung von "
                           "Fachvorträgen und Produktpräsentationen\n* Teilnahme an Ausstellungen und Messen\n* "
-                          "Einsatzgebiet Region Nord-/Ostdeutschland\n* Homeoffice idealerweise in Berlin/Potsdam"]
+                          "Einsatzgebiet Region Testdeutschland\n* Homeoffice idealerweise in Test"]
 
         self.assertEqual(convert_classifyunits.identify_listitems(example_input), example_output)
         self.assertIsInstance(convert_classifyunits.identify_listitems(example_input), list)
 
     def test_mergewhatbelongstogether(self):
         test_input = [
-            "Technischer Zeichner für Tga Tech. Gebäudeausrüstung Technische/-r Systemplaner/-in - Versorgungs- und "
-            "Ausrüstungst. GeHatec-Gesellschaft für Haustechnik Berlin mbH "
-            "Ausbildungsplatz für 2018 als Technischer Zeichner für Tga Tech.Gebäudeausrüstung Technische / -r "
-            "Systemplaner / - in - Versorgungs - und Ausrüstungst. in Berlin bei GeHatec - Gesellschaft für "
-            "Haustechnik Berlin mbH. Aussagekräftige Bewerbung bitte direkt über den Bewerben - Button "
+            "Technischer Zeichner für Test Tech. Gebäudeausrüstung Technische/-r Systemplaner/-in - Versorgungs- und "
+            "Ausrüstungst. Test-Gesellschaft für Haustechnik Test Test "
+            "Ausbildungsplatz für 2018 als Technischer Zeichner für Test Tech.Gebäudeausrüstung Technische / -r "
+            "Systemplaner / - in - Versorgungs - und Ausrüstungst. in Test bei Test - Gesellschaft für "
+            "Haustechnik Test Test. Aussagekräftige Bewerbung bitte direkt über den Bewerben - Button "
             "versenden.\n",
             "Ein solides Handwerk kommt nicht aus der Mode. Egal welche technischen Neuerungen auf den Markt "
-            "kommen, in unserer Ausbildung als Technischer Zeichner für Tga Tech.Gebäudeausrüstung Technische "
+            "kommen, in unserer Ausbildung als Technischer Zeichner für Test Tech.Gebäudeausrüstung Technische "
             " / -r Systemplaner / - in - Versorgungs - und Ausrüstungst.werden Innovationen aufgenommen "
             "und mit altbewährten Methoden ergänzt.Mit der Ausbildung zur / zum Technischer Zeichner.\n",
             "  Anforderungsprofil\n"
@@ -88,14 +87,14 @@ class TestNLPTools(unittest.TestCase):
             "+ Kontakte zu arabischsprachigen Experte/-innen, Lotse/-innen und ehrenamtlichen Helfer/-innen\n"
             "+ Erfahrung mit MS Office"]
 
-        test_output = ['Technischer Zeichner für Tga Tech. Gebäudeausrüstung Technische/-r Systemplaner/-in - '
-                       'Versorgungs- und Ausrüstungst. GeHatec-Gesellschaft für Haustechnik Berlin mbH '
-                       'Ausbildungsplatz für 2018 als Technischer Zeichner für Tga Tech.Gebäudeausrüstung Technische '
-                       '/ -r Systemplaner / - in - Versorgungs - und Ausrüstungst. in Berlin bei GeHatec - '
-                       'Gesellschaft für Haustechnik Berlin mbH. Aussagekräftige Bewerbung bitte direkt über den '
+        test_output = ['Technischer Zeichner für Test Tech. Gebäudeausrüstung Technische/-r Systemplaner/-in - '
+                       'Versorgungs- und Ausrüstungst. Test-Gesellschaft für Haustechnik Test Test '
+                       'Ausbildungsplatz für 2018 als Technischer Zeichner für Test Tech.Gebäudeausrüstung Technische '
+                       '/ -r Systemplaner / - in - Versorgungs - und Ausrüstungst. in Test bei Test - '
+                       'Gesellschaft für Haustechnik Test Test. Aussagekräftige Bewerbung bitte direkt über den '
                        'Bewerben - Button versenden.\n\nEin solides Handwerk kommt nicht aus der Mode. Egal welche '
                        'technischen Neuerungen auf den Markt kommen, in unserer Ausbildung als Technischer Zeichner '
-                       'für Tga Tech.Gebäudeausrüstung Technische  / -r Systemplaner / - in - Versorgungs - und '
+                       'für Test Tech.Gebäudeausrüstung Technische  / -r Systemplaner / - in - Versorgungs - und '
                        'Ausrüstungst.werden Innovationen aufgenommen und mit altbewährten Methoden ergänzt.Mit der '
                        'Ausbildung zur / zum Technischer Zeichner.\n', '  Anforderungsprofil\n+ Erfahrung in der '
                                                                        'Terminplanung\n+ Abgeschlossenes '
@@ -113,11 +112,11 @@ class TestNLPTools(unittest.TestCase):
         self.assertIsInstance(convert_classifyunits.identify_whatbelongstogether(test_input), list)
 
     def test_replace_non_alphanumerical(self):
-        test_input = "Für ein Gesundheitsinstitut in Berlin-Pankow suchen wir aktuell eine/n " \
+        test_input = "Für ein Gesundheitsinstitut in Test suchen wir aktuell eine/n " \
                      "Personalsachbearbeiter/in (mit Lohnkenntnissen) oder eine/n Personalreferent/in in Voll- oder " \
                      "Teilzeit. Sie werden angemessen mit einem Gehalt von 2880,-?/Monat vergütet. "
 
-        test_output = "Für ein Gesundheitsinstitut in Berlin Pankow suchen wir aktuell eine n Personalsachbearbeiter " \
+        test_output = "Für ein Gesundheitsinstitut in Test suchen wir aktuell eine n Personalsachbearbeiter " \
                       "in mit Lohnkenntnissen oder eine n Personalreferent in in Voll oder Teilzeit Sie werden " \
                       "angemessen mit einem Gehalt von 2880 Monat vergütet "
 
