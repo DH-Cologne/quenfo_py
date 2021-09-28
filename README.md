@@ -79,6 +79,10 @@ Danach beginnt der Hauptprozess der Software, in dem die zu verarbeitenden Stell
 
 <img src="docs/quenfo_py.svg"/>
 
+Im folgenden sieht man die Klassenstrukturen der ORM-Models:
+
+<img src="docs/models.jpg"/>
+
 
 #### Code Struktur
 Der Code ist so struktuiert, dass sich die einzelnen Module (im Workflow s.o. erkennbar) ebenfalls in der Ordnerstruktur wiederfinden.
@@ -175,7 +179,6 @@ Das bedeutet, dass am Ende des Trainingsmoduls ein Objekt der Klasse Model zurü
 
 ##### Classification
 
-<img src="docs/models.jpg"/>
 
 ##### Information Extraction
 TODO
