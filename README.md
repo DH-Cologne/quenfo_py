@@ -181,39 +181,17 @@ Enthält eine Auflistung an Python-Dependencies, die benötigt werden, um das To
 
 **logger**
 
-Logging-File, in dem zusätzliche Informationen während der Ausführung des Tools gespeichert werden. Außerdem befinden sich hier die Evaluation-Reports und Sanity_checks.
+Logging-Ordner, in dem zusätzliche Informationen während der Ausführung des Tools gespeichert werden. 
 
-**input/, output/, temp/**
-
-Ordner, in denen die Input, Output und Temp-Dateien liegen. Wenn andere Pfade für die Dateien verwendet werden sollen, müssen diese in der config.yaml Datei angepasst werden.
+**input, output **
+Input-Path wird über die CMDLine mitgegeben und Output wird in diese reingeschrieben.
 
 ***
 ### Configuration📋✔️
 ***
 In der Datei config.yaml sind alle Pfade, einstellbare Parameter und der Metadaten-Filter vermerkt. Dadurch wird gewährleistet, dass im Code selbst für eine Anwendung nichts verändert werden muss. Alle Änderungen werden in der `config.yaml` Datei vorgenommen.
 
-**Im aktuellen Zustand befindet sich das Programm in der "Werkseinstellung" und es können nach Belieben Modelle trainiert und Daten analysiert werden (mit entsprechenden Pfadangaben zu Test- und Trainingsdaten).**
-
 Ansonsten können folgende Werte angepasst werden:
-
-1. Andere **Input-Dateien** auswählen:
-
-	- `train_data` und `test_data`
-
-2. Andere **Output-Datei** auswählen:
-
-	- `output_path`
-
-3. Andere **Temp-Dateien** und Pfade festlegen für Dateien, die schon unique_ids bekommen haben:
-
-	- `id_train_data` und `id_test_data`
-
-4. Auswählen, ob für den Prozess ein **trained** oder **retrained Doc2Vec Modell** verwendet wird (nur relevant, wenn Doc2Vec verwendet wird):
-
-	- `d2v_model_type` -> `type` 
-
-	entweder 'd2v_model' für trained Modell oder 'd2v_remodel' für retrained Modell.
-
 
 ***
 ### CommandLine - Befehle📢
