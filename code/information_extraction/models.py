@@ -1,4 +1,6 @@
 """Models using for information extraction."""
+from sqlalchemy import Column, String, Float
+
 from orm_handling.models import InformationEntity
 
 
@@ -158,6 +160,30 @@ class PatternToken(Token):
         return full_expression
 
 
+class ExtractedEntity(InformationEntity):
+    conf = Column('conf', Float)
+    pattern = Column('pattern_string', String(225))                             # matched pattern description
+
+    def __init__(self, pattern, ie_type, start_lemma, is_single_word):
+        super(ExtractedEntity, self).__init__(ie_type, start_lemma, is_single_word)
+        self.pattern = pattern
+
+    def set_conf(self, used_pattern: list[Pattern]):
+        self.conf = 0.0
+        product = 0.0
+        conf_value = list()
+
+        for pattern in used_pattern:
+            conf_value.append(1 - pattern.conf)
+
+        for i in range(len(conf_value)):
+            if product == 0.0:
+                product = conf_value[i]
+            else:
+                product = product * conf_value[i]
+        self.conf = 1 - product
+
+
 class MatchedEntity(InformationEntity):
     labels = set()
 
@@ -167,3 +193,16 @@ class MatchedEntity(InformationEntity):
 
     def add_label(self, label: str):
         self.labels.append(label)
+
+
+class Modifier:
+    start_lemma = str()
+    lemma_array = list()
+    is_single_word = bool()
+
+    def __init__(self, start_lemma, is_single_word):
+        self.start_lemma = start_lemma
+        self.is_single_word = is_single_word
+
+    def set_lemma_array(self, lemma_array):
+        self.lemma_array = lemma_array

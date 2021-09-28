@@ -1,4 +1,6 @@
+from information_extraction.models import TextToken
 from information_extraction.prepare_resources import get_ie_pattern
+from information_extraction.prepare_resources.convert_entities import normalize_entities
 from orm_handling.models import ExtractionUnits, InformationEntity
 
 
@@ -9,6 +11,7 @@ def extract_entities(extraction_unit: ExtractionUnits, ie_mode: str) -> 'list[In
     required_for_modifier = int
     required_for_entity = int
     match = bool
+    entity_token = TextToken(lemma=str(), token=str(), pos_tag=str())
 
     eu_tokens = extraction_unit.token_array
     for p in pattern:
@@ -30,6 +33,16 @@ def extract_entities(extraction_unit: ExtractionUnits, ie_mode: str) -> 'list[In
                     if p.extraction_pointer[0] == c:
                         entity_pointer = v + c
                     if pattern_token.ie_token:
-                        required_for_entity = 0
+                        required_for_entity = token.tokensToCompleteInformationEntity
+                    if pattern_token.modifier_token:
+                        required_for_modifier = token.tokensToCompleteModifier
+                if match:
+                    entity_token = eu_tokens[entity_pointer]
+                    norm_lemma = normalize_entities(entity_token.lemma)
+                    entity_size = len(p.extraction_pointer)
+                    if entity_size == 1:
+                        if entity_token.modifier_token or entity_token.no_token:
+                            continue
+                        # TODO
 
     return extractions

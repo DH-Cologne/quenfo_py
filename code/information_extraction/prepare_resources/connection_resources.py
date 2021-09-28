@@ -3,7 +3,7 @@ import codecs
 
 import configuration
 import logger
-from information_extraction.models import Pattern, PatternToken, MatchedEntity
+from information_extraction.models import Pattern, PatternToken, MatchedEntity, Modifier
 from information_extraction.prepare_resources import convert_entities
 
 
@@ -66,7 +66,16 @@ def get_entities_from_file(extraction_type: str) -> list:
                 continue
             else:
                 continue
-        # otherwise set one line to one string
+        elif extraction_type == 'modifier':
+            if entity[0]:
+                modifier = Modifier(start_lemma=entity[0], is_single_word=len(entity) == 1)
+                if not modifier.is_single_word:
+                    modifier.set_lemma_array(entity)
+                entities.append(modifier)
+                continue
+            else:
+                continue
+        # otherwise (no_tools or no_comptenteces) set one line to one string
         else:
             # if return is not empty, join strings from list
             normalize_entity = " ".join(entity).strip()

@@ -180,8 +180,6 @@ class InformationEntity(Base):
     __tablename__ = 'extracted_entities'                                        # Tablename for matching with db table
     id = Column(Integer, primary_key=True)                                      # Columns to query
     sentence = Column('extraction_unit', String(225))                           # extraction_unit with found entity
-    # TODO pattern as list
-    pattern = Column('pattern_string', String(225))                             # matched pattern description
     ie_type = Column("ie_type", String(225))                                    # type
     start_lemma = Column("start_lemma", String(225))                            # start_lemma: first string
     is_single_word = Column("is_single_word", Boolean)                          # single word entity?
@@ -199,9 +197,6 @@ class InformationEntity(Base):
     # Setter
     def set_sentence(self, sentence: str):
         self.sentence = sentence
-
-    def set_pattern(self, pattern: str):
-        self.pattern = pattern
 
     def set_full_expression(self, full_expression: str):
         self.full_expression = full_expression

@@ -4,6 +4,7 @@
 import spacy
 import re
 
+from information_extraction.models import TextToken
 from information_extraction.prepare_resources import modifier, get_entities, get_no_entities
 from information_extraction.prepare_resources.convert_entities import normalize_entities
 
@@ -213,15 +214,44 @@ def annotate_token(token: list, ie_mode: str) -> 'list[TextToken]':
     known_entities = get_entities(ie_mode)
     no_entities = get_no_entities(ie_mode)
 
-    for t in token:
-        lemma = normalize_entities(t.lemma)
-        if known_entities.__contains__(lemma):
-            t.set_ie_token(True)
-        elif no_entities.__contains__(lemma):
-            t.set_no_token(True)
+    for i in range(len(token)):
+        lemma = normalize_entities(token[i].lemma)
+        # Anmerkung: Programm braucht für diesen Teil 4 Minuten länger bei query_limit = 500
+        matched_entities = [known_entity for known_entity in known_entities if known_entity.start_lemma == lemma]
+        for known_entity in matched_entities:
+            if known_entity.is_single_word:
+                token[i].set_ie_token(True)
+                continue
+            matches = False
+            for j in range(len(known_entity.lemma_array)):
+                if len(token) <= i + j:
+                    matches = False
+                    break
+                matches = known_entity.lemma_array[j].__eq__(normalize_entities(token[i + j].lemma))
+                if not matches:
+                    break
+            if matches:
+                token[i].set_ie_token(True)
+                token[i].tokensToCompleteInformationEntity = len(known_entity.lemma_array) - 1
+        if no_entities.__contains__(lemma):
+            token[i].set_no_token(True)
         if ie_mode != 'TOOLS':
-            if modifier.__contains__(lemma):
-                t.set_modifier_token(True)
-        annotate_list.append(t)
+            matched_modifier = [m for m in modifier if m.start_lemma == lemma]
+            for mod in matched_modifier:
+                if mod.is_single_word:
+                    token[i].set_modifier(True)
+                    continue
+                matches = False
+                for j in range(len(mod.lemma_array)):
+                    if len(token) <= i + j:
+                        matches = False
+                        break
+                    matches = mod.lemma_array[j].__eq__(normalize_entities(token[i + j].lemma))
+                    if not matches:
+                        break
+                if matches:
+                    token[i].set_modifier(True)
+                    token[i].tokensToCompleteModifier = len(mod.lemma_array) - 1
+        annotate_list.append(token[i])
 
     return annotate_list
