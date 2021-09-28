@@ -170,7 +170,7 @@ Zuletzt wird noch der RegexClassifier geladen, der sich aus den gegebenen Muster
 
 Das bedeutet, dass am Ende des Trainingsmoduls ein Objekt der Klasse Model zurückgegeben wird, welches aus drei Werten besteht und noch zusätzlich Informationen über die genutzten Trainingsdaten enthält.
 
-<img src="docs/class_model.svg"/>
+<img src="docs/class_model.jpg"/>
 
 
 ##### Classification
