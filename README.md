@@ -156,9 +156,28 @@ Der Code ist so struktuiert, dass sich die einzelnen Module (im Workflow s.o. er
 
 #### Hauptbestandteile: Training, Classification, IE und Matching
 ##### Training
+Das Trainingsmodul besteht erstens aus dem Abgleich, ob ein Modell bereits vorhanden ist oder ob ein neues trainiert werden soll.
+Dafür wird einmal überprüft, ob bereits ein Model für den TfidfVectorizer und den KNN-Classifier vorliegt (Pfade dazu in config.yaml gesetzt). Liegt jeweils eins vor, wird überprüft,
+
+1. ob die vorliegenden Trainingsdaten auch für das Modell verwendet wurden und 
+2. ob die Konfigurationseinstellungen der Modelle mit denen in der config.yaml gesetzten übereinstimmen.
+3. ob die Modelle auch gefittet sind.
+
+Sollten dementsprechend neue Trainingsdaten vorliegen oder neue Konfigurationseinstellungen gesetzt worden sein oder die geladenen Modelle nicht gefittet sein, wird neu trainiert oder andersrum der entsprechende Vectorizer und Classifier geladen.
+Anschließend werden diese für das Objekt der Klasse Model als Werte gesetzt.
+
+Zuletzt wird noch der RegexClassifier geladen, der sich aus den gegebenen Mustern und ihren Klasseneinteilungen aus der Support-Datei *regex.txt*  ergibt. Auch diese werden in Form eines Dataframes als RegexClassifier im Model gesetzt.
+
+Das bedeutet, dass am Ende des Trainingsmoduls ein Objekt der Klasse Model zurückgegeben wird, welches aus drei Werten besteht und noch zusätzlich Informationen über die genutzten Trainingsdaten enthält.
+
+<img src="docs/class_model.svg"/>
+
+
 ##### Classification
 ##### Information Extraction
+TODO
 ##### Matching
+TODO
 
 #### Support Module
 
