@@ -220,7 +220,7 @@ Alle Befehle werden relativ zum Ordner `code/` ausgeführt.
 ### Daten - Aufbau📚
 ***
 
-####Input
+#### Input
 Als Input-Dateien müssen SQL-Datenbanken vorliegen. Die Tabelle mit den enthaltenen Stellenanzeigen sollte bestenfalls den Namen *jobads*  haben oder der neue Tabellenname muss manuell im Script *code/orm_handling/models.py *geändert werden. Die Daten müssen mindestens über folgende gefüllte Spalten verfügen, damit sie als Input-Daten verwendet werden können (egal ob als Test- oder Trainingsdaten):
 
 - id
@@ -229,7 +229,7 @@ Als Input-Dateien müssen SQL-Datenbanken vorliegen. Die Tabelle mit den enthalt
 - language
 - jahrgang
 
-####Output
+#### Output
 
 Tabelle zur Textclassification:
 -  id
