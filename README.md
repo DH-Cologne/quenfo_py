@@ -17,14 +17,13 @@ und in Kooperation mit dem Bundesinstitut für Berufsbildung.
 **Zielsetzung:**
 
 	a. Stellenanzeigen werden in Paragraphen aufgesplittet und klassifiziert.
-Mögliche Klassen: 
-1. Selbstvorstellung des ausschreibenden Unternehmens
-2. Beschreibung der Tätigkeit, Angebote an die Bewerberinnen und Bewerber
-3. Anforderungen an die Bewerberin bzw. den Bewerber 
-4. Formalia und Sonstiges
-5. 1&3
-6. 2&3
-
+			Mögliche Klassen: 
+			1. Selbstvorstellung des ausschreibenden Unternehmens
+			2. Beschreibung der Tätigkeit, Angebote an die Bewerberinnen und Bewerber
+			3. Anforderungen an die Bewerberin bzw. den Bewerber 
+			4. Formalia und Sonstiges
+			5. 1&3
+			6. 2&3
    
 	b. Informationsextraktion von Kompetenzen und Tools aus klassifizierten Paragraphen
 	c. Matching-Workflows zum Auffinden bereits bekannter Entitäten innerhalb klassifizierter Paragrafen.
