@@ -140,7 +140,7 @@ def get_classify_units(current_pos: int) -> list:
             else:  # else: create extractionunit table
                 ExtractionUnits.__table__.create(database.engine)
     except sqlalchemy.exc.OperationalError:
-        logger.ie.info(f'table extraction_units does not exist --> create new one')
+        logger.log_ie.info(f'table extraction_units does not exist --> create new one')
         ExtractionUnits.__table__.create(database.engine)
 
     try:
@@ -287,7 +287,7 @@ def close_session(session: Session):
 
 
 # Function to manage session adding
-def create_output(session: Session, output: object):
+def create_output(session: Session, output: object, tablename: str):
     """ Function checks if table to store output in already exists. Else the table is dropped and created again.
     The session.add(object) statement adds the passed object to the current session.
 
@@ -300,6 +300,7 @@ def create_output(session: Session, output: object):
 
     # db_mode: append data or overwrite it
     db_mode = configuration.config_obj.get_mode()
+    
     if db_mode == "overwrite":
         __check_once()
         session.add(output)

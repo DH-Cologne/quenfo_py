@@ -64,7 +64,7 @@ def classify(model: Model) -> None:
             # STEP 3: Predict Classes for CUs in JobAds. 
             predict_classes.start_prediction(jobad, model)
             # add obj (with predicted paragraphs) to current session --> to be written in db
-            orm.create_output(database.session, jobad)
+            orm.create_output(database.session, jobad, 'ClassifyUnits')
             # Update progress in progress bar
             __progress(jobad_counter, query_limit,
                        status=f" of {query_limit} JobAds classified. Current JobAd {jobad_counter}.")
@@ -72,7 +72,7 @@ def classify(model: Model) -> None:
 
         # Commit generated classify units with paragraphs and classes to table
         orm.pass_output(database.session)
-        counter += len(jobads)  # update counter
+        counter += len(jobads)      # update counter
         current_pos += len(jobads)  # update current position
 
         logger.log_clf.info(

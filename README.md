@@ -43,8 +43,8 @@ Mögliche Klassen:
 **Output:** SQL-Datenbank bestehend aus:
 
 	SQL-Tabelle mit klassifizierten Paragraphen
-	SQL-Tabelle mit ExtractionUnits
-	SQL-Tabelle mit MatchingUnits
+	SQL-Tabelle mit ExtractionUnits (Tools oder Kompetenzen)
+	SQL-Tabelle mit MatchingUnits (Tools oder Kompetenzen)
 	
 --> Mehr zu Input und Output siehe Ende der Readme
 
@@ -77,13 +77,13 @@ Hier kommt der Workflow hin
 
 Hier kommt der allgemeine Workflow hin
 
-#### Aufteilung Classification, IE und Matching
+#### Aufteilung Classification(Aufgeteilt in Training und classification), IE und Matching
 
 Das sind die drei Steps
 
 und hier bitte das Workflow bild einbinden
 
-<img src=""/>
+<img src="docs/quenfo_py.svg"/>
 
 
 #### Code Struktur
@@ -260,3 +260,25 @@ Tabelle zur Textclassification:
 - classID
 - parentID --> Zu welcher JobAd der Paragraph gehört
 - paragraph
+
+Tabelle zur Information Extraction:
+Kompetenzen oder Tools werden als Entitäten durch Extraktionsmuster extrahiert
+- id
+- positionIndex
+- paragraph_id
+- sentence
+- tokenArray
+
+Tabelle zum Matching:
+Kompetenzen oder Tools werden durch StringMatching gefunden
+- id
+- parent_id
+- type
+- startLemma
+- singleWordEntitiy
+- lemmaArray
+- lemmaExpression
+- modifier
+
+
+
