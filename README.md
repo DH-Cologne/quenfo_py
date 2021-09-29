@@ -278,6 +278,7 @@ Alle Befehle werden relativ zum Ordner `code/` ausgeführt.
     --db_mode {overwrite,append}
 
 **Beispiel**
+
 `python main.py --classification --input_path "this/is/my/input/path.db --db_mode overwrite`
 --> Hier wird nur die Classification aufgerufen und die im input_path mitgegebene Datei verarbeitet. Sollten bereits ClassifyUnits vorhanden sein, werden diese überschrieben.
 
