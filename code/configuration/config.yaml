@@ -10,8 +10,8 @@ classification:
 
   # --- Data-Handling Parameters ---
   query_limit: 500               # Number of JobAds to query --> set -1 if all JobAds need to be processed
-  fetch_size: 100                 # Number of JobAds per chunk
-  start_pos: 0                  # Index Number of row where query starts
+  fetch_size: 100                # Number of JobAds per chunk
+  start_pos: 0                   # Index Number of row where query starts
 
   # --- Model Paths ---
   models:                       #Paths to Tfidf Model and Knn Model

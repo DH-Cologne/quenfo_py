@@ -2,6 +2,7 @@
 
 #### 👷‍♀️⚠️ Work in Progress ⚠️ 👷‍♀️
 
+TODO: quenfo_data folder
 
 ## Dokumentation quenfo_py
 ***
@@ -181,14 +182,14 @@ Die Textclassification ist in zwei Hauptschritte aufgeteilt:
 
 1. **Vorbereitung der zu klassifizierenden Stellenanzeigen** (*prepare_classifyunits/*) in den Schritten:
 
-	a. Generierung von **classify_units** durch splitten der Stellenanzeigen in Paragraphen (und erste Normalisierungsschritte)
-	b. Verarbeitung der Paragraphen zu **feature_units** (Tokenization, Normalization, Stopwords Removal, Stemming, NGram(or ContinuousNGram) Generation)
-	c. Vektorisierung der feature_units zu **feature_vectors** mittels des Tfidf-Vectorizers.
+	1. Generierung von **classify_units** durch splitten der Stellenanzeigen in Paragraphen (und erste Normalisierungsschritte)
+	2. Verarbeitung der Paragraphen zu **feature_units** (Tokenization, Normalization, Stopwords Removal, Stemming, NGram(or ContinuousNGram) Generation)
+	3. Vektorisierung der feature_units zu **feature_vectors** mittels des **Tfidf-Vectorizers**(aus dem Objekt Model).
 
 2. **Vorhersage der Klassen für die vorverarbeiteten Paragraphen** (*predict_classes/*) in den Schritten:
-	a. **KNN-Prediction**
-	b. **Regex-Prediction**
-	c. Abgleich und Zusammenführen der beiden Vorhersagen (**merge_results**)
+	1.  **KNN-Prediction** mittels des KNN-Classifiers aus dem Model.
+	2.  **Regex-Prediction** mittels des Regex-Classifiers aus dem Model.
+	3. Abgleich und Zusammenführen der beiden Vorhersagen (**merge_results**)
 
 
 ##### Information Extraction
@@ -199,28 +200,49 @@ TODO
 #### Support Module
 
 ##### configuration
+Das configuration-Modul enthält 
+1.  das **config.yaml** File, in dem die Konfigurationseinstellungen und Pfade gesetzt sind.
+2. das **config_models.py** Script, in dem die Klasse *Configuration* definiert wird, die getter, setter und checks für die in der Konfigurationsdatei enthaltenen Werte enthält.
+
 ##### orm_handling
+Das Modul *orm_handling/* ist das Verbindungsstück zwischen Datenbank und Python-Tool. Hier werden Daten abgefragt und in Datenbanken geschrieben, mithilfe der Definition von Models, die die Datenbank-Tabellen abbilden. Verwendet wurde das Python-Package [SQLAlchemy](https://docs.sqlalchemy.org/en/14/orm/) um Object Relational Mapping umzusetzen.
+
+1. `models.py`
+Script um Klassen und Schmeata für ORM-Objects zu definieren.
+Classes:
+        JobAds               --> JobAds to be splitted and classified
+        ClassifyUnits        --> preprocessed and classified paragraphs
+        TrainData            --> Traindata (already in paragraphs and classified)
+        ClassifyUnits_Train  --> contains each Traindata paragraph (preprocessed and classified)
+        ExtrationUnits       --> preprocessed and splitted sentences from paragraphs
+        InformationEntity    --> extracted entities
+2. `orm.py` --> Script enthält query-Abfragen an die Datenbank und Funktionen, um Objekte Datenbanken hinzuzufügen (session.add(), session.commit()). Außerdem werden hier Hilfsfunktionen definiert, die ggf. Tabellen löschen und createn. 
+
+
+
 ##### database
-1. `connection.py`: Script mit dem die connections zu den SQL-Datenbanken hergestellt werden (Input, Output und Backup-Dateien).
+1. `connection.py`: Script mit dem die connections zu den SQL-Datenbanken hergestellt  werden. --> Returns session-obj und engine-obj.
 
 ##### logger
-
 Logging-Ordner, in dem zusätzliche Informationen während der Ausführung des Tools gespeichert werden.
+Es gibt vier verschiedene Logging-files:
+1. `log_main.log` --> for all main related processes and raises.
+2. `log_clf.log`  --> for all classification related processes and raises.
+3. `log_ie.log`   --> for all information extraction related processes and raises.
+4. `log_match.log`--> for all matching related processes and raises.
 
 ##### tests
-
+TODO
 
 #### Files
 **main.py**
-
 Main-Skript des Tools. Hier befindet sich die grobe Architektur und Verwaltung des Programms. Des Weiteren sind hier die ArgumentParser Befehle deklariert, mit denen bestimmte Teile des Skriptes aufgerufen werden können (mehr dazu weiter unten).
 
 **requirements.txt**
-
 Enthält eine Auflistung an Python-Dependencies, die benötigt werden, um das Tool auszuführen.
 
 **input, output **
-Input-Path wird über die CMDLine mitgegeben und Output wird in diese reingeschrieben.
+Input-Path wird über die CMDLine mitgegeben und Output wird in die Input Datenbank reingeschrieben.
 
 ***
 ### Configuration📋✔️
@@ -228,7 +250,13 @@ Input-Path wird über die CMDLine mitgegeben und Output wird in diese reingeschr
 In der Datei config.yaml sind alle Pfade und einstellbare Parameter vermerkt. Dadurch wird gewährleistet, dass im Code selbst für eine Anwendung nichts verändert werden muss. Alle Änderungen werden in der `config.yaml` Datei vorgenommen.
 
 Ansonsten können folgende Werte angepasst werden:
-
+- FeatureUnitConfiguration --> Wie sollen die FeatureUnits erstellt werden?
+- Data-Handling Parameter --> Wie viele Stellenanzeigen sollen verarbeitet werden und in welcher Chunksize?
+- Tfidf Configuration --> Wie soll der Vectorizer trainiert werden oder welcher soll geladen werden?
+- KNN Configuration --> Wie soll der KNN Classifier trainiert werden oder welcher soll geladen werden?
+- IE Configuration --> Wie soll die Information Extraction ablaufen?
+- Model Paths --> Pfade zu den Modellen (Tfidf und KNN)
+- Paths --> Resource Pfade zu den Benötigten Dateien
 
 ***
 ### CommandLine - Befehle📢
@@ -250,6 +278,15 @@ Alle Befehle werden relativ zum Ordner `code/` ausgeführt.
     --input_path INPUT_PATH
     --db_mode {overwrite,append}
 
+**Beispiel**
+`python main.py --classification --input_path "this/is/my/input/path.db --db_mode overwrite`
+--> Hier wird nur die Classification aufgerufen und die im input_path mitgegebene Datei verarbeitet. Sollten bereits ClassifyUnits vorhanden sein, werden diese überschrieben.
+
+`python main.py --input_path "this/is/my/input/path.db --db_mode append`
+--> Da hier kein Wert mitgegeben wurde, welcher Teil des Tools aufgerufen werden soll, werden alle drei Steps nacheinander durchlaufen (1. Classification, 2. IE, 3. Matching). Da der db_mode *append*  gesetzt wurde, werden ClassifyUnits (die bereits gegeben sein könnten in der input_db) nicht überschrieben und nur noch nicht verarbeitete hinzugefügt.
+
+`python main.py --classification --extraction --input_path "this/is/my/input/path.db --db_mode overwrite`
+--> Hier wird erst die Classification und dann die IE aufgerufen und die im input_path gegebenen Daten verarbeitet. Der db_mode ist auf *overwrite* gesetzt. Dementsprechend werden, falls ClassifyUnits bereits vorhanden sind, diese überschrieben.
 
 
 ***
