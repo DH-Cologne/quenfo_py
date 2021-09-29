@@ -70,7 +70,7 @@ Informationen über die erfolgten Abläufe und Ergebnisse werden in dem Modul `/
 ***
 ### Workflow🔁
 ***
-Im folgenden wird der Workflow der quenfo_py Software beschrieben.
+Im Folgenden wird der Workflow der quenfo_py Software beschrieben.
 
 #### Allgemein
 
@@ -174,10 +174,21 @@ Zuletzt wird noch der RegexClassifier geladen, der sich aus den gegebenen Muster
 
 <img src="docs/class_model.jpg"/>
 
-Das bedeutet, dass am Ende des Trainingsmoduls ein Objekt der Klasse Model zurückgegeben wird, welches aus drei Werten besteht und noch zusätzlich Informationen über die genutzten Trainingsdaten enthält.
-
+Das bedeutet, dass am Ende des Trainingsmoduls ein Objekt der Klasse Model zurückgegeben wird, welches aus den drei Komponenten (Tfidf, KNN & Regex) besteht und noch zusätzlich Informationen über die genutzten Trainingsdaten enthält.
 
 ##### Classification
+Die Textclassification ist in zwei Hauptschritte aufgeteilt:
+
+1. **Vorbereitung der zu klassifizierenden Stellenanzeigen** (*prepare_classifyunits/*) in den Schritten:
+
+	a. Generierung von **classify_units** durch splitten der Stellenanzeigen in Paragraphen (und erste Normalisierungsschritte)
+	b. Verarbeitung der Paragraphen zu **feature_units** (Tokenization, Normalization, Stopwords Removal, Stemming, NGram(or ContinuousNGram) Generation)
+	c. Vektorisierung der feature_units zu **feature_vectors** mittels des Tfidf-Vectorizers.
+
+2. **Vorhersage der Klassen für die vorverarbeiteten Paragraphen** (*predict_classes/*) in den Schritten:
+	a. **KNN-Prediction**
+	b. **Regex-Prediction**
+	c. Abgleich und Zusammenführen der beiden Vorhersagen (**merge_results**)
 
 
 ##### Information Extraction
