@@ -219,9 +219,8 @@ Classes:
 2. `orm.py` --> Script enthält query-Abfragen an die Datenbank und Funktionen, um Objekte Datenbanken hinzuzufügen (session.add(), session.commit()). Außerdem werden hier Hilfsfunktionen definiert, die ggf. Tabellen löschen und createn. 
 
 
-
 ##### database
-1. `connection.py`: Script mit dem die connections zu den SQL-Datenbanken hergestellt  werden. --> Returns session-obj und engine-obj.
+`connection.py`: Script mit dem die connections zu den SQL-Datenbanken hergestellt  werden. --> Returns session-obj und engine-obj.
 
 ##### logger
 Logging-Ordner, in dem zusätzliche Informationen während der Ausführung des Tools gespeichert werden.
@@ -241,7 +240,7 @@ Main-Skript des Tools. Hier befindet sich die grobe Architektur und Verwaltung d
 **requirements.txt**
 Enthält eine Auflistung an Python-Dependencies, die benötigt werden, um das Tool auszuführen.
 
-**input, output **
+**input, output**
 Input-Path wird über die CMDLine mitgegeben und Output wird in die Input Datenbank reingeschrieben.
 
 ***
