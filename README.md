@@ -71,7 +71,7 @@ Informationen über die erfolgten Abläufe und Ergebnisse werden in dem Modul `/
 ***
 ### Workflow🔁
 ***
-Im Folgenden wird der Workflow der quenfo_py Software beschrieben.
+Im Folgenden wird der Workflow der **quenfo_py** Software beschrieben.
 
 #### Allgemein
 
