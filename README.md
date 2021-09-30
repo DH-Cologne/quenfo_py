@@ -60,7 +60,7 @@ cd in den Ordner **quenfo_py/code**: hier liegt die requirements Datei und das P
 `python -m pip install -r requirements.txt`
 
 Mit der nachfolgenden Ausführung wird das gesamte Programm samt Default-Settings aufgerufen (Input-und Trainingsdaten müssen zuvor in der quenfo_data
-Struktur liegen und die Dateinamen in der config.yaml Datei angegeben werden.)
+Struktur liegen und der Dateiname des Trainingsfiles in der config.yaml Datei angegeben werden.)
 
 --> Textclassification, Information Extraction, Matching
 
