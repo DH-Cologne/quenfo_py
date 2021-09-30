@@ -2,8 +2,6 @@
 
 #### 👷‍♀️⚠️ Work in Progress ⚠️ 👷‍♀️
 
-TODO: quenfo_data folder
-
 ## Dokumentation quenfo_py
 ***
 Die Software **quenfo_py** bietet verschiedene Funktionen zur Verarbeitung von Stellenanzeigen an.
@@ -61,10 +59,14 @@ cd in den Ordner **quenfo_py/code**: hier liegt die requirements Datei und das P
 
 `python -m pip install -r requirements.txt`
 
-Mit der nachfolgenden Ausführung wird das gesamte Programm samt Default-Settings aufgerufen (Pfad zu den Trainingsdaten muss zuvor in der config.yaml angegeben werden). 
+Mit der nachfolgenden Ausführung wird das gesamte Programm samt Default-Settings aufgerufen (Input-und Trainingsdaten müssen zuvor in der quenfo_data
+Struktur liegen und die Dateinamen in der config.yaml Datei angegeben werden.)
+
 --> Textclassification, Information Extraction, Matching
 
-`python main.py --input_path "path_to_input_data" --db_mode {overwrite,append}`
+`python main.py --input_path "absolute_path_to_input_data" --db_mode {overwrite,append}`
+
+--> Input- und Trainingsdaten müssen in der quenfo_data Struktur liegen.
 
 Informationen über die erfolgten Abläufe und Ergebnisse werden in dem Modul `/logger` in den entsprechenden logging-Dateien gespeichert.
 
@@ -110,7 +112,6 @@ Der Code ist so struktuiert, dass sich die einzelnen Module (im Workflow s.o. er
  ┃ ┃ ┃ ┗ 📜__init__.py
  ┃ ┃ ┗ 📜__init__.py
  ┃ ┣ 📂configuration
- ┃ ┃ ┣ 📜config.yaml
  ┃ ┃ ┣ 📜config_model.py
  ┃ ┃ ┗ 📜__init__.py
  ┃ ┣ 📂database
@@ -162,7 +163,7 @@ Der Code ist so struktuiert, dass sich die einzelnen Module (im Workflow s.o. er
 #### Hauptbestandteile: Training, Classification, IE und Matching
 ##### Training
 Das Trainingsmodul besteht erstens aus dem Abgleich, ob ein Modell bereits vorhanden ist oder ob ein neues trainiert werden soll.
-Dafür wird einmal überprüft, ob bereits ein Model für den TfidfVectorizer und den KNN-Classifier vorliegt (Pfade dazu in config.yaml gesetzt). Liegt jeweils eins vor, wird überprüft,
+Dafür wird einmal überprüft, ob bereits ein Model für den TfidfVectorizer und den KNN-Classifier vorliegt (Dateinamen dazu in config.yaml gesetzt). Liegt jeweils eins vor, wird überprüft,
 
 1. ob die vorliegenden Trainingsdaten auch für das Modell verwendet wurden und 
 2. ob die Konfigurationseinstellungen der Modelle mit denen in der config.yaml gesetzten übereinstimmen.
@@ -200,9 +201,9 @@ TODO
 #### Support Module
 
 ##### configuration
-Das configuration-Modul enthält 
-1.  das **config.yaml** File, in dem die Konfigurationseinstellungen und Pfade gesetzt sind.
-2. das **config_models.py** Script, in dem die Klasse *Configuration* definiert wird, die getter, setter und checks für die in der Konfigurationsdatei enthaltenen Werte enthält.
+Das configuration-Modul enthält :
+1. das **config_models.py** Script, in dem die Klasse *Configuration* definiert wird, die getter, setter und checks für die in der Konfigurationsdatei enthaltenen Werte enthält.
+--> Die dazugehörige config.yaml Datei (in der die Konfigurationseinstellungen und Filenamen enthalten sind), befindet sich in der quenfo_data Struktur.
 
 ##### orm_handling
 Das Modul *orm_handling/* ist das Verbindungsstück zwischen Datenbank und Python-Tool. Hier werden Daten abgefragt und in Datenbanken geschrieben, mithilfe der Definition von Models, die die Datenbank-Tabellen abbilden. Verwendet wurde das Python-Package [SQLAlchemy](https://docs.sqlalchemy.org/en/14/orm/) um Object Relational Mapping umzusetzen.
@@ -246,7 +247,7 @@ Input-Path wird über die CMDLine mitgegeben und Output wird in die Input Datenb
 ***
 ### Configuration📋✔️
 ***
-In der Datei config.yaml sind alle Pfade und einstellbare Parameter vermerkt. Dadurch wird gewährleistet, dass im Code selbst für eine Anwendung nichts verändert werden muss. Alle Änderungen werden in der `config.yaml` Datei vorgenommen.
+In der Datei `config.yaml` sind alle Pfade und einstellbare Parameter vermerkt. Dadurch wird gewährleistet, dass im Code selbst für eine Anwendung nichts verändert werden muss. Alle Änderungen werden in der `config.yaml` Datei vorgenommen.
 
 Ansonsten können folgende Werte angepasst werden:
 - FeatureUnitConfiguration --> Wie sollen die FeatureUnits erstellt werden?
@@ -294,6 +295,7 @@ Alle Befehle werden relativ zum Ordner `code/` ausgeführt.
 ***
 
 #### Input
+--> Datei muss in der entsprechenden quenfo_data Struktur liegen.
 Als Input-Dateien müssen SQL-Datenbanken vorliegen. Die Tabelle mit den enthaltenen Stellenanzeigen sollte bestenfalls den Namen *jobads*  haben oder der neue Tabellenname muss manuell im Script *code/orm_handling/models.py *geändert werden. Die Daten müssen mindestens über folgende gefüllte Spalten verfügen, damit sie als Input-Daten verwendet werden können (egal ob als Test- oder Trainingsdaten):
 
 - id
@@ -330,7 +332,7 @@ Kompetenzen oder Tools werden durch StringMatching gefunden
 - modifier
 
 #### Trainingsdaten als Input
---> Pfadangabe in config.yaml notwendig
+--> Angabe des Dateinamens in config.yaml notwendig --> Datei muss in der spezifischen quenfo_data Struktur liegen.
 --> Trainingsdaten als SQLite Datenbank 
 --> Tablename = 'traindata' (oder Abänderung im Code orm.py)
 Folgende Spalten müssen vorliegen:

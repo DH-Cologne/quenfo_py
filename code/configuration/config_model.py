@@ -1,6 +1,7 @@
 # ## Imports
 import ruamel.yaml
 from pathlib import Path
+import os
 
 
 # Configuration Class
@@ -9,8 +10,12 @@ class Configurations:
         --> If not, set default values. """
 
     def __init__(self, arg_input_path, arg_db_mode):
+
+        # Get global_path (relative for all other needed files) from input_file
+        global_path = extract_globalpath(arg_input_path)
+
         # ## Open Configuration-file and set variables + paths
-        with open(Path('configuration/config.yaml'), 'r') as yamlfile:
+        with open(Path(os.path.join(global_path, 'config/config.yaml')), 'r') as yamlfile:
             yaml = ruamel.yaml.YAML(typ='safe')
             cfg = yaml.load(yamlfile)
             # classification config
@@ -18,13 +23,18 @@ class Configurations:
             c_query_limit = cfg['classification']['query_limit']
             c_fetch_size = cfg['classification']['fetch_size']
             c_start_pos = cfg['classification']['start_pos']
-            tfidf_path = cfg['classification']['models']['tfidf_path']
-            knn_path = cfg['classification']['models']['knn_path']
+            # model paths
+            tfidf_path = os.path.join(global_path, 'resources', cfg['classification']['models']['tfidf_path'])
+            knn_path = os.path.join(global_path, 'resources', cfg['classification']['models']['knn_path'])
+            # config modeling
             tfidf_config = cfg['classification']['tfidf_config']
             knn_config = cfg['classification']['knn_config']
-            traindata_path = cfg['resources']['traindata_path']
-            stopwords_path = cfg['resources']['stopwords_path']
-            regex_path = cfg['resources']['regex_path']
+            # resources
+            global_orm = [global_path, 'sqlite','orm']                                                   # subfolder orm
+            traindata_path = os.path.join(*global_orm, cfg['resources']['traindata_path'])
+            global_resources = [global_path, 'resources','classification']                               # subfolder resources
+            stopwords_path = os.path.join(*global_resources, cfg['resources']['stopwords_path'])
+            regex_path = os.path.join(*global_resources, cfg['resources']['regex_path'])
 
             # ie config
             ie_query_limit = cfg['ie_config']['query_limit']
@@ -35,15 +45,17 @@ class Configurations:
             ie_type = cfg['ie_config']['type']
 
             # competence paths
-            competence_path = cfg['resources']['competences_path']
-            no_competence_path = cfg['resources']['nocompetences_path']
-            modifier_path = cfg['resources']['modifier_path']
-            comppattern_path = cfg['resources']['comppattern_path']
+            global_comp = [global_path, 'resources','information_extraction','competences']         # subfolder for competences
+            competence_path = os.path.join(*global_comp, cfg['resources']['competences_path'])
+            no_competence_path = os.path.join(*global_comp, cfg['resources']['nocompetences_path'])
+            modifier_path = os.path.join(*global_comp, cfg['resources']['modifier_path'])
+            comppattern_path = os.path.join(*global_comp, cfg['resources']['comppattern_path'])
 
             # tool paths
-            tool_path = cfg['resources']['tools_path']
-            no_tools_path = cfg['resources']['notools_path']
-            toolpattern_path = cfg['resources']['toolpattern_path']
+            global_tools = [global_path, 'resources','information_extraction','tools']              # subfolder for tools
+            tool_path = os.path.join(*global_tools, cfg['resources']['tools_path'])
+            no_tools_path = os.path.join(*global_tools, cfg['resources']['notools_path'])
+            toolpattern_path = os.path.join(*global_tools, cfg['resources']['toolpattern_path'])
 
         # Set default values
         # classification
@@ -330,3 +342,20 @@ class Configurations:
             except KeyError:
                 current_dict.update({key: default_str})
         return current_dict
+
+def extract_globalpath(arg_input_path) -> str:
+    global_path = list()
+    for i in arg_input_path.split(os.sep):
+        global_path.append(i)
+        if i == 'quenfo_data':
+            # for windows add \
+            if global_path[0].endswith(':'):
+                global_path.insert(1, os.sep)
+            global_path = os.path.join(*global_path)
+            break
+    try:
+        Path(global_path).exists()
+        global_path = global_path
+    except (FileNotFoundError, NotADirectoryError):
+        global_path = None
+    return global_path
