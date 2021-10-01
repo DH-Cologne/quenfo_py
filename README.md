@@ -63,7 +63,7 @@ Mit der nachfolgenden Ausführung wird das gesamte Programm samt Default-Setting
 
 --> Textclassification, Information Extraction, Matching
 
-`python main.py --input_path "absolute_path/input_data.db" --db_mode {overwrite,append}`
+`python main.py --input_path "C:\absolute_path\quenfo_py_data\sqlite\orm\input_database.db" --db_mode {overwrite,append}`
 
 Informationen über die erfolgten Abläufe und Ergebnisse werden in dem Modul `/logger` in den entsprechenden logging-Dateien gespeichert.
 
@@ -112,7 +112,7 @@ Neben dem **quenfo_py** Repo wird ein Ordner namens **quenfo_py_data** benötigt
  ┃ ┗ 📂orm
  ┃ ┃ ┗ 📜input_data.db ❗
  ```
- 
+
  --> Weitere Informationen wie die Input- und Trainingsdaten aufgebaut sein müssen im letzten Kapitel unter (Daten-Aufbau)
 
 ***
