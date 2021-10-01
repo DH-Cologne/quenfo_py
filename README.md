@@ -79,8 +79,8 @@ Neben dem **quenfo_py** Repo wird ein Ordner namens **quenfo_py_data** benötigt
  ┃ ┣ 📂classification
  ┃ ┃ ┣ 📂trainingSets
  ┃ ┃ ┃ ┗ 📜traindata.db ❗
- ┃ ┃ ┣ 📜regex.txt (optional: wenn nicht vorhanden, wird nur KNN genutzt)
- ┃ ┃ ┗ 📜stopwords.txt (optional: wenn nicht vorhanden, werden keine SW entfernt)
+ ┃ ┃ ┣ 📜regex.txt	(optional: wenn nicht vorhanden, wird nur KNN genutzt)
+ ┃ ┃ ┗ 📜stopwords.txt	(optional: wenn nicht vorhanden, werden keine SW entfernt)
  ┃ ┣ 📂information_extraction
  ┃ ┃ ┣ 📂competences
  ┃ ┃ ┃ ┣ 📜competenceContexts.txt ❗
@@ -112,7 +112,7 @@ Neben dem **quenfo_py** Repo wird ein Ordner namens **quenfo_py_data** benötigt
  ┃ ┃ ┗ 📂tools
  ┃ ┗ 📂orm
  ┃ ┃ ┗ 📜input_data.db ❗
- ```
+```
 
  --> Weitere Informationen wie die Input- und Trainingsdaten aufgebaut sein müssen im letzten Kapitel unter (Daten-Aufbau)
 
@@ -201,7 +201,6 @@ Der Code ist so struktuiert, dass sich die einzelnen Module (im Workflow s.o. er
  ┣ 📜.gitignore
  ┗ 📜README.md
 ```
-
 ***
 ### Implementierung und Module 🛠️
 ***
@@ -303,6 +302,10 @@ Ansonsten können folgende Werte angepasst werden:
 - IE Configuration --> Wie soll die Information Extraction ablaufen?
 - Model Paths --> Pfade zu den Modellen (Tfidf und KNN)
 - Paths --> Resource Pfade zu den Benötigten Dateien
+
+Die **config.yaml** Datei kann wie folgt aussehen:
+<img src="docs/config.jpg"/>
+
 
 ***
 ### CommandLine - Befehle📢
