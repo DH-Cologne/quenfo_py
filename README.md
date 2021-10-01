@@ -59,16 +59,60 @@ cd in den Ordner **quenfo_py/code**: hier liegt die requirements Datei und das P
 
 `python -m pip install -r requirements.txt`
 
-Mit der nachfolgenden Ausführung wird das gesamte Programm samt Default-Settings aufgerufen (Input-und Trainingsdaten müssen zuvor in der quenfo_data
-Struktur liegen und der Dateiname des Trainingsfiles in der config.yaml Datei angegeben werden.)
+Mit der nachfolgenden Ausführung wird das gesamte Programm samt Default-Settings aufgerufen (Input-und Trainingsdaten müssen zuvor in der **quenfo_py_data** Struktur liegen (siehe im nachfolgenden Punkt) und der Dateiname des Trainingsfiles in der quenfo_py_data/config/config.yaml Datei angegeben werden.)
 
 --> Textclassification, Information Extraction, Matching
 
-`python main.py --input_path "absolute_path_to_input_data" --db_mode {overwrite,append}`
-
---> Input- und Trainingsdaten müssen in der quenfo_data Struktur liegen.
+`python main.py --input_path "absolute_path/input_data.db" --db_mode {overwrite,append}`
 
 Informationen über die erfolgten Abläufe und Ergebnisse werden in dem Modul `/logger` in den entsprechenden logging-Dateien gespeichert.
+
+❗ IMPORTANT ❗
+
+Neben dem **quenfo_py** Repo wird ein Ordner namens **quenfo_py_data** benötigt, der die nachfolgende Struktur enthalten muss. Mit ❗ sind die obligatorischen Dateien markiert, die in jedem Fall benötigt werden. Der Pfad zu der Input_Datei muss als **absolute Pfadangabe** über das CMDline Interface mitgegeben werden (s.u.). Ansonsten kann der Ordner an beliebiger Stelle im Verzeichnis liegen.
+
+📦**quenfo_py_data**
+ ┣ 📂config
+ ┃ ┗ 📜config.yaml ❗
+ ┣ 📂resources
+ ┃ ┣ 📂classification
+ ┃ ┃ ┣ 📂trainingSets
+ ┃ ┃ ┃ ┗ 📜traindata.db ❗
+ ┃ ┃ ┣ 📜regex.txt (optional: wenn nicht vorhanden, wird nur KNN genutzt)
+ ┃ ┃ ┗ 📜stopwords.txt (optional: wenn nicht vorhanden, werden keine SW entfernt)
+ ┃ ┣ 📂information_extraction
+ ┃ ┃ ┣ 📂competences
+ ┃ ┃ ┃ ┣ 📜competenceContexts.txt ❗
+ ┃ ┃ ┃ ┣ 📜competences.txt❗
+ ┃ ┃ ┃ ┣ 📜matchingStats.txt❗
+ ┃ ┃ ┃ ┣ 📜modifier.txt❗
+ ┃ ┃ ┃ ┗ 📜noCompetences.txt❗
+ ┃ ┃ ┗ 📂tools
+ ┃ ┃ ┃ ┣ 📜matchingStats.txt❗
+ ┃ ┃ ┃ ┣ 📜noTools.txt❗
+ ┃ ┃ ┃ ┣ 📜toolContexts.txt❗
+ ┃ ┃ ┃ ┗ 📜tools.txt❗
+ ┃ ┣ 📂nlp
+ ┃ ┃ ┣ 📂compounds
+ ┃ ┃ ┃ ┣ 📜possibleCompounds.txt❗
+ ┃ ┃ ┃ ┗ 📜splittedCompounds.txt❗
+ ┃ ┃ ┣ 📂matetools
+ ┃ ┃ ┃ ┣ 📜lemma-ger-3.6.model❗
+ ┃ ┃ ┃ ┗ 📜tag-ger-3.6.model❗
+ ┃ ┃ ┗ 📂openNLP
+ ┃ ┃ ┃ ┣ 📜de-sent.bin❗
+ ┃ ┃ ┃ ┗ 📜de-token.bin❗
+ ┃ ┣ 📜model_knn 	(optional, wird sonst trainiert)
+ ┃ ┗ 📜model_tfidf	(optional, wird sonst trainiert)
+ ┗ 📂sqlite
+ ┃ ┣ 📂information_extraction
+ ┃ ┃ ┗ 📂competences
+ ┃ ┣ 📂matching
+ ┃ ┃ ┗ 📂tools
+ ┃ ┗ 📂orm
+ ┃ ┃ ┗ 📜input_data.db ❗
+ 
+ --> Weitere Informationen wie die Input- und Trainingsdaten aufgebaut sein müssen im letzten Kapitel unter (Daten-Aufbau)
 
 ***
 ### Workflow🔁
@@ -203,7 +247,7 @@ TODO
 ##### configuration
 Das configuration-Modul enthält :
 1. das **config_models.py** Script, in dem die Klasse *Configuration* definiert wird, die getter, setter und checks für die in der Konfigurationsdatei enthaltenen Werte enthält.
---> Die dazugehörige config.yaml Datei (in der die Konfigurationseinstellungen und Filenamen enthalten sind), befindet sich in der quenfo_data Struktur.
+--> Die dazugehörige config.yaml Datei (in der die Konfigurationseinstellungen und Filenamen enthalten sind), befindet sich in der quenfo_py_data Struktur.
 
 ##### orm_handling
 Das Modul *orm_handling/* ist das Verbindungsstück zwischen Datenbank und Python-Tool. Hier werden Daten abgefragt und in Datenbanken geschrieben, mithilfe der Definition von Models, die die Datenbank-Tabellen abbilden. Verwendet wurde das Python-Package [SQLAlchemy](https://docs.sqlalchemy.org/en/14/orm/) um Object Relational Mapping umzusetzen.
@@ -247,7 +291,7 @@ Input-Path wird über die CMDLine mitgegeben und Output wird in die Input Datenb
 ***
 ### Configuration📋✔️
 ***
-In der Datei `config.yaml` sind alle Pfade und einstellbare Parameter vermerkt. Dadurch wird gewährleistet, dass im Code selbst für eine Anwendung nichts verändert werden muss. Alle Änderungen werden in der `config.yaml` Datei vorgenommen.
+In der Datei `config.yaml` sind alle Pfade und einstellbare Parameter vermerkt. Dadurch wird gewährleistet, dass im Code selbst für eine Anwendung nichts verändert werden muss. Alle Änderungen werden in der `config.yaml` Datei vorgenommen. Datei liegt in **quenfo_py_data/config/config.yaml**
 
 Ansonsten können folgende Werte angepasst werden:
 - FeatureUnitConfiguration --> Wie sollen die FeatureUnits erstellt werden?
@@ -295,7 +339,7 @@ Alle Befehle werden relativ zum Ordner `code/` ausgeführt.
 ***
 
 #### Input
---> Datei muss in der entsprechenden quenfo_data Struktur liegen.
+--> Datei muss in der entsprechenden quenfo_py_data Struktur liegen.
 Als Input-Dateien müssen SQL-Datenbanken vorliegen. Die Tabelle mit den enthaltenen Stellenanzeigen sollte bestenfalls den Namen *jobads*  haben oder der neue Tabellenname muss manuell im Script *code/orm_handling/models.py *geändert werden. Die Daten müssen mindestens über folgende gefüllte Spalten verfügen, damit sie als Input-Daten verwendet werden können (egal ob als Test- oder Trainingsdaten):
 
 - id
@@ -303,6 +347,19 @@ Als Input-Dateien müssen SQL-Datenbanken vorliegen. Die Tabelle mit den enthalt
 - postingID
 - language
 - jahrgang
+
+#### Trainingsdaten
+--> Angabe des Dateinamens in config.yaml notwendig --> Datei muss in der spezifischen quenfo_py_data Struktur liegen.
+--> Trainingsdaten als SQLite Datenbank 
+--> Tablename = 'traindata' (oder Abänderung im Code orm.py)
+Folgende Spalten müssen vorliegen:
+- content
+- classID
+- index
+- postingID
+- zeilennr
+
+--> Zusätzliches file *make_sql_traindata.py*  in *additional_scripts/* Folder kann benutzt werden um tsv-Dateien in SQLite Datenbank zu konvertieren.
 
 #### Output
 
@@ -331,18 +388,6 @@ Kompetenzen oder Tools werden durch StringMatching gefunden
 - lemmaExpression
 - modifier
 
-#### Trainingsdaten als Input
---> Angabe des Dateinamens in config.yaml notwendig --> Datei muss in der spezifischen quenfo_data Struktur liegen.
---> Trainingsdaten als SQLite Datenbank 
---> Tablename = 'traindata' (oder Abänderung im Code orm.py)
-Folgende Spalten müssen vorliegen:
-- content
-- classID
-- index
-- postingID
-- zeilennr
-
---> Zusätzliches file *make_sql_traindata.py*  in *additional_scripts/* Folder kann benutzt werden um tsv-Dateien in SQLite Datenbank zu konvertieren.
 
 
 
