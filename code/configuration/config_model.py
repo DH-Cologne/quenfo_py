@@ -345,7 +345,7 @@ class Configurations:
 
 def extract_globalpath(arg_input_path) -> str:
     try:
-        global_path = os.path.join((arg_input_path.split('quenfo_data'))[0], 'quenfo_data')
+        global_path = os.path.join((arg_input_path.split('quenfo_py_data'))[0], 'quenfo_py_data')
         Path(global_path).exists()
         global_path = global_path
     except (FileNotFoundError, NotADirectoryError):

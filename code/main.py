@@ -54,7 +54,7 @@
     --input_path INPUT_PATH
     --db_mode {overwrite,append}
 
-CLI-example: python main.py --classification --input_path "C:\absolute_path\quenfo_data\sqlite\orm\input_database.db" --db_mode overwrite """
+CLI-example: python main.py --classification --input_path "C:\absolute_path\quenfo_py_data\sqlite\orm\input_database.db" --db_mode overwrite """
 
 # ## Imports
 import configuration
