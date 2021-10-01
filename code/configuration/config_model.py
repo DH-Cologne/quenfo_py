@@ -31,9 +31,8 @@ class Configurations:
             tfidf_config = cfg['classification']['tfidf_config']
             knn_config = cfg['classification']['knn_config']
             # resources
-            global_orm = [global_path, 'sqlite','orm']                                                   # subfolder orm
-            traindata_path = os.path.join(*global_orm, cfg['resources']['traindata_path'])
             global_resources = [global_path, 'resources','classification']                               # subfolder resources
+            traindata_path = os.path.join(*global_resources, 'trainingSets', cfg['resources']['traindata_path'])
             stopwords_path = os.path.join(*global_resources, cfg['resources']['stopwords_path'])
             regex_path = os.path.join(*global_resources, cfg['resources']['regex_path'])
 
