@@ -2,6 +2,7 @@
 import ruamel.yaml
 from pathlib import Path
 import os
+import logger
 
 
 # Configuration Class
@@ -344,18 +345,12 @@ class Configurations:
         return current_dict
 
 def extract_globalpath(arg_input_path) -> str:
-    global_path = list()
-    for i in arg_input_path.split(os.sep):
-        global_path.append(i)
-        if i == 'quenfo_data':
-            # for windows add \
-            if global_path[0].endswith(':'):
-                global_path.insert(1, os.sep)
-            global_path = os.path.join(*global_path)
-            break
     try:
+        global_path = os.path.join((arg_input_path.split('quenfo_data'))[0], 'quenfo_data')
         Path(global_path).exists()
         global_path = global_path
     except (FileNotFoundError, NotADirectoryError):
         global_path = None
+        logger.log_main.error(f'Global_path {global_path} could not be resolved. Error was raised. Check again input_path.')
+        print(f'Global_path {global_path} could not be resolved. Error was raised. Check again input_path.')
     return global_path
