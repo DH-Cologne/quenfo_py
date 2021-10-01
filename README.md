@@ -70,8 +70,8 @@ Informationen über die erfolgten Abläufe und Ergebnisse werden in dem Modul `/
 ❗ IMPORTANT ❗
 
 Neben dem **quenfo_py** Repo wird ein Ordner namens **quenfo_py_data** benötigt, der die nachfolgende Struktur enthalten muss. Mit ❗ sind die obligatorischen Dateien markiert, die in jedem Fall benötigt werden. Der Pfad zu der Input_Datei muss als **absolute Pfadangabe** über das CMDline Interface mitgegeben werden (s.u.). Ansonsten kann der Ordner an beliebiger Stelle im Verzeichnis liegen.
-
-📦**quenfo_py_data**
+```
+📦quenfo_py_data
  ┣ 📂config
  ┃ ┗ 📜config.yaml ❗
  ┣ 📂resources
@@ -111,6 +111,7 @@ Neben dem **quenfo_py** Repo wird ein Ordner namens **quenfo_py_data** benötigt
  ┃ ┃ ┗ 📂tools
  ┃ ┗ 📂orm
  ┃ ┃ ┗ 📜input_data.db ❗
+ ```
  
  --> Weitere Informationen wie die Input- und Trainingsdaten aufgebaut sein müssen im letzten Kapitel unter (Daten-Aufbau)
 
