@@ -330,8 +330,11 @@ Alle Befehle werden relativ zum Ordner `code/` ausgeführt.
 **Beispiel**
 
 `python main.py --classification --input_path "this/is/my/input/path.db --db_mode overwrite`
+
 In CMDLine:
+
 <img src="docs/cmd_clf.jpg"/>
+
 --> Hier wird nur die Classification aufgerufen und die im input_path mitgegebene Datei verarbeitet. Sollten bereits ClassifyUnits vorhanden sein, werden diese überschrieben.
 
 
@@ -357,6 +360,7 @@ Als Input-Dateien müssen SQL-Datenbanken vorliegen. Die Tabelle mit den enthalt
 - jahrgang
 
 Ausschnitt aus db:
+
 <img src="docs/input.jpg"/>
 
 #### Trainingsdaten
@@ -371,6 +375,7 @@ Folgende Spalten müssen vorliegen:
 - zeilennr
 
 Ausschnitt aus db:
+
 <img src="docs/traindata.jpg"/>
 
 --> Zusätzliches file *make_sql_traindata.py*  in *additional_scripts/* Folder kann benutzt werden um tsv-Dateien in SQLite Datenbank zu konvertieren.
