@@ -330,7 +330,10 @@ Alle Befehle werden relativ zum Ordner `code/` ausgeführt.
 **Beispiel**
 
 `python main.py --classification --input_path "this/is/my/input/path.db --db_mode overwrite`
+In CMDLine:
+<img src="docs/cmd_clf.jpg"/>
 --> Hier wird nur die Classification aufgerufen und die im input_path mitgegebene Datei verarbeitet. Sollten bereits ClassifyUnits vorhanden sein, werden diese überschrieben.
+
 
 `python main.py --input_path "this/is/my/input/path.db --db_mode append`
 --> Da hier kein Wert mitgegeben wurde, welcher Teil des Tools aufgerufen werden soll, werden alle drei Steps nacheinander durchlaufen (1. Classification, 2. IE, 3. Matching). Da der db_mode *append*  gesetzt wurde, werden ClassifyUnits (die bereits gegeben sein könnten in der input_db) nicht überschrieben und nur noch nicht verarbeitete hinzugefügt.
@@ -353,6 +356,9 @@ Als Input-Dateien müssen SQL-Datenbanken vorliegen. Die Tabelle mit den enthalt
 - language
 - jahrgang
 
+Ausschnitt aus db:
+<img src="docs/input.jpg"/>
+
 #### Trainingsdaten
 --> Angabe des Dateinamens in config.yaml notwendig --> Datei muss in der spezifischen quenfo_py_data Struktur liegen.
 --> Trainingsdaten als SQLite Datenbank 
@@ -363,6 +369,9 @@ Folgende Spalten müssen vorliegen:
 - index
 - postingID
 - zeilennr
+
+Ausschnitt aus db:
+<img src="docs/traindata.jpg"/>
 
 --> Zusätzliches file *make_sql_traindata.py*  in *additional_scripts/* Folder kann benutzt werden um tsv-Dateien in SQLite Datenbank zu konvertieren.
 
