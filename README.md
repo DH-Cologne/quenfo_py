@@ -114,6 +114,18 @@ Neben dem **quenfo_py** Repo wird ein Ordner namens **quenfo_py_data** benötigt
  ┃ ┃ ┗ 📜input_data.db ❗
 ```
 
+in den Ordner information_extraction/data/openNLPmodels/
+--> de-sent.bin & de-token.bin (downloadlink: http://opennlp.sourceforge.net/models-1.5/)
+--> ger-tagger+lemmatizer+morphology+graph-based-3.6+.tgz (downloadlink: https://code.google.com/archive/p/mate-tools/downloads)
+
+in den Ordner information_extraction/data/competences/
+--> competences.txt (leer, oder mit bereits bekannten/extrahierten Kompetenzausdrücken)
+--> noCompetences.txt (leer, oder mit Falschextraktionen, die nicht wiederholt werden sollen)
+
+in den Ordner information_extraction/data/tools/
+--> tools.txt (leer, oder mit bereits bekannten/extrahierten Tools)
+--> noTools.txt (leer, oder mit Falschextraktionen, die nicht wiederholt werden sollen)
+
  --> Weitere Informationen wie die Input- und Trainingsdaten aufgebaut sein müssen im letzten Kapitel unter (Daten-Aufbau)
 
 ***
