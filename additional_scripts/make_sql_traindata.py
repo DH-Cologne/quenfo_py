@@ -5,7 +5,7 @@ from sqlite3 import Error
 
 # Paths definieren
 input_path = '..\\..\\quenfo_data\\resources\\classification\\trainingSets\\trainingdata_anonymized.tsv'
-output_path = '..\\..\\quenfo_v1_1_3\\quenfo_data\\sqlite\\orm\\traindata_sql.db'
+output_path = '..\\..\\traindata_sql.db'
 
 
 # Loads Input Data (Trainingdata) and readlines
@@ -47,7 +47,7 @@ def transfer_lines_to_df(filelines):
             list_df_prepraration= []
  
     # Generate df with all rows in specific columns
-    df = pd.DataFrame(all_rows, columns=['postingId', 'zeilennr', 'classID', 'content'])
+    df = pd.DataFrame(all_rows, columns=['postingID', 'zeilennr', 'classID', 'content'])
     return df
 
 

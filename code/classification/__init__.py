@@ -72,7 +72,7 @@ def classify(model: Model) -> None:
 
         # Commit generated classify units with paragraphs and classes to table
         orm.pass_output(database.session)
-        counter += len(jobads)  # update counter
+        counter += len(jobads)      # update counter
         current_pos += len(jobads)  # update current position
 
         logger.log_clf.info(

@@ -58,7 +58,6 @@ class ClassifyUnits(Base):
     parent_id = Column(Integer, ForeignKey('jobads.id'))                # ClassifyUnits have a parent-child relationship as a child with JobAds.
     parent = relationship("JobAds", back_populates="children")          # ForeignKey to connect both Classes
     children = relationship("ExtractionUnits", back_populates="parent") # Each CU is parent of ExtractionUnits
-    id_iter = itertools.count()                                         # Set uid for each classify unit
     featureunits = list()                                               # Set featureunit
     featurevectors = list()                                             # Set featurevector
 
@@ -91,22 +90,22 @@ class TrainingData(Base):
     """ Checks and sets all TrainingData values. Defines tablename, columnnames and makes values reachable. """
     __tablename__ = 'traindata'                                                 # Tablename for matching with db table
     index = Column(Integer, Sequence('index'), primary_key=True)                # Columns to query
-    postingId = Column('postingId', Integer)
+    postingID = Column('postingID', Integer)
     zeilennr = Column('zeilennr')
     classID = Column('classID')
     content = Column('content')
     children2 = relationship("ClassifyUnits_Train", back_populates="parent2")   # parent-child relationship as a parent
 
     # init-function to set values
-    def __init__(self, postingId, zeilennr, classID, content):
-        self.postingId = postingId
+    def __init__(self, postingID, zeilennr, classID, content):
+        self.postingID = postingID
         self.zeilennr = zeilennr
         self.classID = classID
         self.content = content
 
     # Name the objects
     def __repr__(self):
-        return "(%s, %s, %s)" % (self.postingId, self.zeilennr, self.classID)
+        return "(%s, %s, %s)" % (self.postingID, self.zeilennr, self.classID)
 
 
 # Class ClassifyUnits_Train

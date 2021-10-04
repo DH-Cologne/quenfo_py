@@ -53,8 +53,7 @@ def get_jobads(current_pos: int) -> list:
 
     # load the jobads
     # job_ads = database.session.query(JobAds).slice(current_pos, (current_pos+fetch_size)).all()            # 0:02:26.691769 bei 2500 JobAds and 0:16:07.362719 bei 9593
-    job_ads = database.session.query(JobAds).order_by('id').offset(current_pos).limit(
-        fetch_size).all()  # 0:02:25.670638 bei 2500 JobAds and 0:14:19.315887 bei 9593
+    job_ads = database.session.query(JobAds).order_by('id').offset(current_pos).limit(fetch_size).all()      # 0:02:25.670638 bei 2500 JobAds and 0:14:19.315887 bei 9593
     # job_ads = database.session.query(JobAds).where(current_pos<(current_pos+fetch_size)).all()             # 0:02:21.205672 bei 2500 JobAds and 0:13:37.800832 bei 9593
 
     try:
@@ -319,6 +318,7 @@ def create_output(session: Session, output: object, table_type: str):
 
     # db_mode: append data or overwrite it
     db_mode = configuration.config_obj.get_mode()
+    
     if db_mode == "overwrite":
         __check_once(table_type)
         session.add(output)
