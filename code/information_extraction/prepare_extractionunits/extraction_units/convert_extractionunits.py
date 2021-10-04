@@ -5,7 +5,7 @@ import spacy
 import re
 
 from information_extraction.models import TextToken
-from information_extraction.prepare_resources import modifier, get_entities, get_no_entities
+from information_extraction.prepare_resources import get_entities, get_no_entities, get_modifier
 from information_extraction.prepare_resources.convert_entities import normalize_entities
 
 # load nlp-model for sentence detection, pos tagger and lemmatizer
@@ -213,6 +213,7 @@ def annotate_token(token: list, ie_mode: str) -> 'list[TextToken]':
     annotate_list = list()
     known_entities = get_entities(ie_mode)
     no_entities = get_no_entities(ie_mode)
+    modifier = get_modifier()
 
     for i in range(len(token)):
         lemma = normalize_entities(token[i].lemma)
@@ -239,7 +240,7 @@ def annotate_token(token: list, ie_mode: str) -> 'list[TextToken]':
             matched_modifier = [m for m in modifier if m.start_lemma == lemma]
             for mod in matched_modifier:
                 if mod.is_single_word:
-                    token[i].set_modifier(True)
+                    token[i].set_modifier_token(True)
                     continue
                 matches = False
                 for j in range(len(mod.lemma_array)):
@@ -250,7 +251,7 @@ def annotate_token(token: list, ie_mode: str) -> 'list[TextToken]':
                     if not matches:
                         break
                 if matches:
-                    token[i].set_modifier(True)
+                    token[i].set_modifier_token(True)
                     token[i].tokensToCompleteModifier = len(mod.lemma_array) - 1
         annotate_list.append(token[i])
 

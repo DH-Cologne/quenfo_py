@@ -60,3 +60,7 @@ def get_no_entities(ie_mode: str) -> list:
         all_entities.extend(no_competences)
         all_entities.extend(no_tools)
         return all_entities
+
+
+def get_modifier() -> list:
+    return modifier
