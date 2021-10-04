@@ -97,12 +97,6 @@ Neben dem **quenfo_py** Repo wird ein Ordner namens **quenfo_py_data** benötigt
  ┃ ┃ ┣ 📂compounds
  ┃ ┃ ┃ ┣ 📜possibleCompounds.txt❗
  ┃ ┃ ┃ ┗ 📜splittedCompounds.txt❗
- ┃ ┃ ┣ 📂matetools
- ┃ ┃ ┃ ┣ 📜lemma-ger-3.6.model❗
- ┃ ┃ ┃ ┗ 📜tag-ger-3.6.model❗
- ┃ ┃ ┗ 📂openNLP
- ┃ ┃ ┃ ┣ 📜de-sent.bin❗
- ┃ ┃ ┃ ┗ 📜de-token.bin❗
  ┃ ┣ 📜model_knn 	(optional, wird sonst trainiert)
  ┃ ┗ 📜model_tfidf	(optional, wird sonst trainiert)
  ┗ 📂sqlite
@@ -113,11 +107,6 @@ Neben dem **quenfo_py** Repo wird ein Ordner namens **quenfo_py_data** benötigt
  ┃ ┗ 📂orm
  ┃ ┃ ┗ 📜input_data.db ❗
 ```
-
-in den Ordner information_extraction/data/openNLPmodels/
-
-- de-sent.bin & de-token.bin (downloadlink: http://opennlp.sourceforge.net/models-1.5/)
-- ger-tagger+lemmatizer+morphology+graph-based-3.6+.tgz (downloadlink: https://code.google.com/archive/p/mate-tools/downloads)
 
 in den Ordner information_extraction/data/competences/
 
