@@ -168,7 +168,7 @@ class ExtractedEntity(InformationEntity):
         super(ExtractedEntity, self).__init__(ie_type, start_lemma, is_single_word)
         self.pattern = pattern
 
-    def set_conf(self, used_pattern: list[Pattern]):
+    def set_conf(self, used_pattern: "list[Pattern]"):
         self.conf = 0.0
         product = 0.0
         conf_value = list()
