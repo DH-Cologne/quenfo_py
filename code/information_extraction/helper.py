@@ -13,7 +13,7 @@ def remove_modifier(extraction: ExtractedEntity):
         if t + skip >= len(lemma_list):
             break
         lemma = normalize_entities(lemma_list[t + skip])
-        matched_modifier = [m for m in modifier if m.start_lemma == lemma]
+        matched_modifier = [m for m in modifier if m.start_lemma == hash(lemma)]
         if matched_modifier:
             required = -1
             match = False
