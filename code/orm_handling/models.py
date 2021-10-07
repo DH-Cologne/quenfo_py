@@ -21,7 +21,6 @@ Base = declarative_base()
 
 # *** JOBADS/CU MODELS ***
 
-
 # Class JobAds
 class JobAds(Base):
     """ Checks and sets all JobAds values. Defines tablename, columnnames and makes values reachable. """
@@ -143,12 +142,16 @@ class ClassifyUnits_Train(Base):
     def set_classID(self, value):
         self.classID = value
 
+# *** IE MODELS ***
 
+
+# class ExtractionUnits
 class ExtractionUnits(Base):
     """ Checks and sets all ExtractionUnits values. Defines tablename, columnnames and makes values reachable. """
     parent_id = Column(Integer, ForeignKey('classify_units.id'))                # ExtractionUnits have a parent-child relationship as a child with ClassifyUnits.
     parent = relationship('ClassifyUnits', back_populates="children")           # ForeignKey to connect both Classes
-    children = relationship("InformationEntity", back_populates="parent")       # parent-child relationship as a parent
+    children = relationship("ExtractedEntity", back_populates="parent")       # parent-child relationship as a parent
+    # children = relationship("MatchedEntity", back_populates="parent")
     __tablename__ = 'extraction_units'                                          # Tablename for matching with db table
     id = Column(Integer, primary_key=True)                                      # Columns to query
     paragraph = Column('paragraph', String(225))
@@ -172,12 +175,10 @@ class ExtractionUnits(Base):
         self.pos_tags = pos_tags
 
 
-class InformationEntity(Base):
-    """ Checks and sets all InformationEntity values. Defines tablename, columnnames and makes values reachable. """
-    parent_id = Column(Integer, ForeignKey('extraction_units.id'))              # InformationEntity have a parent-child relationship as a child with ExtractionUnits.
-    parent = relationship('ExtractionUnits', back_populates="children")         # ForeignKey to connect both Classes
-    __tablename__ = 'extracted_entities'                                        # Tablename for matching with db table
-    id = Column(Integer, primary_key=True)                                      # Columns to query
+# class InformationEntity, extended by ie models
+class InformationEntity:
+    """ Checks and sets all InformationEntity values. Defines columnnames and makes values reachable. """
+    id = Column(Integer, primary_key=True)  # Columns to query
     sentence = Column('extraction_unit', String(225))                           # extraction_unit with found entity
     ie_type = Column("ie_type", String(225))                                    # type
     start_lemma = Column("start_lemma", String(225))                            # start_lemma: first string

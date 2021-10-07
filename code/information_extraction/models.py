@@ -1,7 +1,10 @@
 """Models using for information extraction."""
-from sqlalchemy import Column, String, Float
 
-from orm_handling.models import InformationEntity
+# ## Imports
+from sqlalchemy import Column, String, Float, Integer, ForeignKey
+from sqlalchemy.orm import relationship
+
+from orm_handling.models import InformationEntity, Base
 
 
 class Token:
@@ -22,6 +25,7 @@ class Token:
         self.pos_tag = pos_tag
         self.lemma = lemma
 
+    # Setter
     def set_ie_token(self, ie_token):
         self.ie_token = ie_token
 
@@ -37,12 +41,20 @@ class Token:
 
 
 class TextToken(Token):
+    """Represents a single Token of an ExtractionUnit (~ Sentence), consisting of String, Lemma and PosTag.
+    A TextToken can be marked as (the first token of) a known Information-Entity (= competence or tool)
+    or (the first token of) an importanceTerm (modifier)."""
+
+    # if token is first token of an IE: number of left token in sentence
     tokensToCompleteInformationEntity = 0
+    # if token is first token of a modifier: number of left token in sentence
     tokensToCompleteModifier = 0
 
+    # init-function to set values, works as constructor
     def __init__(self, token, lemma, pos_tag):
         super(TextToken, self).__init__(token, lemma, pos_tag)
 
+    # Setter
     def set_ie_token(self, ie_token):
         super(TextToken, self).set_ie_token(ie_token)
 
@@ -57,24 +69,41 @@ class TextToken(Token):
         return super(TextToken, self).string_representation()
 
     def is_equals_pattern_token(self, pattern_token) -> bool:
+        """Compares current TextToken with given PatternToken.
+
+                Parameters:
+                ----------
+                    pattern_token: PatternToken
+                        Receives an object from class PatternToken.
+
+                Returns:
+                -------
+                    bool if TextToken and PatternToken are equal"""
+
         if pattern_token.token is not None:
+            # split token by '|'
             pattern_strings = pattern_token.get_token().split(r'|')
             match = False
+            # compares each pattern token with text token
             for string in pattern_strings:
                 match = string.__eq__(self.token)
                 if match:
                     break
             if not match:
                 return False
+
         elif pattern_token.pos_tag is not None:
+            # split pos tags by '|'
             pattern_pos = pattern_token.pos_tag.split(r'|')
             if pattern_pos[0].startswith(r'-'):
+                # compares each pattern pos tag with text pos tag
                 for pos in pattern_pos:
                     pos = pos[1: len(pos)]
                     if pos.__eq__(self.pos_tag):
                         return False
             else:
                 match = False
+                # compares each pattern pos tag with text pos tag
                 for pos in pattern_pos:
                     if pos.startswith(r'-'):
                         match = not (pos.__eq__(self.pos_tag))
@@ -84,12 +113,15 @@ class TextToken(Token):
                         break
                     if not match:
                         return False
+
         elif pattern_token.lemma is not None:
             if pattern_token.modifier_token:
                 return self.modifier_token
             else:
+                # split lemmas by '|'
                 lemmas = pattern_token.lemma.split(r'|')
                 match = False
+                # compares each pattern lemma with text lemma
                 for lemma in lemmas:
                     if lemma.startswith(r'-'):
                         match = self.lemma.endswith(lemma[1: len(lemma)])
@@ -101,20 +133,24 @@ class TextToken(Token):
                         break
                 if not match:
                     return False
+
         elif pattern_token.ie_token:
             return self.ie_token
+
         return True
 
 
 class Pattern:
     """Represents an Extraction-Pattern to identify Information (e.g. competences or tools) in JobAds. Consist of
     several PatternTokens and a Pointer to the Token(s) which has to be extracted in case of a match. """
+
     pattern_token = list()
     extraction_pointer = list()
     description = str()
     id = int()
     conf = float()
 
+    # init-function to set values, works as constructor
     def __init__(self, pattern_token, extraction_pointer, description, id):
         self.pattern_token = pattern_token
         self.extraction_pointer = extraction_pointer
@@ -133,6 +169,7 @@ class Pattern:
     def get_size(self) -> int:
         return len(self.pattern_token)
 
+    # return token at specific index
     def get_token_at_index(self, index: int) -> Token:
         return self.pattern_token[index]
 
@@ -161,6 +198,7 @@ class PatternToken(Token):
         if ie_token:
             super(PatternToken, self).set_ie_token(True)
 
+    # Setter
     def set_ie_token(self, ie_token):
         super(PatternToken, self).set_ie_token(ie_token)
 
@@ -182,10 +220,18 @@ class PatternToken(Token):
         return full_expression
 
 
-class ExtractedEntity(InformationEntity):
+class ExtractedEntity(InformationEntity, Base):
+    """Represents a single information instance (a tool or a competence)
+    defined by an expression of one or more lemmata. Class for Information Extraction."""
+
+    parent_id = Column(Integer, ForeignKey(
+        'extraction_units.id'))  # InformationEntity have a parent-child relationship as a child with ExtractionUnits.
+    parent = relationship('ExtractionUnits', back_populates="children")  # ForeignKey to connect both Classes
+    __tablename__ = 'extracted_entities'  # Tablename for matching with db table
     conf = Column('conf', Float)
     pattern = Column('pattern_string', String(225))  # matched pattern description
 
+    # init-function to set values, works as constructor
     def __init__(self, pattern, ie_type, start_lemma, is_single_word):
         super(ExtractedEntity, self).__init__(ie_type, start_lemma, is_single_word)
         self.pattern = pattern
@@ -222,9 +268,17 @@ class ExtractedEntity(InformationEntity):
         self.conf = 1 - product
 
 
-class MatchedEntity(InformationEntity):
+class MatchedEntity(InformationEntity, Base):
+    """Represents a single information instance (a tool or a competence)
+    defined by an expression of one or more lemmata. Class for Matching."""
+
+    """parent_id = Column(Integer, ForeignKey(
+        'extraction_units.id'))  # InformationEntity have a parent-child relationship as a child with ExtractionUnits.
+    parent = relationship('ExtractionUnits', back_populates="children")  # ForeignKey to connect both Classes"""
+    __tablename__ = 'matched_entities'  # Tablename for matching with db table
     labels = set()
 
+    # init-function to set values, works as constructor
     def __init__(self, start_lemma, is_single_word, ie_type, label):
         super(MatchedEntity, self).__init__(ie_type=ie_type, start_lemma=start_lemma, is_single_word=is_single_word)
         self.labels = label
@@ -250,13 +304,16 @@ class MatchedEntity(InformationEntity):
 
 
 class Modifier:
+    """Represents a single modifier instance defined by an expression of one or more lemmata."""
     start_lemma = str()
     lemma_array = list()
     is_single_word = bool()
 
+    # init-function to set values, works as constructor
     def __init__(self, start_lemma, is_single_word):
         self.start_lemma = start_lemma
         self.is_single_word = is_single_word
 
+    # Setter
     def set_lemma_array(self, lemma_array):
         self.lemma_array = lemma_array

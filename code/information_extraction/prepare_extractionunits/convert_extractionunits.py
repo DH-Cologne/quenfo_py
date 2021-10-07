@@ -3,7 +3,6 @@
 # ## Imports
 import spacy
 import re
-
 from information_extraction.models import TextToken
 from information_extraction.prepare_resources import get_entities, get_no_entities, get_modifier
 from information_extraction.prepare_resources.convert_entities import normalize_entities
@@ -11,14 +10,13 @@ from information_extraction.prepare_resources.convert_entities import normalize_
 # load nlp-model for sentence detection, pos tagger and lemmatizer
 nlp = spacy.load("de_core_news_sm")
 
-# load variables
+# set variables
 known_entities = list()
 no_entities = list()
 modifier = list()
 
-# ##Functions
 
-# Split into Sentences
+# ## Functions
 def split_into_sentences(content: str) -> list:
     """Get ExtractionUnits:
         +++ Step 1: Split Paragraph into Sentences. Take use of SentenceRecognizer from Spacy.+++
@@ -34,8 +32,8 @@ def split_into_sentences(content: str) -> list:
             list of sentences from the ClassifyUnit-Content"""
 
     extractionunits = list()
-    # Construction from class and apply the SentenceRecognizer
 
+    # Construction from class and apply the SentenceRecognizer
     list_extractionunits = nlp(content)
 
     for eu in list_extractionunits.sents:
@@ -47,7 +45,7 @@ def split_into_sentences(content: str) -> list:
     return extractionunits
 
 
-# Split list items into single sentences
+# Private function to split list items into single sentences
 def __split_list_items(sentence: str) -> list:
     extractionunits = list()
     # split sentence at empty lines
@@ -70,7 +68,7 @@ def __split_list_items(sentence: str) -> list:
     return extractionunits
 
 
-# check if sentence contains word characters
+# Private funtion to check if sentence contains word characters
 def __contains_only_word_characters(string: str) -> bool:
     # regex for word character
     word_regex = re.compile(r"\w")
@@ -79,11 +77,11 @@ def __contains_only_word_characters(string: str) -> bool:
     return False
 
 
+# Private funtion to split sentence at empty line
 def __split_at_empty_line(content: str) -> list:
     return content.split("\n")
 
 
-# correct sentence
 def normalize_sentence(sentence: str) -> str:
     """Get ExtractionUnits:
             +++ Step 2: Correct specific elements of the sentence. +++
@@ -147,6 +145,18 @@ def normalize_sentence(sentence: str) -> str:
 
 
 def get_token(sentence: str) -> list:
+    """Get ExtractionUnits:
+                +++ Step 3: Get lexical data from tokens. +++
+
+                Parameters:
+                -----------
+                sentence: str
+                    Receives sentence as potential ExtractionUnit.
+
+                Returns:
+                --------
+                list
+                    list of token"""
     tokens = list()
 
     pre_token =nlp(sentence)
@@ -156,7 +166,6 @@ def get_token(sentence: str) -> list:
     return tokens
 
 
-# get POS-tag for each token of given sentence
 def get_pos_tags(sentence: str) -> list:
     """Get ExtractionUnits:
                 +++ Step 3: Get lexical data from tokens. +++
@@ -164,7 +173,7 @@ def get_pos_tags(sentence: str) -> list:
                 Parameters:
                 -----------
                 sentence: str
-                        Receives sentence as potential ExtractionUnit.
+                    Receives sentence as potential ExtractionUnit.
 
                 Returns:
                 --------
@@ -179,20 +188,19 @@ def get_pos_tags(sentence: str) -> list:
     return pos_tags
 
 
-# get lemma for each token of given sentence
 def get_lemmata(sentence: str) -> list:
     """Get ExtractionUnits:
-                    +++ Step 3: Get lexical data from tokens. +++
+                +++ Step 3: Get lexical data from tokens. +++
 
-                    Parameters:
-                    -----------
-                    sentence: str
-                        Receives sentence as potential ExtractionUnit.
+                Parameters:
+                -----------
+                sentence: str
+                    Receives sentence as potential ExtractionUnit.
 
-                    Returns:
-                    --------
-                    list
-                        list of lemma for each token"""
+                Returns:
+                --------
+                list
+                    list of lemma for each token"""
     lemmata = list()
 
     pre_lemmata = nlp(sentence)
@@ -204,49 +212,59 @@ def get_lemmata(sentence: str) -> list:
 
 def annotate_token(token: list, ie_mode: str) -> 'list[TextToken]':
     """Get ExtractionUnits:
-                    +++ Step 4: Annotate tokens by comparing them with list of extraction errors,
-                    modifiers and known extractions. +++
+                +++ Step 4: Annotate tokens by comparing them with list of extraction errors,
+                modifiers and known extractions. +++
 
-                    Parameters:
-                    -----------
-                        token: list of Token
-                            Receives list with tokens from ExtractionUnit
-                        ie_mode: str
-                            Receives a string with the current extraction mode: competences or tools"""
+                Parameters:
+                -----------
+                token: list of Token
+                    Receives list with tokens from ExtractionUnit
+                ie_mode: str
+                    Receives a string with the current extraction mode: competences or tools"""
 
+    # set globals
     global known_entities, no_entities, modifier
 
+    # get data from resource
     known_entities = get_entities(ie_mode)
     no_entities = get_no_entities(ie_mode)
     modifier = get_modifier()
 
+    # call different methods depending on the list
     if known_entities:
-        token = annotate_entities(token)
+        token = __annotate_entities(token)
     if no_entities:
-        token = annotate_negatives(token)
+        token = __annotate_negatives(token)
+    # modifier only used by competence extraction
     if ie_mode != 'TOOLS' and modifier:
-        token = annotate_modifier(token)
+        token = __annotate_modifier(token)
 
     return token
 
 
-def annotate_entities(token: list) -> 'list[TextToken]':
+# Private funtion to annotate token as known entity
+def __annotate_entities(token: list) -> 'list[TextToken]':
     annotate_list = list()
 
     for i in range(len(token)):
+        # each token will be normalized
         lemma = normalize_entities(token[i].lemma)
         # Anmerkung: Programm braucht für diesen Teil 4 Minuten länger bei query_limit = 500
+        # search all occurrences of the normalized token in list
         matched_entities = [known_entity for known_entity in known_entities if hash(known_entity.start_lemma) == hash(lemma)]
         for known_entity in matched_entities:
             if known_entity.is_single_word:
+                # if known_entity is single word (e.g. 'wlan'), token the token also consists of only one
                 token[i].set_ie_token(True)
                 continue
             matches = False
+            # otherwise it will be a multi token (e.g. 'software deployment')
             for j in range(len(known_entity.lemma_array)):
+                # each following token is considered
                 if len(token) <= i + j:
                     matches = False
                     break
-                matches = known_entity.lemma_array[j].__eq__(normalize_entities(token[i + j].lemma))
+                matches = hash(known_entity.lemma_array[j]).__eq__(hash(normalize_entities(token[i + j].lemma)))
                 if not matches:
                     break
             if matches:
@@ -257,11 +275,14 @@ def annotate_entities(token: list) -> 'list[TextToken]':
     return annotate_list
 
 
-def annotate_negatives(token: list) -> 'list[TextToken]':
+# Private function to annotate token as known extraction fail
+def __annotate_negatives(token: list) -> 'list[TextToken]':
     annotate_list = list()
 
     for i in range(len(token)):
+        # each token will be normalized
         lemma = normalize_entities(token[i].lemma)
+        # check if list contains normalized token
         if no_entities.__contains__(lemma):
             token[i].set_no_token(True)
         annotate_list.append(token[i])
@@ -269,22 +290,28 @@ def annotate_negatives(token: list) -> 'list[TextToken]':
     return annotate_list
 
 
-def annotate_modifier(token: list) -> 'list[TextToken]':
+# Private function to annotate token as modifier
+def __annotate_modifier(token: list) -> 'list[TextToken]':
     annotate_list = list()
 
     for i in range(len(token)):
+        # each token will be normalized
         lemma = normalize_entities(token[i].lemma)
+        # search all occurrences of the normalized token in list
         matched_modifier = [m for m in modifier if hash(m.start_lemma) == hash(lemma)]
         for mod in matched_modifier:
             if mod.is_single_word:
+                # if modifier is single word (e.g. 'erforderlich'), token the token also consists of only one
                 token[i].set_modifier_token(True)
                 continue
             matches = False
+            # otherwise it will be a multi token (e.g. 'ideal aber kein bedingung')
             for j in range(len(mod.lemma_array)):
+                # each following token is considered
                 if len(token) <= i + j:
                     matches = False
                     break
-                matches = mod.lemma_array[j].__eq__(normalize_entities(token[i + j].lemma))
+                matches = hash(mod.lemma_array[j]).__eq__(hash(normalize_entities(token[i + j].lemma)))
                 if not matches:
                     break
             if matches:

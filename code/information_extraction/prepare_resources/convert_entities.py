@@ -1,3 +1,6 @@
+"""Script to handle normalization."""
+
+
 def normalize_entities(entity: str) -> str:
     """Normalizes the given string - trim - deletes (most) special characters at the begin and end of the string
         (with some exceptions).
@@ -50,7 +53,8 @@ def normalize_entities(entity: str) -> str:
         if len(entity) == 0:
             break
         # check if first character is not a letter, a digit or special character and remove character
-        if not last_character.isalpha() and not last_character.isdigit() and not last_character.__eq__("+") and not last_character.__eq__("#"):
+        if not last_character.isalpha() and not last_character.isdigit() and not last_character.__eq__(
+                "+") and not last_character.__eq__("#"):
             entity = entity[0:len(entity) - 1].strip()
         else:
             break

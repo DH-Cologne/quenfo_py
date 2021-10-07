@@ -6,6 +6,7 @@ from . import knn_predictor
 from . import regex_predictor
 from . import result_merger
 
+
 # ## Functions
 def start_prediction(jobad: object, model: Model) -> None:
     """ Function manages the prediction of the classes for each cu.
@@ -23,7 +24,7 @@ def start_prediction(jobad: object, model: Model) -> None:
 
     # Iterate over each classifyunit
     for cu in jobad.children:
-    
+
         # a. KNN PREDICTION: predict classes with knn
         knn_predicted = knn_predictor.gen_classes(cu.featurevector, model.model_knn)
 
@@ -31,9 +32,9 @@ def start_prediction(jobad: object, model: Model) -> None:
         reg_predicted = regex_predictor.gen_classes(cu.paragraph, model.get_regex_clf())
 
         # c. MERGE: compare the prediction from knn and regex
-        if reg_predicted:                                                   # if regex pattern suggested a prediction
-            predicted = result_merger.merge(reg_predicted, knn_predicted)   # compare knn and regex results
-        else:                                                               # no regex class was predicted, use knn
+        if reg_predicted:  # if regex pattern suggested a prediction
+            predicted = result_merger.merge(reg_predicted, knn_predicted)  # compare knn and regex results
+        else:  # no regex class was predicted, use knn
             predicted = knn_predicted
 
         # Set class
