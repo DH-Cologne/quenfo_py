@@ -4,7 +4,6 @@ import classification
 import configuration
 import database
 import logger
-from database import session
 from information_extraction.extraction import extract_entities
 from information_extraction.prepare_extractionunits import generate_extractionunits
 from orm_handling import orm

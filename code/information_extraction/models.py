@@ -43,6 +43,19 @@ class TextToken(Token):
     def __init__(self, token, lemma, pos_tag):
         super(TextToken, self).__init__(token, lemma, pos_tag)
 
+    def set_ie_token(self, ie_token):
+        super(TextToken, self).set_ie_token(ie_token)
+
+    def set_modifier_token(self, modifier_token):
+        super(TextToken, self).set_modifier_token(modifier_token)
+
+    def set_no_token(self, no_token):
+        super(TextToken, self).set_no_token(no_token)
+
+    # string representation of a Token object
+    def string_representation(self) -> str:
+        return super(TextToken, self).string_representation()
+
     def is_equals_pattern_token(self, pattern_token) -> bool:
         if pattern_token.token is not None:
             pattern_strings = pattern_token.get_token().split(r'|')
@@ -133,7 +146,7 @@ class Pattern:
         for i in self.extraction_pointer:
             full_expression += str(i) + ","
         full_expression = full_expression[0:len(full_expression) - 1]
-        full_expression += "\nCONF:\t" + self.conf + "\n\n"
+        full_expression += "\nCONF:\t", self.conf, "\n\n"
         return full_expression
 
 
@@ -147,6 +160,15 @@ class PatternToken(Token):
         super(PatternToken, self).__init__(token, lemma, pos_tag)
         if ie_token:
             super(PatternToken, self).set_ie_token(True)
+
+    def set_ie_token(self, ie_token):
+        super(PatternToken, self).set_ie_token(ie_token)
+
+    def set_modifier_token(self, modifier_token):
+        super(PatternToken, self).set_modifier_token(modifier_token)
+
+    def set_no_token(self, no_token):
+        super(PatternToken, self).set_no_token(no_token)
 
     #  string representation of a PatternToken object
     def string_representation(self) -> str:
@@ -162,13 +184,29 @@ class PatternToken(Token):
 
 class ExtractedEntity(InformationEntity):
     conf = Column('conf', Float)
-    pattern = Column('pattern_string', String(225))                             # matched pattern description
+    pattern = Column('pattern_string', String(225))  # matched pattern description
 
     def __init__(self, pattern, ie_type, start_lemma, is_single_word):
         super(ExtractedEntity, self).__init__(ie_type, start_lemma, is_single_word)
         self.pattern = pattern
 
-    def set_conf(self, used_pattern: "list[Pattern]"):
+    # Setter
+    def set_sentence(self, sentence: str):
+        super(ExtractedEntity, self).set_sentence(sentence)
+
+    def set_full_expression(self, full_expression: str):
+        super(ExtractedEntity, self).set_full_expression(full_expression)
+
+    def set_lemma_array(self, lemma_array: list):
+        super(ExtractedEntity, self).set_lemma_array(lemma_array)
+
+    def set_modifier(self, modifier: str):
+        super(ExtractedEntity, self).set_modifier(modifier)
+
+    def set_first_index(self, first_index: int):
+        super(ExtractedEntity, self).set_first_index(first_index)
+
+    def set_conf(self, used_pattern: 'list[Pattern]'):
         self.conf = 0.0
         product = 0.0
         conf_value = list()
@@ -190,6 +228,22 @@ class MatchedEntity(InformationEntity):
     def __init__(self, start_lemma, is_single_word, ie_type, label):
         super(MatchedEntity, self).__init__(ie_type=ie_type, start_lemma=start_lemma, is_single_word=is_single_word)
         self.labels = label
+
+    # Setter
+    def set_sentence(self, sentence: str):
+        super(MatchedEntity, self).set_sentence(sentence)
+
+    def set_full_expression(self, full_expression: str):
+        super(MatchedEntity, self).set_full_expression(full_expression)
+
+    def set_lemma_array(self, lemma_array: list):
+        super(MatchedEntity, self).set_lemma_array(lemma_array)
+
+    def set_modifier(self, modifier: str):
+        super(MatchedEntity, self).set_modifier(modifier)
+
+    def set_first_index(self, first_index: int):
+        super(MatchedEntity, self).set_first_index(first_index)
 
     def add_label(self, label: str):
         self.labels.append(label)

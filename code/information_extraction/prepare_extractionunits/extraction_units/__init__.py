@@ -6,9 +6,8 @@ from . import convert_extractionunits
 from orm_handling.models import ExtractionUnits, ClassifyUnits
 from information_extraction.models import TextToken
 
+
 # ### Main-Function for ExtractionUnit generation
-
-
 def get_extractionunits(classifyunit: ClassifyUnits, ie_mode: str):
     position_index = 0
 
