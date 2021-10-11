@@ -3,7 +3,6 @@
 # ## Imports
 from sqlalchemy import Column, String, Float, Integer, ForeignKey
 from sqlalchemy.orm import relationship
-
 from orm_handling.models import InformationEntity, Base
 
 
@@ -86,7 +85,7 @@ class TextToken(Token):
             match = False
             # compares each pattern token with text token
             for string in pattern_strings:
-                match = string.__eq__(self.token)
+                match = string == self.token
                 if match:
                     break
             if not match:
@@ -99,16 +98,16 @@ class TextToken(Token):
                 # compares each pattern pos tag with text pos tag
                 for pos in pattern_pos:
                     pos = pos[1: len(pos)]
-                    if pos.__eq__(self.pos_tag):
+                    if pos == self.pos_tag:
                         return False
             else:
                 match = False
                 # compares each pattern pos tag with text pos tag
                 for pos in pattern_pos:
                     if pos.startswith(r'-'):
-                        match = not (pos.__eq__(self.pos_tag))
+                        match = not pos == self.pos_tag
                     else:
-                        match = pos.__eq__(self.pos_tag)
+                        match = pos == self.pos_tag
                     if match:
                         break
                     if not match:
@@ -128,7 +127,7 @@ class TextToken(Token):
                         if match:
                             match = not (self.lemma.endswith(lemma[1: len(lemma)]))
                     else:
-                        match = self.lemma.__eq__(lemma)
+                        match = self.lemma == lemma
                     if match:
                         break
                 if not match:
@@ -226,7 +225,7 @@ class ExtractedEntity(InformationEntity, Base):
 
     parent_id = Column(Integer, ForeignKey(
         'extraction_units.id'))  # InformationEntity have a parent-child relationship as a child with ExtractionUnits.
-    parent = relationship('ExtractionUnits', back_populates="children")  # ForeignKey to connect both Classes
+    parent = relationship('ExtractionUnits', back_populates="children_extracted")  # ForeignKey to connect both Classes
     __tablename__ = 'extracted_entities'  # Tablename for matching with db table
     conf = Column('conf', Float)
     pattern = Column('pattern_string', String(225))  # matched pattern description
@@ -272,9 +271,9 @@ class MatchedEntity(InformationEntity, Base):
     """Represents a single information instance (a tool or a competence)
     defined by an expression of one or more lemmata. Class for Matching."""
 
-    """parent_id = Column(Integer, ForeignKey(
+    parent_id = Column(Integer, ForeignKey(
         'extraction_units.id'))  # InformationEntity have a parent-child relationship as a child with ExtractionUnits.
-    parent = relationship('ExtractionUnits', back_populates="children")  # ForeignKey to connect both Classes"""
+    parent = relationship('ExtractionUnits', back_populates="children_matched")  # ForeignKey to connect both Classes
     __tablename__ = 'matched_entities'  # Tablename for matching with db table
     labels = set()
 

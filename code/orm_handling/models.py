@@ -150,8 +150,8 @@ class ExtractionUnits(Base):
     """ Checks and sets all ExtractionUnits values. Defines tablename, columnnames and makes values reachable. """
     parent_id = Column(Integer, ForeignKey('classify_units.id'))                # ExtractionUnits have a parent-child relationship as a child with ClassifyUnits.
     parent = relationship('ClassifyUnits', back_populates="children")           # ForeignKey to connect both Classes
-    children = relationship("ExtractedEntity", back_populates="parent")       # parent-child relationship as a parent
-    # children = relationship("MatchedEntity", back_populates="parent")
+    children_extracted = relationship("ExtractedEntity", back_populates="parent")       # parent-child relationship as a parent
+    children_matched = relationship("MatchedEntity", back_populates="parent")
     __tablename__ = 'extraction_units'                                          # Tablename for matching with db table
     id = Column(Integer, primary_key=True)                                      # Columns to query
     paragraph = Column('paragraph', String(225))

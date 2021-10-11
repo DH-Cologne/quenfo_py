@@ -24,7 +24,7 @@ def remove_modifier(extraction: ExtractedEntity) -> None:
     to_delete = list()  # return list
     skip = 0
     required = -1
-    modifier = get_modifier()   # list with modifier loaded from resource file
+    modifier = get_modifier()   # dict with modifier loaded from resource file
 
     # iterate over each lemma
     for t in range(len(lemma_list)):
@@ -33,7 +33,7 @@ def remove_modifier(extraction: ExtractedEntity) -> None:
         # normalize lemma
         lemma = normalize_entities(lemma_list[t + skip])
         # find all occurrences of lemma in modifier list
-        matched_modifier = [m for m in modifier if m.start_lemma == hash(lemma)]
+        matched_modifier = [value for key, value in modifier.items() if hash(lemma) == key]
         if matched_modifier:
             required = -1
             match = False

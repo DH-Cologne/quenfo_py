@@ -4,7 +4,7 @@
     * Step 3: Extract Entities"""
 
 # ## Imports
-import classification
+import sys
 import configuration
 import database
 import logger
@@ -14,8 +14,6 @@ from orm_handling import orm
 
 
 # ## Functions
-
-
 def extract():
     """Main-Function for Information Extraction.
         * Step 1: Set Connection to DB and load ClassifyUnits from DB -> get_classify_units
@@ -24,7 +22,7 @@ def extract():
         * Step 4: For each EU extract entities -> extract_entities"""
 
     # ## Set Variables
-    all_extractions = list()    # list with all found extractions
+    all_extractions = list()  # list with all found extractions
 
     query_limit = configuration.config_obj.get_ie_query_limit()  # query_limit: Number of ClassifyUnits to process
     if query_limit == -1:  # if query_limit is -1, the whole table will be processed.
@@ -67,10 +65,9 @@ def extract():
             # add obj to current session --> to be written in db
             orm.create_output(database.session, cu, 'eu')
             # Update progress in progress bar
-            # TODO replace place of function -> global use in each step (classification, ie, matching)
-            classification.__progress(cu_counter, query_limit,
-                                      status=f" of {query_limit} ClassifyUnits separated. "
-                                             f"Current ClassifyUnit {cu_counter}.")
+            __progress(cu_counter, query_limit,
+                       status=f" of {query_limit} ClassifyUnits separated. "
+                              f"Current ClassifyUnit {cu_counter}.")
             cu_counter += 1
 
         # Commit generated extraction units to table
@@ -94,13 +91,12 @@ def extract():
     for eu in extraction_units:
         # Step 4: Extraction
         extractions = extract_entities(eu, ie_mode)
-        all_extractions.extend(extractions)     # collect all extractions
+        all_extractions.extend(extractions)  # collect all extractions
         # add obj to current session --> to be written in db
         orm.create_output(database.session, eu, 'e')
         # Update progress in progress bar
-        classification.__progress(eu_counter, len(extraction_units),
-                                  status=f" of {len(extraction_units)} ExtractionUnits processed. "
-                                         f"Current ExtractionUnit {eu_counter}.")
+        __progress(eu_counter, len(extraction_units), status=f" of {len(extraction_units)} ExtractionUnits processed. "
+                                                             f"Current ExtractionUnit {eu_counter}.")
         eu_counter += 1
 
     # Commit generated extractions to table
@@ -133,3 +129,15 @@ def set_ie_mode(ie_types: dict) -> str:
     else:
         ie_mode = "TYPE OF EXTRACTION NOT GIVEN"
     return ie_mode
+
+
+# Progress Bar to keep track of already processed objects from class
+def __progress(count: int, total: int, status: str):
+    bar_len = 20
+    filled_len = int(round(bar_len * count / float(total)))
+
+    percents = round(100.0 * count / float(total), 1)
+    bar = '=' * filled_len + '-' * (bar_len - filled_len)
+
+    sys.stdout.write('\r[%s] %s%s%s\r' % (bar, percents, '%', status))
+    sys.stdout.flush()

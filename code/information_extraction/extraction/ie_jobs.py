@@ -1,15 +1,15 @@
 """Script manages the jobs from information extraction."""
 
 # ## Imports
-from information_extraction.models import TextToken, ExtractedEntity, Token
+from information_extraction.models import TextToken, ExtractedEntity
 from information_extraction.helper import remove_modifier
 from information_extraction.prepare_resources import get_ie_pattern, get_no_entities, get_entities
 from information_extraction.prepare_resources.convert_entities import normalize_entities
 from orm_handling.models import ExtractionUnits, InformationEntity
 
 # set variables
-known_entities = list()
-no_entities = list()
+known_entities = dict()
+no_entities = dict()
 
 
 def extract(extraction_unit: ExtractionUnits, ie_mode: str) -> 'list[InformationEntity]':
@@ -83,7 +83,7 @@ def extract(extraction_unit: ExtractionUnits, ie_mode: str) -> 'list[Information
                         if entity_token.modifier_token or entity_token.no_token:
                             continue
                         # store extraction as ExtractedEntity object
-                        if len(norm_lemma) > 1 and not entity_token.lemma.__eq__('--'):
+                        if len(norm_lemma) > 1 and not entity_token.lemma == '--':
                             ie = ExtractedEntity(start_lemma=norm_lemma, is_single_word=True, ie_type=ie_mode,
                                                  pattern=p.description)
                             extraction_unit.children.append(ie)
@@ -91,7 +91,7 @@ def extract(extraction_unit: ExtractionUnits, ie_mode: str) -> 'list[Information
                             continue
                     # multi token
                     else:
-                        if len(norm_lemma) > 1 and not entity_token.lemma.__eq__('--'):
+                        if len(norm_lemma) > 1 and not entity_token.lemma == '--':
                             # store extraction as ExtractedEntity object
                             ie = ExtractedEntity(start_lemma=norm_lemma, is_single_word=False, ie_type=ie_mode,
                                                  pattern=p.description)
@@ -104,8 +104,7 @@ def extract(extraction_unit: ExtractionUnits, ie_mode: str) -> 'list[Information
                             current_token = eu_tokens[entity_pointer + j]
                             # normalized token
                             norm_current_token = normalize_entities(current_token.lemma)
-                            if not norm_current_token.strip().__eq__('') and not norm_current_token.strip().__eq__(
-                                    '--'):
+                            if not norm_current_token.strip() == '' and not norm_current_token.strip() == '--':
                                 complete_entity.append(norm_current_token)
                         if len(complete_entity) > 1:
                             # TODO Morphemkoordination hinzufügen
@@ -126,7 +125,7 @@ def extract(extraction_unit: ExtractionUnits, ie_mode: str) -> 'list[Information
                     for e in extractions:
                         # check if list with fails contains found extractions
                         is_no_entity = False
-                        if no_entities.__contains__(hash(e.start_lemma)):
+                        if hash(e.start_lemma) in no_entities.keys():
                             is_no_entity = True
                         if is_no_entity:
                             e = None
@@ -166,8 +165,7 @@ def remove_known_entities(extractions: list, ie_mode: str) -> 'list[InformationE
     # iterate over each extraction
     for e in extractions:
         # search all occurrences of extraction in list
-        matched_entities = [known_entity for known_entity in known_entities
-                            if hash(known_entity.start_lemma) == hash(e.start_lemma)]
+        matched_entities = [value for key, value in known_entities.items() if hash(e.start_lemma) == key]
         # remove all occurrences
         if matched_entities is None or not matched_entities.__contains__(e):
             filtered_extractions.append(e)
@@ -197,7 +195,7 @@ def evaluate_pattern(extractions: list) -> None:
     for p in used_pattern:
         found_extractions = list()
         for e in extractions:
-            if e.pattern.__eq__(p) and not found_extractions.__contains__(e):
+            if e.pattern == p and not found_extractions.__contains__(e):
                 found_extractions.append(e)
 
         # set variables with default
@@ -208,13 +206,11 @@ def evaluate_pattern(extractions: list) -> None:
         for ie in found_extractions:
 
             # search all occurrences of extraction in list and add number
-            matched_entities = [known_entity for known_entity in known_entities if
-                                hash(known_entity.start_lemma) == hash(ie.start_lemma)]
+            matched_entities = [value for key, value in known_entities.items() if hash(ie.start_lemma) == key]
             tp += len(matched_entities)
 
             # search all occurrences of extraction in list and add number
-            matched_no_entities = [no_entity for no_entity in no_entities if
-                                   hash(no_entity.start_lemma) == hash(ie.start_lemma)]
+            matched_no_entities = [value for key, value in no_entities.items() if hash(ie.start_lemma) == key]
             fp += len(matched_no_entities)
 
         # set conf value

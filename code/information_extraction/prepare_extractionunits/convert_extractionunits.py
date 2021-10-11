@@ -11,9 +11,9 @@ from information_extraction.prepare_resources.convert_entities import normalize_
 nlp = spacy.load("de_core_news_sm")
 
 # set variables
-known_entities = list()
-no_entities = list()
-modifier = list()
+known_entities = dict()
+no_entities = dict()
+modifier = dict()
 
 
 # ## Functions
@@ -159,7 +159,7 @@ def get_token(sentence: str) -> list:
                     list of token"""
     tokens = list()
 
-    pre_token =nlp(sentence)
+    pre_token = nlp(sentence)
     for token in pre_token:
         tokens.append(token.text)
 
@@ -249,9 +249,8 @@ def __annotate_entities(token: list) -> 'list[TextToken]':
     for i in range(len(token)):
         # each token will be normalized
         lemma = normalize_entities(token[i].lemma)
-        # Anmerkung: Programm braucht für diesen Teil 4 Minuten länger bei query_limit = 500
         # search all occurrences of the normalized token in list
-        matched_entities = [known_entity for known_entity in known_entities if hash(known_entity.start_lemma) == hash(lemma)]
+        matched_entities = [value for key, value in known_entities.items() if hash(lemma) == key]
         for known_entity in matched_entities:
             if known_entity.is_single_word:
                 # if known_entity is single word (e.g. 'wlan'), token the token also consists of only one
@@ -264,7 +263,7 @@ def __annotate_entities(token: list) -> 'list[TextToken]':
                 if len(token) <= i + j:
                     matches = False
                     break
-                matches = hash(known_entity.lemma_array[j]).__eq__(hash(normalize_entities(token[i + j].lemma)))
+                matches = hash(known_entity.lemma_array[j]) == (hash(normalize_entities(token[i + j].lemma)))
                 if not matches:
                     break
             if matches:
@@ -283,7 +282,7 @@ def __annotate_negatives(token: list) -> 'list[TextToken]':
         # each token will be normalized
         lemma = normalize_entities(token[i].lemma)
         # check if list contains normalized token
-        if no_entities.__contains__(lemma):
+        if hash(lemma) in no_entities.keys():
             token[i].set_no_token(True)
         annotate_list.append(token[i])
 
@@ -297,8 +296,8 @@ def __annotate_modifier(token: list) -> 'list[TextToken]':
     for i in range(len(token)):
         # each token will be normalized
         lemma = normalize_entities(token[i].lemma)
-        # search all occurrences of the normalized token in list
-        matched_modifier = [m for m in modifier if hash(m.start_lemma) == hash(lemma)]
+        # search all occurrences of the normalized token in dict
+        matched_modifier = [value for key, value in modifier.items() if hash(lemma) == key]
         for mod in matched_modifier:
             if mod.is_single_word:
                 # if modifier is single word (e.g. 'erforderlich'), token the token also consists of only one
@@ -311,7 +310,7 @@ def __annotate_modifier(token: list) -> 'list[TextToken]':
                 if len(token) <= i + j:
                     matches = False
                     break
-                matches = hash(mod.lemma_array[j]).__eq__(hash(normalize_entities(token[i + j].lemma)))
+                matches = hash(mod.lemma_array[j]) == hash(normalize_entities(token[i + j].lemma))
                 if not matches:
                     break
             if matches:

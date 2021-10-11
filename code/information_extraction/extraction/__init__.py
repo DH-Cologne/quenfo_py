@@ -2,7 +2,6 @@
 confidence. """
 
 # ## Imports
-import logger
 from information_extraction.extraction.ie_jobs import extract, remove_known_entities, evaluate_pattern, evaluate_seeds, \
     select_best_extractions
 from orm_handling.models import ExtractionUnits, InformationEntity
@@ -30,8 +29,6 @@ def extract_entities(extraction_unit: ExtractionUnits, ie_mode: str) -> 'list[In
     # Step 1: extraction
     extractions = extract(extraction_unit, ie_mode)
 
-    logger.log_ie.info(f'{len(extractions)} extracted entities from {ie_mode} were found in EU: {extraction_unit.id}.')
-
     # Step 2: remove extraction that that are already known
     extractions = remove_known_entities(extractions, ie_mode)
 
@@ -39,8 +36,5 @@ def extract_entities(extraction_unit: ExtractionUnits, ie_mode: str) -> 'list[In
     evaluate_pattern(extractions)
     evaluate_seeds(extractions)
     extractions = select_best_extractions(extractions)
-
-    logger.log_ie.info(f'After removing known extractions and poorly rated ones, {len(extractions)} '
-                       f' extractions from {ie_mode} remain.')
 
     return extractions
