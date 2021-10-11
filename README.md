@@ -10,13 +10,13 @@ In dieser Dokumentation werden die jeweiligen Workflows beschrieben. Dabei werde
 Jede ausführbare Applikation arbeitet mit Object Relational Mapping (ORM). Objekte werden hierbei als Datenbankeinträge persistiert, d.h. in den Datenklassen (z.B. in den Klassen ClassifyUnits, ExtractedEntity, InformationEntity oder ExtractionUnit) werden entsprechende Annotationen an Klassenattributen vorgenommen, um diese als vorzunehmenden Eintrag zu kennzeichnen. Für die Realisierung wurde [SQLAlchemy](https://docs.sqlalchemy.org/en/14/orm/) genutzt. 
 
 Die Software entstand im Projekt [Quenfo](https://dh.phil-fak.uni-koeln.de/forschung/qualifikationsentwicklungsforschung) 
-und in Kooperation mit dem Bundesinstitut für Berufsbildung.
+und in Kooperation mit dem Bundesinstitut für Berufsbildung --> [BIBB](https://www.bibb.de/).
 
 
 **Zielsetzung:**
 
 	a. Stellenanzeigen werden in Paragraphen aufgesplittet und klassifiziert.
-			Mögliche Klassen: 
+			Mögliche Klassen: (SingleClasses)
 			1. Selbstvorstellung des ausschreibenden Unternehmens
 			2. Beschreibung der Tätigkeit, Angebote an die Bewerberinnen und Bewerber
 			3. Anforderungen an die Bewerberin bzw. den Bewerber 
