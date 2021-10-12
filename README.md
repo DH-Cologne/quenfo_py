@@ -41,8 +41,9 @@ und in Kooperation mit dem Bundesinstitut für Berufsbildung --> [BIBB](https://
 **Output:** SQL-Datenbank bestehend aus:
 
 	SQL-Tabelle mit klassifizierten Paragraphen
-	SQL-Tabelle mit ExtractionUnits (Tools oder Kompetenzen)
-	SQL-Tabelle mit MatchingUnits (Tools oder Kompetenzen)
+	SQL-Tabelle mit einzelnen Sätzen der klassifizierten Paragrafen 
+	SQL-Tabelle mit Extractions (Tools oder Kompetenzen)
+	SQL-Tabelle mit Matches (Tools oder Kompetenzen)
 	
 --> Mehr zu Input und Output siehe Ende der Readme
 
@@ -100,10 +101,6 @@ Neben dem **quenfo_py** Repo wird ein Ordner namens **quenfo_py_data** benötigt
  ┃ ┣ 📜model_knn 	(optional, wird sonst trainiert)
  ┃ ┗ 📜model_tfidf	(optional, wird sonst trainiert)
  ┗ 📂sqlite
- ┃ ┣ 📂information_extraction
- ┃ ┃ ┗ 📂competences
- ┃ ┣ 📂matching
- ┃ ┃ ┗ 📂tools
  ┃ ┗ 📂orm
  ┃ ┃ ┗ 📜input_data.db ❗
 ```
@@ -169,10 +166,11 @@ Der Code ist so struktuiert, dass sich die einzelnen Module (im Workflow s.o. er
  ┃ ┃ ┣ 📜connection.py
  ┃ ┃ ┗ 📜__init__.py
  ┃ ┣ 📂information_extraction
+ ┃ ┃ ┣ 📂extraction
+ ┃ ┃ ┃ ┣ 📜__init__.py
+ ┃ ┃ ┃ ┗ 📜ie_jobs.py
  ┃ ┃ ┣ 📂prepare_extractionunits
- ┃ ┃ ┃ ┣ 📂extraction_units
- ┃ ┃ ┃ ┃ ┣ 📜convert_extractionunits.py
- ┃ ┃ ┃ ┃ ┗ 📜__init__.py
+ ┃ ┃ ┃ ┣ 📜convert_extractionunits.py
  ┃ ┃ ┃ ┗ 📜__init__.py
  ┃ ┃ ┣ 📂prepare_resources
  ┃ ┃ ┃ ┣ 📜connection_resources.py
@@ -244,7 +242,17 @@ Die Textclassification ist in zwei Hauptschritte aufgeteilt:
 
 
 ##### Information Extraction
-TODO
+Die Informationsextraktion besteht aus zwei wesentlichen Schritten:
+1. **Vorbereitung der Sätze, in denen nach Informationen gesucht werden soll** (*prepare_extractionunits/*) in den Schritten:
+	1. Generierung von **extraction_units** durch splitten der Paragrafen in einzelne Sätze (und erste Normalisierungsschritte)
+	2. Anreichern der EUs mit lexikalischen Informationen (Lemmata, Pos-Tags, Annotation, ob bereits bekannte Entität, Fehler oder Modifizierer)
+
+2. **Extraktion von Kompetenzen oder Tools in den ExtractionUnits** (*extraction/*) in den Schritten:
+	1. Extraktion von Entitäten mittels **Extraktionsmustern**
+	2. Entfernen bereits bekannter Entitäten
+	3. Evaluation der Extraktionen durch Ermittlung eines Confidence-Werts
+
+
 ##### Matching
 TODO
 
@@ -388,28 +396,47 @@ Ausschnitt aus db:
 #### Output
 
 Tabelle zur Textclassification:
+
+**ClassifyUnit**
 -  id
 - classID
 - parentID --> Zu welcher JobAd der Paragraph gehört
 - paragraph
 
-Tabelle zur Information Extraction:
-Kompetenzen oder Tools werden als Entitäten durch Extraktionsmuster extrahiert
+Tabellen zur Information Extraction:
+
+**ExtractionUnit**
 - id
-- positionIndex
-- paragraph_id
+- parentID
+- paragraph
+- position_index
 - sentence
-- tokenArray
+- token_array
+
+**ExtractedEntity**: Kompetenzen oder Tools werden als Entitäten durch Extraktionsmuster extrahiert
+- id
+- parentID
+- sentence
+- ie_type
+- start_lemma
+- is_single_word
+- full_expression
+- lemma_array
+- modifier
+- conf
+- pattern
 
 Tabelle zum Matching:
-Kompetenzen oder Tools werden durch StringMatching gefunden
+
+**MatchedEntities**: Kompetenzen oder Tools werden durch StringMatching gefunden
 - id
-- parent_id
-- type
-- startLemma
-- singleWordEntitiy
-- lemmaArray
-- lemmaExpression
+- parentID
+- sentence
+- ie_type
+- start_lemma
+- is_single_word
+- full_expression
+- lemma_array
 - modifier
 
 
