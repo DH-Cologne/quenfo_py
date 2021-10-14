@@ -57,6 +57,11 @@ class Configurations:
             no_tools_path = os.path.join(*global_tools, cfg['resources']['notools_path'])
             toolpattern_path = os.path.join(*global_tools, cfg['resources']['toolpattern_path'])
 
+            # compounds paths
+            global_comps = [global_path, 'resources', 'nlp', 'compounds']                           # subfolder for compounds
+            possible_comps = os.path.join(*global_comps, cfg['resources']['possible_comp_path'])
+            splitted_comps = os.path.join(*global_comps, cfg['resources']['splitted_comp_path'])
+
         # Set default values
         # classification
         self.fus_config = fus_config
@@ -85,6 +90,8 @@ class Configurations:
         self.tool_path = tool_path
         self.no_tools_path = no_tools_path
         self.toolpattern_path = toolpattern_path
+        self.possible_comps = possible_comps
+        self.splitted_comps = splitted_comps
 
         # Values passed by ArgumentParser
         self.db_mode = arg_db_mode
@@ -216,6 +223,14 @@ class Configurations:
         self.no_tools_path = no_tools_path
         self.toolpattern_path = toolpattern_path
 
+    def set_pos_comps(self):
+        possible_comps = Configurations.__check_path(self.possible_comps)
+        self.possible_comps = possible_comps
+
+    def set_split_comps(self):
+        splitted_comps = Configurations.__check_path(self.splitted_comps)
+        self.splitted_comps = splitted_comps
+
     # Getter
     def get_traindata_path(self) -> str:
         return self.traindata_path
@@ -294,6 +309,12 @@ class Configurations:
 
     def get_toolpattern_path(self) -> str:
         return self.toolpattern_path
+
+    def get_pos_comps_path(self) -> str:
+        return self.possible_comps
+
+    def get_split_comps_path(self) -> str:
+        return self.splitted_comps
 
     # Checker
     def __check_path(path):

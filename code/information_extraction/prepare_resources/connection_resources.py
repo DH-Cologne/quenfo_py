@@ -67,7 +67,6 @@ def read_known_entities(extraction_type: str) -> dict:
 
 
 def read_modifier() -> dict:
-
     # set variables
     entities = dict()
     path = configuration.config_obj.get_modifier_path()
@@ -204,11 +203,11 @@ def read_pattern_from_file(pattern_type: str) -> 'list[Pattern]':
         f = codecs.open(path, "r", encoding="utf-8")
 
         # set variables
-        line_number = 0                 # number of current line
-        id = int()                      # pattern id
-        description = str()             # pattern description
-        token_list = list()             # list with pattern token
-        extraction_pointer = list()     # list with numbers of the tokens to be extracted
+        line_number = 0  # number of current line
+        id = int()  # pattern id
+        description = str()  # pattern description
+        token_list = list()  # list with pattern token
+        extraction_pointer = list()  # list with numbers of the tokens to be extracted
 
         while True:
             # read next line
@@ -274,3 +273,41 @@ def read_pattern_from_file(pattern_type: str) -> 'list[Pattern]':
         logger.log_ie.info(f'Can not find File from ' + path + '.')
 
     return pattern_list
+
+
+def read_compounds(comp_type: str) -> dict:
+    # set variables
+    compounds = dict()
+    switch = {
+        'pos': configuration.config_obj.get_pos_comps_path(),
+        'split': configuration.config_obj.get_split_comps_path(),
+    }
+
+    path = switch.get(comp_type)
+
+    logger.log_ie.info(f'Read entities from file: ' + path)
+
+    try:
+        f = codecs.open(path, "r", encoding="utf-8")
+
+        while True:
+            # read next line
+            line = f.readline()
+
+            # if line is empty, you are done with all lines in the file
+            if not line:
+                break
+
+            # separated line by character
+            parts = line.split('\\|')
+            if len(parts) > 1:
+                compounds[hash(parts[0] + parts[1])] = parts
+
+        # close file
+        f.close()
+
+    except FileNotFoundError:
+        print(f'File not found.')
+        logger.log_ie.info(f'Can not find File from ' + path + '.')
+
+    return compounds

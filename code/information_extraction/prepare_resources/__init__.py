@@ -13,6 +13,9 @@ tools = dict()
 no_tools = dict()
 tool_pattern = list()
 
+possible_comppounds = dict()
+splitted_compounds = dict()
+
 
 # ## Functions
 def set_ie_resources() -> None:
@@ -23,7 +26,8 @@ def set_ie_resources() -> None:
                 None"""
 
     # set globals
-    global competences, no_competences, modifier, comp_pattern, tools, no_tools, tool_pattern
+    global competences, no_competences, modifier, comp_pattern, tools, no_tools, tool_pattern, possible_comppounds, \
+        splitted_compounds
 
     # fill variables with content
     # variables for competences
@@ -32,10 +36,14 @@ def set_ie_resources() -> None:
     modifier = connection_resources.read_modifier()
     comp_pattern = connection_resources.read_pattern_from_file('comp_pattern')
 
-    # variable for tools
+    # variables for tools
     tools = connection_resources.read_known_entities('TOOLS')
     no_tools = connection_resources.read_failures('no_tools')
     tool_pattern = connection_resources.read_pattern_from_file('tool_pattern')
+
+    # variables for compounds
+    possible_comppounds = connection_resources.read_compounds('pos')
+    splitted_compounds = connection_resources.read_compounds('split')
 
 
 # Getter
@@ -73,3 +81,13 @@ def get_no_entities(ie_mode: str) -> dict:
 
 def get_modifier() -> dict:
     return modifier
+
+
+def get_compounds(comp_type: str) -> dict:
+    if comp_type == 'pos':
+        return possible_comppounds
+    elif comp_type == 'split':
+        return splitted_compounds
+    elif comp_type == 'all':
+        all_compounds = dict(list(possible_comppounds.items()) + list(splitted_compounds.items()))
+        return all_compounds

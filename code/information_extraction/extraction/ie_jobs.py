@@ -1,6 +1,8 @@
 """Script manages the jobs from information extraction."""
 
 # ## Imports
+import configuration
+from information_extraction.coordinate_expander import resolve
 from information_extraction.models import TextToken, ExtractedEntity
 from information_extraction.helper import remove_modifier
 from information_extraction.prepare_resources import get_ie_pattern, get_no_entities, get_entities
@@ -105,9 +107,16 @@ def extract(extraction_unit: ExtractionUnits, ie_mode: str) -> 'list[Information
                             # normalized token
                             norm_current_token = normalize_entities(current_token.lemma)
                             if not norm_current_token.strip() == '' and not norm_current_token.strip() == '--':
-                                complete_entity.append(norm_current_token)
+                                complete_entity.append(current_token)
                         if len(complete_entity) > 1:
                             # TODO Morphemkoordination hinzufügen
+                            """coordinate_entities = list()
+                            for e in complete_entity:
+                                coordinate_entities.append(normalize_entities(e.lemma))
+
+                                if configuration.config_obj.get_expand_coordinates() and e.pos_tag == 'KON':
+                                    combinations = resolve(complete_entity, eu_tokens, False)"""
+
                             # store extraction as ExtractedEntity object
                             ie = ExtractedEntity(start_lemma=complete_entity[0], is_single_word=False, ie_type=ie_mode,
                                                  pattern=p.description)
