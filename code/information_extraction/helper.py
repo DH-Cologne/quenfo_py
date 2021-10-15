@@ -6,7 +6,7 @@ from information_extraction.prepare_resources import get_modifier
 from information_extraction.prepare_resources.convert_entities import normalize_entities
 
 
-# ## Function
+# ## Functions
 def remove_modifier(extraction: ExtractedEntity) -> None:
     """Function to remove modifier token from extractions.
 
@@ -67,3 +67,29 @@ def remove_modifier(extraction: ExtractedEntity) -> None:
     to_delete = list()
     skip = 0
     required = -1
+
+
+def is_all_upper(string: str) -> bool:
+    """Function to check if character of given string is not letter or capitalized letter.
+
+            Parameters:
+            ----------
+                string: str
+                    Receives a string to check.
+
+            Returns:
+            -------
+                bool if string is all upper or not"""
+
+    string = string.replace('-', '')
+    i = 0
+    try:
+        while True:
+            #  character is either not a letter or a capitalized letter
+            if not string[i].isalpha() or string[i].isupper():
+                break
+            i += 1
+    except IndexError:
+        return True
+
+    return False

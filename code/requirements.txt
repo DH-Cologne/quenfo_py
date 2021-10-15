@@ -4,6 +4,7 @@ certifi==2021.5.30
 charset-normalizer==2.0.6
 click==8.0.1
 colorama==0.4.4
+compound_split==1.0.2
 cymem==2.0.5
 de-core-news-sm @ https://github.com/explosion/spacy-models/releases/download/de_core_news_sm-3.1.0/de_core_news_sm-3.1.0-py3-none-any.whl
 dill==0.3.4
