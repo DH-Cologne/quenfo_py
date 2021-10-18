@@ -120,6 +120,7 @@ def manage_app(args: dict) -> None:
 
     # Get items from dict
     method_args = vars(args)
+    print(method_args)
 
     # First: set configurations and database-connections
     def __set_all():
