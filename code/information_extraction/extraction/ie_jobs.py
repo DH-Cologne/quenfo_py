@@ -49,7 +49,7 @@ def extract(extraction_unit: ExtractionUnits, ie_mode: str) -> 'list[Information
         # check if pattern has declared conf value
         if p.conf == 0.0 or p.conf >= 0.5:
             # iterate over each token
-            for i in range(len(eu_tokens) - p.get_size()):
+            for i in range(0, len(eu_tokens) - p.get_size()):
                 # set default
                 match = False
                 entity_pointer = 0
@@ -89,6 +89,7 @@ def extract(extraction_unit: ExtractionUnits, ie_mode: str) -> 'list[Information
                             ie = ExtractedEntity(start_lemma=norm_lemma, is_single_word=True, ie_type=ie_mode,
                                                  pattern=p.description)
                             extraction_unit.children.append(ie)
+                            extractions.append(ie)
                         else:
                             continue
                     # multi token
@@ -98,6 +99,7 @@ def extract(extraction_unit: ExtractionUnits, ie_mode: str) -> 'list[Information
                             ie = ExtractedEntity(start_lemma=norm_lemma, is_single_word=False, ie_type=ie_mode,
                                                  pattern=p.description)
                             extraction_unit.children.append(ie)
+                            extractions.append(ie)
                         else:
                             continue
                         complete_entity = list()
@@ -108,20 +110,37 @@ def extract(extraction_unit: ExtractionUnits, ie_mode: str) -> 'list[Information
                             norm_current_token = normalize_entities(current_token.lemma)
                             if not norm_current_token.strip() == '' and not norm_current_token.strip() == '--':
                                 complete_entity.append(current_token)
-                        if len(complete_entity) > 1:
-                            # TODO Morphemkoordination hinzufügen
-                            """coordinate_entities = list()
-                            for e in complete_entity:
-                                coordinate_entities.append(normalize_entities(e.lemma))
 
+                        if len(complete_entity) > 1:    # entity consists of more than one token
+                            coordinate_entities = list()
+
+                            # check if it is a morpheme coordination
+                            for e in complete_entity:
+                                # as long as no TRUNC appears, all lemmas are added to the expression
+                                coordinate_entities.append(normalize_entities(e.lemma))
+                                # as soon as a KON appears, the morpheme coordination is resolved
                                 if configuration.config_obj.get_expand_coordinates() and e.pos_tag == 'KON':
-                                    combinations = resolve(complete_entity, eu_tokens, False)"""
+                                    combinations = resolve(complete_entity, eu_tokens, False)
+
+                                    # for each expansion an InformationEntity is created
+                                    for combination_list in combinations:
+                                        combination_lemmata = list()
+                                        
+                                        for c_token in combination_list:
+                                            combination_lemmata.append(c_token.lemma)
+                                        ie = ExtractedEntity(start_lemma=combination_lemmata[0], is_single_word=False,
+                                                             ie_type=ie_mode, pattern=p.description)
+                                        ie.set_lemma_array(combination_lemmata)
+                                        extraction_unit.children.append(ie)
+                                        extractions.append(ie)
 
                             # store extraction as ExtractedEntity object
                             ie = ExtractedEntity(start_lemma=complete_entity[0], is_single_word=False, ie_type=ie_mode,
                                                  pattern=p.description)
-                            extraction_unit.children.append(ie)
+                            ie.first_index = entity_pointer
                             ie.lemma_array = complete_entity
+                            extraction_unit.children.append(ie)
+                            extractions.append(ie)
                         elif len(complete_entity) < 1:
                             continue
                         # single token
@@ -129,8 +148,9 @@ def extract(extraction_unit: ExtractionUnits, ie_mode: str) -> 'list[Information
                             # store extraction as ExtractedEntity object
                             ie = ExtractedEntity(start_lemma=complete_entity[0], is_single_word=True, ie_type=ie_mode,
                                                  pattern=p.description)
+                            ie.first_index = entity_pointer
                             extraction_unit.children.append(ie)
-                        extractions.append(ie)
+                            extractions.append(ie)
                     for e in extractions:
                         # check if list with fails contains found extractions
                         is_no_entity = False

@@ -244,7 +244,6 @@ def annotate_token(token: list, ie_mode: str) -> 'list[TextToken]':
 
 # Private funtion to annotate token as known entity
 def __annotate_entities(token: list) -> 'list[TextToken]':
-    annotate_list = list()
 
     for i in range(len(token)):
         # each token will be normalized
@@ -269,14 +268,12 @@ def __annotate_entities(token: list) -> 'list[TextToken]':
             if matches:
                 token[i].set_ie_token(True)
                 token[i].tokensToCompleteInformationEntity = len(known_entity.lemma_array) - 1
-            annotate_list.append(token[i])
 
-    return annotate_list
+    return token
 
 
 # Private function to annotate token as known extraction fail
 def __annotate_negatives(token: list) -> 'list[TextToken]':
-    annotate_list = list()
 
     for i in range(len(token)):
         # each token will be normalized
@@ -284,14 +281,12 @@ def __annotate_negatives(token: list) -> 'list[TextToken]':
         # check if list contains normalized token
         if hash(lemma) in no_entities.keys():
             token[i].set_no_token(True)
-        annotate_list.append(token[i])
 
-    return annotate_list
+    return token
 
 
 # Private function to annotate token as modifier
 def __annotate_modifier(token: list) -> 'list[TextToken]':
-    annotate_list = list()
 
     for i in range(len(token)):
         # each token will be normalized
@@ -316,6 +311,5 @@ def __annotate_modifier(token: list) -> 'list[TextToken]':
             if matches:
                 token[i].set_modifier_token(True)
                 token[i].tokensToCompleteModifier = len(mod.lemma_array) - 1
-        annotate_list.append(token[i])
 
-    return annotate_list
+    return token
