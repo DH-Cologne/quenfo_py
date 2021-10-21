@@ -99,6 +99,7 @@ def start_classification() -> None:
 
 # *** PART 2: Information Extraction ***
 def start_extraction() -> None:
+    # Start Extraction
     extract()
 
 

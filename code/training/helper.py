@@ -1,4 +1,4 @@
-""" Script contains all helper functions and support funcitons needed for modeling. The helper functions are mostly for handling and preparing the 
+""" Script contains all helper functions and support functions needed for modeling. The helper functions are mostly for handling and preparing the
     traindata. The support functions are for handling the loading, checking and saving the models. """
 
 # ## Imports

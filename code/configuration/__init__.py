@@ -48,3 +48,6 @@ def set_config(method_args: dict) -> None:
 
     config_obj.set_competence_paths()   # check and set ie paths
     config_obj.set_tool_paths()
+
+    config_obj.set_pos_comps()      # check and set compounds paths
+    config_obj.set_split_comps()
