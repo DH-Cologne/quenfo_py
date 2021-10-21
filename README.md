@@ -320,6 +320,7 @@ Die **config.yaml** Datei kann wie folgt aussehen:
 <img src="docs/config.jpg"/>
 
 
+
 ***
 ### CommandLine - Befehle📢
 ***
