@@ -30,9 +30,8 @@ def extract():
     query_limit = configuration.config_obj.get_ie_query_limit()  # query_limit: Number of ClassifyUnits to process
     search_type = configuration.config_obj.get_search_type()
     if query_limit == -1:  # if query_limit is -1, the whole table will be processed.
-        cus = database.session.query(ClassifyUnits).order_by('id').filter(
-        ClassifyUnits.classID == search_type).all()
-        query_limit = len(cus)  # Therefore the length of the table is extracted and set as query_limit.
+        query_limit = len(database.session.query(ClassifyUnits).order_by('id').filter(
+        ClassifyUnits.classID == search_type).all())    # Therefore the length of the table is extracted and set as query_limit.
 
     start_pos = configuration.config_obj.get_ie_start_pos()  # start_pos: Row Number where to start query
     current_pos = start_pos  # set row number for query
