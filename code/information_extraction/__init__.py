@@ -14,6 +14,9 @@ from orm_handling import orm
 
 
 # ## Functions
+from orm_handling.models import ClassifyUnits
+
+
 def extract():
     """Main-Function for Information Extraction.
         * Step 1: Set Connection to DB and load ClassifyUnits from DB -> get_classify_units
@@ -25,8 +28,11 @@ def extract():
     all_extractions = list()  # list with all found extractions
 
     query_limit = configuration.config_obj.get_ie_query_limit()  # query_limit: Number of ClassifyUnits to process
+    search_type = configuration.config_obj.get_search_type()
     if query_limit == -1:  # if query_limit is -1, the whole table will be processed.
-        query_limit = orm.get_length('cu')  # Therefore the length of the table is extracted and set as query_limit.
+        cus = database.session.query(ClassifyUnits).order_by('id').filter(
+        ClassifyUnits.classID == search_type).all()
+        query_limit = len(cus)  # Therefore the length of the table is extracted and set as query_limit.
 
     start_pos = configuration.config_obj.get_ie_start_pos()  # start_pos: Row Number where to start query
     current_pos = start_pos  # set row number for query
