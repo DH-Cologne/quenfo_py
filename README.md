@@ -222,7 +222,7 @@ Anschließend werden diese für das Objekt der Klasse Model als Werte gesetzt.
 
 Zuletzt wird noch der RegexClassifier geladen, der sich aus den gegebenen Mustern und ihren Klasseneinteilungen aus der Support-Datei *regex.txt*  ergibt. Auch diese werden in Form eines Dataframes als RegexClassifier im Model gesetzt.
 
-<img src="docs/class_model.jpg"/>
+<img src="docs/data_model.jpg"/>
 
 Das bedeutet, dass am Ende des Trainingsmoduls ein Objekt der Klasse Model zurückgegeben wird, welches aus den drei Komponenten (Tfidf, KNN & Regex) besteht und noch zusätzlich Informationen über die genutzten Trainingsdaten enthält.
 
