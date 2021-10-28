@@ -15,18 +15,20 @@ log_match = None
 log_ie = None
 log_main = None
 
+
 # ## Functions
 def __setup_logger(logger_name: str, log_file: Path, level=logging.DEBUG):
     l = logging.getLogger(logger_name)
     # no stdout from logging
     l.propagate = False
     formatter = logging.Formatter('%(asctime)s : %(threadName)s : %(levelname)s : %(message)s')
-    
+
     fileHandler = logging.FileHandler(log_file, mode='w+')
     fileHandler.setFormatter(formatter)
 
     l.setLevel(level)
     l.addHandler(fileHandler)
+
 
 # Main Function for setup
 def main() -> None:
@@ -46,8 +48,9 @@ def main() -> None:
     log_ie = logging.getLogger('log_ie')
     log_main = logging.getLogger('log_main')
 
-# Set specific information for logging and stdout. 
-def set_infos(spec_logger: logging.Logger, step: str, mode:str) -> None:
+
+# Set specific information for logging and stdout.
+def set_infos(spec_logger: logging.Logger, step: str, mode: str) -> None:
     """ Set specific information for logging and stdout depending on step.
 
     Parameters

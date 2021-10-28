@@ -4,11 +4,11 @@ from pathlib import Path
 import yaml
 from classification.prepare_classifyunits.classify_units import convert_classifyunits
 from classification.prepare_classifyunits.feature_units import convert_featureunits
-from information_extraction.prepare_extractionunits.extraction_units import convert_extractionunits
+from information_extraction.prepare_extractionunits import convert_extractionunits
 
-with open(Path('configuration/config.yaml'), 'r') as yamlfile:
+with open(Path('C:\\Users\Anne\Desktop\Quenfo\quenfo_py_data\config\config.yaml'), 'r') as yamlfile:
     cfg = yaml.load(yamlfile, Loader=yaml.FullLoader)
-    fus_config = cfg['fus_config']
+    fus_config = cfg['classification']['fus_config']
     resources = cfg['resources']
 
 

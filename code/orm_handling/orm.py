@@ -2,6 +2,7 @@
     --> The data loading and handling takes place here and the modified data to be saved in the database is handled here too."""
 
 # ## Imports
+from information_extraction.models import ExtractedEntity
 from .models import ClassifyUnits, ClassifyUnits_Train, TrainingData, JobAds, ExtractionUnits, InformationEntity
 from training.train_models import Model
 import sqlalchemy
@@ -112,6 +113,23 @@ def get_traindata() -> list:
 
 
 def get_classify_units(current_pos: int) -> list:
+    """ Function manages the data query and instantiates the Schema for the class ClassifyUnits in models.py
+
+    Parameters
+    ----------
+    current_pos: int
+        The integer contains the current position in database (rownr)
+
+    Returns
+    -------
+    classify_units: list
+        Data contains the orm-objects from class ClassifyUnits
+
+    Raises
+    ------
+    sqlalchemy.exc.OperationalError
+        If changes in db are not possible, OperationalError is raised to continue with creation of table """
+
     # Set global
     global drop_once_eu
 
@@ -152,7 +170,22 @@ def get_classify_units(current_pos: int) -> list:
 
 
 def get_extraction_units() -> list:
+    """ Function manages the data query and instantiates the Schema for the class ExtractionUnits in models.py
+
+        Returns
+        -------
+        extraction_units: list
+            Data contains the orm-objects from class ExtractionUnits
+
+        Raises
+        ------
+        sqlalchemy.exc.OperationalError
+            If changes in db are not possible, OperationalError is raised to continue with creation of table """
+
+    # Set global
     global drop_once_e
+
+    # Get Configuration Settings from config.yaml file
     db_mode = configuration.config_obj.get_mode()  # db_mode: append data or overwrite it
 
     # load the eus
@@ -163,23 +196,23 @@ def get_extraction_units() -> list:
         if db_mode == 'overwrite':
             if drop_once_e is None:
                 try:
-                    InformationEntity.__table__.create(database.engine)
+                    ExtractedEntity.__table__.create(database.engine)
                 except sqlalchemy.exc.OperationalError as err:
-                    database.session.query(InformationEntity).delete()
+                    database.session.query(ExtractedEntity).delete()
                 drop_once_e = 'filled'
             else:
                 pass
         # load all related InformationEntity for appending
         else:
             if inspect(database.engine).has_table(
-                    InformationEntity.__tablename__):  # if table does exist, get related units
-                database.session.query(InformationEntity).filter(
-                    InformationEntity.parent_id == ExtractionUnits.id).all()
+                    ExtractedEntity.__tablename__):  # if table does exist, get related units
+                database.session.query(ExtractedEntity).filter(
+                    ExtractedEntity.parent_id == ExtractionUnits.id).all()
             else:  # else: create extractionunit table
-                InformationEntity.__table__.create(database.engine)
+                ExtractedEntity.__table__.create(database.engine)
     except sqlalchemy.exc.OperationalError:
         logger.log_ie.info(f'table extracted_entities does not exist --> create new one')
-        InformationEntity.__table__.create(database.engine)
+        ExtractedEntity.__table__.create(database.engine)
 
     pass_output(database.session)
 
@@ -328,7 +361,11 @@ def create_output(session: Session, output: object, table_type: str):
 
 # Private function to check if needed table already exists, else drop it and create a new empty table
 def __check_once(table_type: str):
+
+    # Set global
     global is_created
+
+    # Set switch-variable for db-table and logger
     switch_table = {
         'cu': ClassifyUnits,
         'eu': ExtractionUnits,
@@ -342,6 +379,7 @@ def __check_once(table_type: str):
         # 'me': logger.log_m,
     }
 
+    # Set variable
     table_name = switch_table.get(table_type)
     log_name = switch_logger.get(table_type)
 

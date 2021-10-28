@@ -81,6 +81,7 @@ Set four different logging-files:
 
 logger.main()
 
+
 # ## Functions
 
 # *** PART 1: Textclassification ***
@@ -98,6 +99,7 @@ def start_classification() -> None:
 
 # *** PART 2: Information Extraction ***
 def start_extraction() -> None:
+    # Start Extraction
     extract()
 
 
@@ -198,6 +200,7 @@ def get_application_parser() -> argparse.ArgumentParser:
     # ## set default function
     application_parser.set_defaults(func=manage_app)
     return application_parser
+
 
 def __file_path(path: str) -> str:
     if os.path.exists(Path(path)):

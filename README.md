@@ -7,16 +7,16 @@
 Die Software **quenfo_py** bietet verschiedene Funktionen zur Verarbeitung von Stellenanzeigen an.
 Diese unterteilen sich in die Klassifikation von Stellenanzeigen, in die Informationsextraktion von Kompetenzen und Tools und in Matching-Workflows zum Auffinden bereits bekannter Entitäten innerhalb klassifizierter Paragrafen.
 In dieser Dokumentation werden die jeweiligen Workflows beschrieben. Dabei werden die einzelnen Schritte und die genutzten Klassen und Methoden aufgeführt. 
-Jede ausführbare Applikation arbeitet mit Object Relational Mapping (ORM). Objekte werden hierbei als Datenbankeinträge persistiert, d.h. in den Datenklassen (z.B. in den Klassen ClassifyUnits, ExtractedEntity, InformationEntity oder ExtractionUnit) werden entsprechende Annotationen an Klassenattributen vorgenommen, um diese als vorzunehmenden Eintrag zu kennzeichnen. Für die Realisierung wurde [SQLAlchemy](https://docs.sqlalchemy.org/en/14/orm/) genutzt. 
+Jede ausführbare Applikation arbeitet mit Object Relational Mapping (ORM). Objekte werden hierbei als Datenbankeinträge persistiert, d.h. in den Datenklassen (z.B. in den Klassen ClassifyUnits, ExtractedEntity, InformationEntity oder ExtractionUnit) werden entsprechende Annotationen an Klassenattributen vorgenommen, um diese als vorzunehmenden Eintrag zu kennzeichnen. Für die Realisierung wurde [SQLAlchemy](https://docs.sqlalchemy.org/en/14/orm/) genutzt.
 
 Die Software entstand im Projekt [Quenfo](https://dh.phil-fak.uni-koeln.de/forschung/qualifikationsentwicklungsforschung) 
-und in Kooperation mit dem Bundesinstitut für Berufsbildung.
+und in Kooperation mit dem Bundesinstitut für Berufsbildung --> [BIBB](https://www.bibb.de/).
 
 
 **Zielsetzung:**
 
 	a. Stellenanzeigen werden in Paragraphen aufgesplittet und klassifiziert.
-			Mögliche Klassen: 
+			Mögliche Klassen: (SingleClasses)
 			1. Selbstvorstellung des ausschreibenden Unternehmens
 			2. Beschreibung der Tätigkeit, Angebote an die Bewerberinnen und Bewerber
 			3. Anforderungen an die Bewerberin bzw. den Bewerber 
@@ -41,8 +41,9 @@ und in Kooperation mit dem Bundesinstitut für Berufsbildung.
 **Output:** SQL-Datenbank bestehend aus:
 
 	SQL-Tabelle mit klassifizierten Paragraphen
-	SQL-Tabelle mit ExtractionUnits (Tools oder Kompetenzen)
-	SQL-Tabelle mit MatchingUnits (Tools oder Kompetenzen)
+	SQL-Tabelle mit einzelnen Sätzen der klassifizierten Paragrafen 
+	SQL-Tabelle mit Extractions (Tools oder Kompetenzen)
+	SQL-Tabelle mit Matches (Tools oder Kompetenzen)
 	
 --> Mehr zu Input und Output siehe Ende der Readme
 
@@ -97,27 +98,12 @@ Neben dem **quenfo_py** Repo wird ein Ordner namens **quenfo_py_data** benötigt
  ┃ ┃ ┣ 📂compounds
  ┃ ┃ ┃ ┣ 📜possibleCompounds.txt❗
  ┃ ┃ ┃ ┗ 📜splittedCompounds.txt❗
- ┃ ┃ ┣ 📂matetools
- ┃ ┃ ┃ ┣ 📜lemma-ger-3.6.model❗
- ┃ ┃ ┃ ┗ 📜tag-ger-3.6.model❗
- ┃ ┃ ┗ 📂openNLP
- ┃ ┃ ┃ ┣ 📜de-sent.bin❗
- ┃ ┃ ┃ ┗ 📜de-token.bin❗
  ┃ ┣ 📜model_knn 	(optional, wird sonst trainiert)
  ┃ ┗ 📜model_tfidf	(optional, wird sonst trainiert)
  ┗ 📂sqlite
- ┃ ┣ 📂information_extraction
- ┃ ┃ ┗ 📂competences
- ┃ ┣ 📂matching
- ┃ ┃ ┗ 📂tools
  ┃ ┗ 📂orm
  ┃ ┃ ┗ 📜input_data.db ❗
 ```
-
-in den Ordner information_extraction/data/openNLPmodels/
-
-- de-sent.bin & de-token.bin (downloadlink: http://opennlp.sourceforge.net/models-1.5/)
-- ger-tagger+lemmatizer+morphology+graph-based-3.6+.tgz (downloadlink: https://code.google.com/archive/p/mate-tools/downloads)
 
 in den Ordner information_extraction/data/competences/
 
@@ -146,7 +132,7 @@ Danach beginnt der Hauptprozess der Software, in dem die zu verarbeitenden Stell
 
 Im folgenden sieht man die Klassenstrukturen der ORM-Models:
 
-<img src="docs/models.jpg"/>
+<img src="docs/data_model.jpg"/>
 
 
 #### Code Struktur
@@ -180,10 +166,11 @@ Der Code ist so struktuiert, dass sich die einzelnen Module (im Workflow s.o. er
  ┃ ┃ ┣ 📜connection.py
  ┃ ┃ ┗ 📜__init__.py
  ┃ ┣ 📂information_extraction
+ ┃ ┃ ┣ 📂extraction
+ ┃ ┃ ┃ ┣ 📜__init__.py
+ ┃ ┃ ┃ ┗ 📜ie_jobs.py
  ┃ ┃ ┣ 📂prepare_extractionunits
- ┃ ┃ ┃ ┣ 📂extraction_units
- ┃ ┃ ┃ ┃ ┣ 📜convert_extractionunits.py
- ┃ ┃ ┃ ┃ ┗ 📜__init__.py
+ ┃ ┃ ┃ ┣ 📜convert_extractionunits.py
  ┃ ┃ ┃ ┗ 📜__init__.py
  ┃ ┃ ┣ 📂prepare_resources
  ┃ ┃ ┃ ┣ 📜connection_resources.py
@@ -255,7 +242,17 @@ Die Textclassification ist in zwei Hauptschritte aufgeteilt:
 
 
 ##### Information Extraction
-TODO
+Die Informationsextraktion besteht aus zwei wesentlichen Schritten:
+1. **Vorbereitung der Sätze, in denen nach Informationen gesucht werden soll** (*prepare_extractionunits/*) in den Schritten:
+	1. Generierung von **extraction_units** durch splitten der Paragrafen in einzelne Sätze (und erste Normalisierungsschritte)
+	2. Anreichern der EUs mit lexikalischen Informationen (Lemmata, Pos-Tags, Annotation, ob bereits bekannte Entität, Fehler oder Modifizierer)
+
+2. **Extraktion von Kompetenzen oder Tools in den ExtractionUnits** (*extraction/*) in den Schritten:
+	1. Extraktion von Entitäten mittels **Extraktionsmustern**
+	2. Entfernen bereits bekannter Entitäten
+	3. Evaluation der Extraktionen durch Ermittlung eines Confidence-Werts
+
+
 ##### Matching
 TODO
 
@@ -321,6 +318,7 @@ Ansonsten können folgende Werte angepasst werden:
 
 Die **config.yaml** Datei kann wie folgt aussehen:
 <img src="docs/config.jpg"/>
+
 
 
 ***
@@ -399,28 +397,47 @@ Ausschnitt aus db:
 #### Output
 
 Tabelle zur Textclassification:
+
+**ClassifyUnit**
 -  id
 - classID
 - parentID --> Zu welcher JobAd der Paragraph gehört
 - paragraph
 
-Tabelle zur Information Extraction:
-Kompetenzen oder Tools werden als Entitäten durch Extraktionsmuster extrahiert
+Tabellen zur Information Extraction:
+
+**ExtractionUnit**
 - id
-- positionIndex
-- paragraph_id
+- parentID
+- paragraph
+- position_index
 - sentence
-- tokenArray
+- token_array
+
+**ExtractedEntity**: Kompetenzen oder Tools werden als Entitäten durch Extraktionsmuster extrahiert
+- id
+- parentID
+- sentence
+- ie_type
+- start_lemma
+- is_single_word
+- full_expression
+- lemma_array
+- modifier
+- conf
+- pattern
 
 Tabelle zum Matching:
-Kompetenzen oder Tools werden durch StringMatching gefunden
+
+**MatchedEntities**: Kompetenzen oder Tools werden durch StringMatching gefunden
 - id
-- parent_id
-- type
-- startLemma
-- singleWordEntitiy
-- lemmaArray
-- lemmaExpression
+- parentID
+- sentence
+- ie_type
+- start_lemma
+- is_single_word
+- full_expression
+- lemma_array
 - modifier
 
 

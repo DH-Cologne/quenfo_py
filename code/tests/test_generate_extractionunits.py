@@ -1,7 +1,7 @@
 import unittest
 
-from information_extraction.prepare_resources import connection_resources, convert_entities
-from information_extraction.prepare_extractionunits.extraction_units import convert_extractionunits
+from information_extraction.prepare_resources import convert_entities
+from information_extraction.prepare_extractionunits import convert_extractionunits
 
 
 class TestGenerateExtractionUnits(unittest.TestCase):
